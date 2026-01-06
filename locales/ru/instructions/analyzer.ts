@@ -1,0 +1,79 @@
+
+
+
+
+
+
+
+
+
+export const analyzer = {
+    'instruction.inputs_data': 'Входные данные',
+    'instruction.desc.inputs_data': 'Источник: Краткое содержание, Профили персонажей, Текст сцен.',
+    'instruction.ana_role': 'Роль Анализатора',
+    'instruction.desc.ana_role': 'Режиссерский анализ сценария. Вы пишете инструкции для ИИ-генерации изображений и видео. Каждый кадр должен быть описан повторно и подробно, независимо от предыдущего и поддержкой контекста предыдущего или предыдущих кадров. Не используйте литературные сокращения и приемы.',
+    'instruction.ana_cinema': 'Кинематография',
+    'instruction.desc.ana_cinema': 'Проф. термины кадрирования (Wide Shot, Close-up) и перспективы (Side Profile, Rear View).',
+    'instruction.ana_cinema_wide': 'Кинематография (Общие)',
+    'instruction.desc.ana_cinema_wide': 'Проф. термины: Wide Shot, Long Shot, Dutch Angle. Перспективы: Aerial, Worm\'s Eye. Без крупных планов.',
+    'instruction.ana_anthro_logic': 'Антро-Логика',
+    'instruction.desc.ana_anthro_logic': 'Явно описывайте персонажей как Антропоморфных Животных (например, "Anthropomorphic Fox") в каждом описании кадра.',
+    'instruction.ana_subscribe_logic': 'Призыв Подписаться',
+    'instruction.desc.ana_subscribe_logic': 'Если сцена призывает подписаться, добавьте визуальные действия: персонажи держат таблички или взаимодействуют с 3D текстом.',
+    'instruction.rule_hierarchy': 'Мастер Алгоритм Кадрирования',
+    'instruction.desc.rule_hierarchy': 'Порядок: 1. Глобальный Контекст. 2. Полная поза персонажа + АКТИВНОЕ ВЗАИМОДЕЙСТВИЕ (тащит, держит). 3. Детали. 4. Фокус. Описывайте действие целиком, даже если оно частично за кадром.',
+    'instruction.rule_living_world': 'Живой Мир',
+    'instruction.desc.rule_living_world': 'Фоновая массовка, соответствующая миру.',
+    'instruction.desc.rule_living_world_anthro': 'Массовка на фоне — антропоморфные животные (НЕ люди).',
+    'instruction.rule_persistence': 'Постоянство',
+    'instruction.desc.rule_persistence': 'ХРОНОЛОГИЧЕСКОЕ ПОСТОЯНСТВО СЦЕНЫ: Поддерживайте единое физическое пространство между всеми кадрами сцены.',
+    'instruction.rule_mandatory_bg': 'Обязательный Глобальный Фон',
+    'instruction.desc.rule_mandatory_bg': "ЗАПРЕЩЕНО оставлять фон пустым или писать просто 'размытый фон'. Всегда описывайте локацию и освещение полностью, даже для макро-снимков.",
+    'instruction.desc.rule_mandatory_bg_wide': "ЗАПРЕЩЕНО оставлять фон пустым. Так как вы работаете ТОЛЬКО с общими планами, описывайте географию, горизонт и погоду в каждом кадре.",
+    'instruction.shot_filter_wide': 'Только Общие Планы',
+    'instruction.desc.shot_filter_wide': 'СТРОГИЙ ФИЛЬТР: Использовать ТОЛЬКО Общие (WS), Дальние (LS) и Средние (MS). Крупные планы (CU/ECU) запрещены.',
+    'instruction.storyboard_rules': 'Разнообразие Ракурсов',
+    'instruction.desc.storyboard_rules': 'Комбинируйте Планы (WS/CU) с Ракурсами (Слева, Справа, Сзади, Сверху, Снизу). Избегайте повторов.',
+    'instruction.storyboard_rules_wide': 'Разнообразие Ракурсов (Общие)',
+    'instruction.desc.storyboard_rules_wide': 'ТОЛЬКО Общие планы, но РАЗНЫЕ углы: Сбоку, Со спины, С дрона, Снизу. Избегайте статики.',
+    'instruction.tech_directives': 'Камера',
+    'instruction.desc.tech_directives': 'Строгая терминология. Для планов использовать ТОЛЬКО аббревиатуры (WS, MS, CU).',
+    'instruction.tech_directives_wide': 'Камера (Общие)',
+    'instruction.desc.tech_directives_wide': 'Строгая терминология. Только аббревиатуры: WS, MS, LS. Без CU/ECU.',
+    'instruction.use_aliases': 'Псевдонимы',
+    'instruction.desc.use_aliases': 'Используйте формат Entity-N (строго на английском). Остальной текст на целевом языке.',
+    'instruction.action_phase_breakdown': 'Атомная Декомпозиция',
+    'instruction.desc.action_phase_breakdown': 'КРИТИЧНО: Запрещено сжимать действие в 1 кадр. "Открыл дверь" = 3 кадра (Рука тянется, Поворот ручки, Дверь открывается). Расширяйте каждое действие.',
+    'instruction.desc.action_phase_breakdown_wide': 'Декомпозиция фаз, но СТРОГО ОБЩИМ планом. Показывайте удар/реакцию через позу всего тела, а не зум.',
+    'instruction.batch_processing': 'Пакетная Обработка',
+    'instruction.desc.batch_processing': 'Анализ сцен как непрерывной последовательности.',
+    'instruction.ana_prompt_lang': 'Язык Промптов',
+    'instruction.desc.ana_prompt_lang': 'Английский язык для совместимости.',
+    'instruction.extended_visuals': 'Анти-Сжатие (Расширение)',
+    'instruction.desc.extended_visuals': 'ЗАПРЕТ НА КРАТКОСТЬ. Вы обязаны превратить каждое предложение сценария в 3-5 визуальных кадров. Растягивайте время. Показывайте микро-движения.',
+    'instruction.extended_visuals_wide': 'Расширенная (Общие)',
+    'instruction.desc.extended_visuals_wide': 'Разбивка на последовательности кадров только в Общих и Средних планах. Фокус на географии и атмосфере. Без крупных планов.',
+    'instruction.desc.target_lang': 'Язык описаний кадров.',
+    'instruction.rule_isolation': 'Нулевой Контекст',
+    'instruction.desc.rule_isolation': 'КРИТИЧНО: Генератор изображений НЕ ЗНАЕТ о предыдущем кадре. Вы ОБЯЗАНЫ заново описать окружение и погоду в каждом кадре.',
+    'instruction.sensory_saturation': 'Анти-Краткость',
+    'instruction.desc.sensory_saturation': 'ЗАПРЕЩЕНО писать кратко. Вместо "Руки сжимают" пишите "Грязные руки с побелевшими костяшками крепко сжимают холодное стекло".',
+    'instruction.ana_no_pov': 'НЕТ POV',
+    'instruction.desc.ana_no_pov': 'КРИТИЧНО: СТРОГИЙ ЗАПРЕТ на кадры от первого лица ("POV"). Камера ВСЕГДА должна быть внешней (из-за плеча, общий план и т.д.).',
+    
+    // New Translations
+    'instruction.desc.static_frame_logic': 'СТРОГИЙ ЗАПРЕТ глаголов движения ("идет", "качается"). Описывайте ЗАСТЫВШИЙ момент. "Пена, застывшая в воздухе", "Листья, наклоненные ветром".',
+    'instruction.desc.anatomical_posing': 'Описывайте ГЕОМЕТРИЮ тела. Вместо "отдыхает" пишите: "Лежит на спине, руки вдоль тела, голова откинута назад".',
+    'instruction.desc.motion_dynamics': 'РАЗДЕЛЕНИЕ: Image Prompt = 100% Статика. Video Prompt = Движение и время (дыхание, волны, ветер).',
+    'instruction.desc.anatomical_strictness': 'РИГГИНГ: Запрет на «Руки за головой и держит стакан». Описывать каждую руку отдельно: Левая рука [состояние], Правая рука [состояние]. Исключить появление 3-й руки.',
+    'instruction.desc.prop_consistency': 'ФИКСАЦИЯ ОБЪЕКТОВ: Запрет на общие слова ("меч", "телефон"). Обязательно указывать виз. атрибуты ("ржавый железный меч", "черный пластиковый телефон") и повторять их.',
+    'instruction.desc.subject_hierarchy': 'НЕВИДИМЫЙ КОНТЕКСТ: Даже если в кадре только ноги, опишите: "Ноги Персонажа-1, КОТОРЫЙ ТАЩИТ Персонажа-2". Связывайте деталь с общим действием.',
+    
+    // Instruction Labels (Titles)
+    'instruction.static_frame_logic': 'Строгая Статика',
+    'instruction.anatomical_posing': 'Анатомическая Поза',
+    'instruction.anatomical_strictness': 'Анатомическая Логика',
+    'instruction.prop_consistency': 'Специфика Объектов',
+    'instruction.subject_hierarchy': 'Контекстная Привязка',
+    'instruction.motion_dynamics': 'Динамика Движения',
+};

@@ -1,0 +1,78 @@
+
+
+
+
+
+
+
+export const analyzer = {
+    'instruction.ana_role': 'Analyzer Role',
+    'instruction.desc.ana_role': 'You are a world-class Film Director and Cinematographer. You write instructions for AI generation. Each frame must be described repeatedly and in detail, independently of the previous one, while maintaining the context of previous frames. Do not use literary abbreviations or devices.',
+    'instruction.ana_cinema': 'Cinematography',
+    'instruction.desc.ana_cinema': 'Professional terms: Wide Shot, Close-up, Dutch Angle, Bokeh for framing and lighting.',
+    'instruction.ana_cinema_wide': 'Cinematography (Wide)',
+    'instruction.desc.ana_cinema_wide': 'Professional terms: Wide Shot, Long Shot. NO Close-ups.',
+    'instruction.ana_anthro_logic': 'Anthro Logic',
+    'instruction.desc.ana_anthro_logic': 'Explicitly describe characters as Anthropomorphic Animals (e.g., "Anthropomorphic Fox") in every frame description.',
+    'instruction.ana_subscribe_logic': 'Subscribe CTA',
+    'instruction.desc.ana_subscribe_logic': 'If the scene asks to Subscribe, add visual actions: characters holding signs or interacting with 3D text.',
+    'instruction.rule_hierarchy': 'Master Framing Algorithm',
+    'instruction.desc.rule_hierarchy': 'Strict order: 1. Global Context. 2. Full Character Posture & Active Interaction (e.g. dragging). 3. Detail. Describe the full action even if partly out of frame.',
+    'instruction.rule_living_world': 'Living World',
+    'instruction.desc.rule_living_world': 'If public place, describe background extras/silhouettes consistent with the world context.',
+    'instruction.desc.rule_living_world_anthro': 'Background extras/crowds must be Anthropomorphic Animals (NOT humans).',
+    'instruction.rule_persistence': 'Persistence',
+    'instruction.desc.rule_persistence': "SCENE-WIDE CHRONOLOGICAL PERSISTENCE: Maintain a persistent global state for the entire scene. Every frame is part of a single physical space. Track the exact position, pose, and status of every character and object, even when they are off-camera. If Character A is in Frame 1 but the camera cuts to Character B in Frame 2, Character A must still exist logically in their last position. If an object is moved, it stays moved. Ensure total continuity across the sequence.",
+    'instruction.rule_mandatory_bg': 'Mandatory Global BG',
+    'instruction.desc.rule_mandatory_bg': "FORBIDDEN to leave background empty or just say 'blurred background'. Always describe the location and lighting fully, even for macro shots.",
+    'instruction.desc.rule_mandatory_bg_wide': "FORBIDDEN to leave background empty. Since you are using WIDE SHOTS only, you must provide comprehensive geography, horizon, and weather details in every frame.",
+    'instruction.shot_filter_wide': 'Wide Shots Only',
+    'instruction.desc.shot_filter_wide': 'STRICT FILTER: Use ONLY Wide, Long, and Medium shots. Close-ups (CU/ECU) are forbidden.',
+    'instruction.storyboard_rules': 'Shot Variety',
+    'instruction.desc.storyboard_rules': 'Alternate between WS/LS (Wide), MS (Medium), and CU/ECU (Close-up) shots for dynamic pacing and emotional focus.',
+    'instruction.storyboard_rules_wide': 'Shot Variety (Wide Only)',
+    'instruction.desc.storyboard_rules_wide': 'Use only Wide, Long, and Establishing shots. Vary the angle (Low/High/Aerial). NO Close-ups.',
+    'instruction.tech_directives': 'Camera Control',
+    'instruction.desc.tech_directives': 'Strict technical terminology. For shot types use ONLY abbreviations (WS, MS, CU).',
+    'instruction.tech_directives_wide': 'Camera Control (Wide)',
+    'instruction.desc.tech_directives_wide': 'Strict technical terminology. Use ONLY abbreviations (WS, MS, LS). NO CU/ECU.',
+    'instruction.use_aliases': 'Use Aliases',
+    'instruction.desc.use_aliases': 'Use Entity-N format (Strictly English). Rest of text in target language.',
+    'instruction.action_phase_breakdown': 'Micro-Actions',
+    'instruction.desc.action_phase_breakdown': 'Decompose complex actions into preparation, initiation, apex, and reaction phases.',
+    'instruction.desc.action_phase_breakdown_wide': 'Decompose actions into phases, but KEEP CAMERA WIDE. Show impact via full-body posture, not zoom.',
+    'instruction.batch_processing': 'Batch Processing',
+    'instruction.desc.batch_processing': 'Analyze all provided scenes as a continuous sequence to maintain narrative and visual consistency.',
+    'instruction.ana_prompt_lang': 'Prompt Language',
+    'instruction.desc.ana_prompt_lang': 'Image and video prompts are strictly in English for best model compatibility.',
+    'instruction.extended_visuals': 'Extended Visual Breakdown',
+    'instruction.desc.extended_visuals': 'Decomposes scenes into short, expressive sequences (Wide, MS, CU, Detail). Focuses on cinematic rhythm, vibrant emotions, dynamic composition, and sincere energy.',
+    'instruction.extended_visuals_wide': 'Extended Visual Breakdown (Wide)',
+    'instruction.desc.extended_visuals_wide': 'Decomposes scenes into sequences using strictly Wide/Medium shots. Focuses on geography, group dynamics, and atmosphere. No Close-ups.',
+    'instruction.desc.target_lang': 'Frame analysis and descriptions will be generated in this language.',
+    'instruction.rule_isolation': 'Zero Context',
+    'instruction.desc.rule_isolation': 'CRITICAL: The image generator DOES NOT know about the previous frame. You MUST re-describe the environment and weather in every single frame.',
+    'instruction.sensory_saturation': 'Anti-Brevity',
+    'instruction.desc.sensory_saturation': 'FORBIDDEN to be brief. Instead of "Hands gripping", write "Dirty hands with white knuckles tightly gripping the cold glass".',
+    'instruction.ana_no_pov': 'No POV',
+    'instruction.desc.ana_no_pov': 'CRITICAL NEGATIVE: STRICT BAN on "POV" or "First-Person" shots. The camera MUST be external (Over-the-shoulder, Wide, etc.).',
+    
+    // New Translations
+    'instruction.desc.static_frame_logic': 'STRICT BAN on movement verbs ("walking", "swaying"). Describe a FROZEN moment. "Foam frozen in air", "Leaves angled by wind".',
+    'instruction.desc.anatomical_posing': 'Describe body GEOMETRY. Instead of "resting", write: "Lying supine, arms at sides, head tilted back".',
+    'instruction.desc.motion_dynamics': 'SEPARATION: Image Prompt = 100% Static. Video Prompt = Movement & Time (breathing, waves, wind).',
+    'instruction.desc.anatomical_strictness': 'RIGGING: Prevents "Arms behind head AND holding drink". Forces separate description: Left Arm [state], Right Arm [state]. Eliminates extra limbs.',
+    'instruction.desc.prop_consistency': 'OBJECT LOCK: Forbidden to use generic nouns ("sword", "phone"). Must specify visual attributes ("rusted iron sword", "cracked black phone") and repeat them.',
+    'instruction.desc.subject_hierarchy': 'INVISIBLE CONTEXT: If showing a Close-up of feet, you MUST describe: "Feet of Character-A WHO IS DRAGGING Character-B". Link the part to the whole action.',
+
+    'instruction.inputs_data': 'Inputs',
+    'instruction.desc.inputs_data': 'Source Data: Script Summary, Character Profiles, Scene Texts.',
+    
+    // Instruction Labels (Titles)
+    'instruction.static_frame_logic': 'Strict Static',
+    'instruction.anatomical_posing': 'Anatomical Posing',
+    'instruction.anatomical_strictness': 'Anatomy Logic',
+    'instruction.prop_consistency': 'Object Specificity',
+    'instruction.subject_hierarchy': 'Context Anchoring',
+    'instruction.motion_dynamics': 'Motion Dynamics',
+};
