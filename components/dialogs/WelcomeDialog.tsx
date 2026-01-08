@@ -8,6 +8,8 @@ interface WelcomeDialogProps {
   isFirstRun: boolean;
 }
 
+const MASKED_KEY = '●●●●●●●●';
+
 const WelcomeDialog: React.FC<WelcomeDialogProps> = ({ isOpen, onSave, isFirstRun }) => {
   const { t, language, setLanguage } = useLanguage();
   const [apiKey, setApiKey] = useState('');
@@ -34,7 +36,8 @@ const WelcomeDialog: React.FC<WelcomeDialogProps> = ({ isOpen, onSave, isFirstRu
 
   useEffect(() => {
     if (isOpen) {
-      setApiKey('');
+      const storedKey = localStorage.getItem('gemini-api-key');
+      setApiKey(storedKey ? MASKED_KEY : '');
       setIsExiting(false);
       requestAnimationFrame(() => {
         setIsVisible(true);
@@ -86,7 +89,8 @@ const WelcomeDialog: React.FC<WelcomeDialogProps> = ({ isOpen, onSave, isFirstRu
   };
 
   const handleSave = () => {
-    triggerSaveSequence(apiKey.trim(), false);
+    const keyToSave = apiKey.trim() === MASKED_KEY ? '' : apiKey.trim();
+    triggerSaveSequence(keyToSave, false);
   };
 
   const handleDeveloperClick = () => {

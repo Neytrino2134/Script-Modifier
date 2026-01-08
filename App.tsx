@@ -88,7 +88,7 @@ const Editor: React.FC = () => {
   // Track if the user has already passed the welcome screen in this session or previously
   const [hasWelcomeBeenShown, setHasWelcomeBeenShown] = useState(() => {
      // If API key exists, we consider welcome shown previously
-     return !!(localStorage.getItem('gemini-api-key') || localStorage.getItem('gemini-use-free-key'));
+     return !!(localStorage.getItem('gemini-api-key') || localStorage.getItem('gemini-use-free-key') === 'true');
   });
 
   const [apiSettings, setApiSettings] = useState(() => {
@@ -103,10 +103,12 @@ const Editor: React.FC = () => {
   const [radialMenuHoveredItem, setRadialMenuHoveredItem] = useState<NodeType | null>(null);
 
   useEffect(() => {
+    // Check key presence on mount
     const hasApiKeyInStorage = localStorage.getItem('gemini-api-key');
     const hasUseFreeKeyInStorage = localStorage.getItem('gemini-use-free-key');
+    const isFree = hasUseFreeKeyInStorage === 'true';
 
-    if (!hasApiKeyInStorage && !hasUseFreeKeyInStorage) {
+    if (!hasApiKeyInStorage && !isFree) {
       // First launch, no settings saved yet.
       setIsWelcomeDialogOpen(true);
       setHasWelcomeBeenShown(false);
@@ -141,16 +143,22 @@ const Editor: React.FC = () => {
   };
 
   const handleSaveApiSettings = (apiKey: string, useFreeKey: boolean) => {
+    const cleanedKey = apiKey.trim();
     localStorage.setItem('gemini-use-free-key', useFreeKey ? 'true' : 'false');
+    
     if (useFreeKey) {
         localStorage.removeItem('gemini-api-key');
-    } else if (apiKey) {
-        localStorage.setItem('gemini-api-key', apiKey);
+    } else if (cleanedKey) {
+        localStorage.setItem('gemini-api-key', cleanedKey);
     }
     
+    // Re-read strictly from storage to ensure sync
+    const storedKey = localStorage.getItem('gemini-api-key');
+    const storedFree = localStorage.getItem('gemini-use-free-key') === 'true';
+    
     setApiSettings({
-        hasApiKey: useFreeKey || !!localStorage.getItem('gemini-api-key'),
-        useFreeKey: useFreeKey,
+        hasApiKey: storedFree || (!!storedKey && storedKey.length > 0),
+        useFreeKey: storedFree,
     });
 
     // Determine if this is a "Fresh Start" or just an update/resume

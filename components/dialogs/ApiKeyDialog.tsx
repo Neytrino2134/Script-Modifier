@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../../localization';
 
@@ -10,6 +11,8 @@ interface ApiKeyDialogProps {
   initialUseFreeKey: boolean;
 }
 
+const MASKED_KEY = '●●●●●●●●';
+
 const ApiKeyDialog: React.FC<ApiKeyDialogProps> = ({ isOpen, onSave, onClose, onClear, hasExistingKey, initialUseFreeKey }) => {
   const { t } = useLanguage();
   const [apiKey, setApiKey] = useState('');
@@ -18,14 +21,20 @@ const ApiKeyDialog: React.FC<ApiKeyDialogProps> = ({ isOpen, onSave, onClose, on
 
   useEffect(() => {
     if (isOpen) {
-      setApiKey(''); // Always clear the input on open for security
+      // Check local storage directly to determine if we should show the mask
+      // We only mask if there is a real key stored, not if it's just 'free mode'
+      const storedKey = localStorage.getItem('gemini-api-key');
+      setApiKey(storedKey ? MASKED_KEY : '');
       setUseFreeKey(initialUseFreeKey);
       setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [isOpen, initialUseFreeKey]);
 
   const handleSave = () => {
-    onSave(apiKey.trim(), useFreeKey);
+    // If the value is the mask, send an empty string to indicate "no change" to the parent handler
+    // The parent handler (App.tsx) preserves the existing key if the new key string is empty
+    const keyToSend = apiKey.trim() === MASKED_KEY ? '' : apiKey.trim();
+    onSave(keyToSend, useFreeKey);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

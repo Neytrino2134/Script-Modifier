@@ -1,8 +1,15 @@
+
 import { GoogleGenAI } from "@google/genai";
 
 export const getAiClient = () => {
-    // Fix: Obtain API key exclusively from environment variable process.env.API_KEY
-    return new GoogleGenAI({ apiKey: process.env.API_KEY });
+    // Check LocalStorage first (User entered key), then Environment Variable (Build time key)
+    const apiKey = localStorage.getItem('gemini-api-key') || process.env.API_KEY;
+
+    if (!apiKey) {
+        throw new Error("API Key not found. Please set it in Settings.");
+    }
+
+    return new GoogleGenAI({ apiKey });
 };
 
 export const withRetry = async <T>(fn: () => Promise<T>, retries = 3, delay = 1000): Promise<T> => {
