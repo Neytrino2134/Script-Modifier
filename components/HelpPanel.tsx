@@ -96,17 +96,24 @@ const HelpPanel: React.FC = () => {
           ]
       },
       {
+          category: t('help.category.gh_pages'),
+          links: [
+              { label: "Script Modifier", subLabel: "GitHub Pages", url: "https://neytrino2134.github.io/Script-Modifier/", iconType: 'github' },
+              { label: "Prompt Modifier", subLabel: "GitHub Pages", url: "https://neytrino2134.github.io/Prompt-Modifier/", iconType: 'github' },
+          ]
+      },
+      {
           category: t('help.category.stable'),
           links: [
-              { label: "Prompt Modifier 0.1.7", subLabel: t('help.sub.stable'), url: "https://ai.studio/apps/drive/1YCO0DaA4BTm9p0j5XqvpBhX_XTg9ClwC?fullscreenApplet=true", iconType: 'google' },
               { label: "Script Modifier 0.1.3", subLabel: t('help.sub.stable'), url: "https://ai.studio/apps/drive/1enTmQ5Wz9RBArkZMZm5s5nYQcKxQ9L8M?fullscreenApplet=true", iconType: 'google' },
+              { label: "Prompt Modifier 0.1.7", subLabel: t('help.sub.stable'), url: "https://ai.studio/apps/drive/1YCO0DaA4BTm9p0j5XqvpBhX_XTg9ClwC?fullscreenApplet=true", iconType: 'google' },
           ]
       },
       {
           category: t('help.category.alpha'),
           links: [
-               { label: "Prompt Modifier 0.1.8", subLabel: t('help.sub.alpha'), url: "https://aistudio.google.com/apps/drive/1OJfPP9wUKlnjvZ5_2_Fxq_v1dW0iftlW?showAssistant=true&resourceKey=&showPreview=true", iconType: 'google' },
                { label: "Script Modifier 0.1.5", subLabel: t('help.sub.alpha'), url: "https://aistudio.google.com/apps/drive/1y9CSUmlVQK2xq7ckses7fpM6wpbZdBnB?showAssistant=true&resourceKey=&showPreview=true", iconType: 'google' },
+               { label: "Prompt Modifier 0.1.8", subLabel: t('help.sub.alpha'), url: "https://aistudio.google.com/apps/drive/1OJfPP9wUKlnjvZ5_2_Fxq_v1dW0iftlW?showAssistant=true&resourceKey=&showPreview=true", iconType: 'google' },
           ]
       },
       {
@@ -210,7 +217,7 @@ const HelpPanel: React.FC = () => {
           {linkGroups.map(group => (
               <div key={group.category} className="space-y-2">
                   <h4 className="font-bold text-xs text-gray-400 uppercase tracking-wider pl-1 select-none border-b border-gray-700/50 pb-1">{group.category}</h4>
-                  <div className="grid grid-cols-1 gap-2">
+                  <div className="grid grid-cols-2 gap-2">
                       {group.links.map((link, idx) => (
                           <div 
                               key={idx} 
@@ -256,14 +263,21 @@ const HelpPanel: React.FC = () => {
   const panelContent = (
     <div 
       ref={panelRef}
-      className="bg-gray-800 rounded-lg w-[450px] h-[600px] border border-gray-700 z-[60] flex flex-col shadow-2xl select-none"
+      className="bg-gray-800 rounded-lg w-[600px] h-[600px] border border-gray-700 z-[60] flex flex-col shadow-2xl select-none"
       style={panelStyle}
       onMouseDown={e => e.stopPropagation()}
       onWheel={e => e.stopPropagation()}
     >
       <div className="flex flex-col border-b border-gray-700 flex-shrink-0">
           <div className="flex justify-between items-center p-3">
-            <h2 className="text-lg font-bold text-emerald-400 select-none">{t('help.title')}</h2>
+            <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-emerald-900/50 flex items-center justify-center border border-emerald-500/30">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h2 className="text-lg font-bold text-emerald-400 select-none">{t('help.title')}</h2>
+            </div>
             <button 
               onClick={() => setIsOpen(false)}
               className="p-1 text-gray-400 rounded-full hover:bg-gray-600 hover:text-white"
