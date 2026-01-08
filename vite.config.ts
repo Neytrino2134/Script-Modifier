@@ -13,9 +13,8 @@ export default defineConfig(({ mode }) => {
     base: isGhPages ? '/Script-Modifier/' : '/',
     define: {
       // Безопасная замена глобальных переменных
-      'process.env.API_KEY': JSON.stringify(env.API_KEY),
-      // Заменяем process.env на пустой объект, чтобы библиотеки не падали при проверке
-      'process.env': {}
+      // Ensure API_KEY is passed if available, otherwise it stays undefined to allow client-side handling
+      'process.env.API_KEY': JSON.stringify(env.API_KEY || ''),
     },
     build: {
       outDir: 'dist',

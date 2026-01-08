@@ -2,13 +2,22 @@
 import { GoogleGenAI } from "@google/genai";
 
 export const getAiClient = () => {
-    // Check LocalStorage first (User entered key), then Environment Variable (Build time key)
-    const apiKey = localStorage.getItem('gemini-api-key') || process.env.API_KEY;
+    // 1. Try to get key from LocalStorage (User entered)
+    const localKey = localStorage.getItem('gemini-api-key');
+
+    // 2. Try to get key from Environment (Build time)
+    // Note: We check if process exists to avoid ReferenceErrors in some environments
+    const envKey = (typeof process !== 'undefined' && process.env) ? process.env.API_KEY : undefined;
+
+    // 3. Resolve final key. LocalStorage takes precedence.
+    const apiKey = (localKey && localKey.trim() !== '') ? localKey : (envKey && envKey.trim() !== '') ? envKey : null;
 
     if (!apiKey) {
+        console.error("Script Modifier: API Key is missing. Please enter it in the application settings.");
         throw new Error("API Key not found. Please set it in Settings.");
     }
 
+    // Initialize SDK with the resolved key
     return new GoogleGenAI({ apiKey });
 };
 
