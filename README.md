@@ -1,3 +1,4 @@
+
 # Script Modifier 🎬
 
 **Script Modifier** is a powerful, visual node-based editor designed to supercharge your storytelling and content creation workflow using Google Gemini AI. 
@@ -51,8 +52,8 @@ Whether you are a screenwriter, a YouTuber, or a creative writer, this tool allo
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/script-modifier.git
-   cd script-modifier
+   git clone https://github.com/Neytrino2134/Script-Modifier.git
+   cd Script-Modifier
    ```
 
 2. **Install dependencies:**

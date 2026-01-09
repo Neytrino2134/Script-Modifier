@@ -1,7 +1,8 @@
+
 {
   "name": "script-modifier",
   "private": true,
-  "version": "0.1.5-alpha.2",
+  "version": "0.1.5-alpha.3",
   "type": "module",
   "homepage": "https://Neytrino2134.github.io/Script-Modifier",
   "scripts": {

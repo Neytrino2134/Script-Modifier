@@ -210,10 +210,10 @@ const YouTubeTitleGeneratorNode: React.FC<NodeContentProps> = ({
              <div className="flex-shrink-0 bg-gray-700/50 p-1 rounded-md border border-gray-600/30">
                 <div className="flex flex-wrap gap-1">
                     {LANGUAGES.map((lang) => (
-                        <Tooltip key={lang.code} title={t(`languages.${lang.code}`)} position="top">
+                        <Tooltip key={lang.code} title={t(`languages.${lang.code}`)} position="top" className="flex-1">
                             <button
                                 onClick={() => handleLangChange(lang.code)}
-                                className={`flex-1 min-w-[30px] py-1 rounded text-[10px] font-bold uppercase transition-colors ${
+                                className={`w-full min-w-[30px] py-1 rounded text-[10px] font-bold uppercase transition-colors ${
                                     targetLanguages[lang.code] 
                                         ? 'bg-emerald-600 text-white shadow-sm' 
                                         : 'bg-gray-800 text-gray-400 hover:bg-gray-600 hover:text-gray-200'
