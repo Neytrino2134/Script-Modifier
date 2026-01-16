@@ -48,6 +48,7 @@ const CharacterCardNode: React.FC<NodeContentProps> = ({
 
     // Define nodeId explicitly for usage in closures and map
     const nodeId = node.id;
+    const nodeTitle = node.title;
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isExternalDragOver, setIsExternalDragOver] = useState(false);
@@ -82,48 +83,65 @@ const CharacterCardNode: React.FC<NodeContentProps> = ({
             }
             if (parsed.length === 0) {
                 parsed = [{ 
+                    type: "character-card",
                     id: `char-card-${Date.now()}`,
                     name: 'New Entity 1', 
-                    index: 'Entity-1', image: null, 
-                    thumbnails: { '1:1': null, '16:9': null, '9:16': null }, 
+                    index: 'Entity-1', 
+                    image: null, 
+                    thumbnails: { '1:1': null, '16:9': null, '9:16': null },
+                    imageSources: { '1:1': null, '16:9': null, '9:16': null }, 
                     selectedRatio: '1:1', prompt: '', fullDescription: '',
                     targetLanguage: 'en',
                     isOutput: true,
+                    isActive: true,
                     isDescriptionCollapsed: false,
                     isImageCollapsed: false,
+                    isPromptCollapsed: true,
                     additionalPrompt: "Full body character concept on a gray background"
                 }];
             }
             return parsed.map((char: any, i: number) => ({
+                type: "character-card",
+                nodeTitle: nodeTitle, // Ensure node title is injected
                 id: char.id || `char-card-${Date.now()}-${i}`,
                 name: char.name || '',
                 index: char.index || char.alias || `Entity-${i + 1}`,
                 image: char.image || null,
                 thumbnails: char.thumbnails || char.imageSources || { '1:1': null, '16:9': null, '9:16': null },
+                imageSources: char.imageSources || char.thumbnails || { '1:1': null, '16:9': null, '9:16': null },
                 selectedRatio: char.selectedRatio || '1:1',
                 prompt: char.prompt || '',
                 additionalPrompt: char.additionalPrompt !== undefined ? char.additionalPrompt : "Full body character concept on a gray background",
                 fullDescription: char.fullDescription || '',
                 targetLanguage: char.targetLanguage || 'en',
                 isOutput: char.isOutput || (i === 0 && !parsed.some((c: any) => c.isOutput)),
+                isActive: char.isActive !== false,
                 isDescriptionCollapsed: char.isDescriptionCollapsed ?? false,
-                isImageCollapsed: char.isImageCollapsed ?? false
+                isImageCollapsed: char.isImageCollapsed ?? false,
+                isPromptCollapsed: char.isPromptCollapsed ?? true,
+                _fullResActive: char._fullResActive || null
             }));
         } catch {
             return [{ 
+                type: "character-card",
+                nodeTitle: nodeTitle,
                 id: `char-card-${Date.now()}`,
                 name: 'New Entity 1', 
-                index: 'Entity-1', image: null, 
+                index: 'Entity-1', 
+                image: null, 
                 thumbnails: { '1:1': null, '16:9': null, '9:16': null }, 
+                imageSources: { '1:1': null, '16:9': null, '9:16': null },
                 selectedRatio: '1:1', prompt: '', fullDescription: '',
                 targetLanguage: 'en',
                 isOutput: true,
+                isActive: true,
                 isDescriptionCollapsed: false,
                 isImageCollapsed: false,
+                isPromptCollapsed: true,
                 additionalPrompt: "Full body character concept on a gray background"
             }];
         }
-    }, [node.value]);
+    }, [node.value, nodeTitle]);
 
     const duplicateIndices = useMemo(() => {
         const counts: Record<string, number> = {};
@@ -139,8 +157,14 @@ const CharacterCardNode: React.FC<NodeContentProps> = ({
     }, [characters]);
 
     const handleValueUpdate = useCallback((newCharacters: CharacterData[]) => {
-        onValueChange(node.id, JSON.stringify(newCharacters));
-    }, [node.id, onValueChange]);
+        // Ensure every character has the node title and correct type before saving
+        const enrichedCharacters = newCharacters.map(c => ({
+            ...c,
+            type: "character-card",
+            nodeTitle: nodeTitle
+        }));
+        onValueChange(node.id, JSON.stringify(enrichedCharacters));
+    }, [node.id, onValueChange, nodeTitle]);
 
     const handleUpdateCard = useCallback((index: number, updates: Partial<CharacterData>) => {
         const newChars = [...characters];
@@ -177,6 +201,8 @@ const CharacterCardNode: React.FC<NodeContentProps> = ({
             character: {
                 ...char,
                 imageSources: fullSources,
+                type: "character-card",
+                nodeTitle: nodeTitle,
                 _fullResActive: getFullSizeImage ? getFullSizeImage(node.id, index * 10) : null
             }
         };
@@ -331,15 +357,20 @@ const CharacterCardNode: React.FC<NodeContentProps> = ({
         const nextIndex = `Entity-${maxIndexNum + 1}`;
 
         const newChars = [...characters, {
+            type: "character-card",
+            nodeTitle: nodeTitle,
             id: `char-card-${Date.now()}`,
             name: nextName,
             index: nextIndex, image: null,
             thumbnails: { '1:1': null, '16:9': null, '9:16': null },
+            imageSources: { '1:1': null, '16:9': null, '9:16': null },
             selectedRatio: '1:1', prompt: '', fullDescription: '',
             targetLanguage: 'en',
             isOutput: false,
+            isActive: true,
             isDescriptionCollapsed: false,
             isImageCollapsed: false,
+            isPromptCollapsed: true,
             additionalPrompt: "Full body character concept on a gray background"
         }];
         handleValueUpdate(newChars);
@@ -353,15 +384,20 @@ const CharacterCardNode: React.FC<NodeContentProps> = ({
         if (characters.length <= 1) {
             // Reset if last
              handleValueUpdate([{ 
+                type: "character-card",
+                nodeTitle: nodeTitle,
                 id: `char-card-${Date.now()}`,
                 name: 'New Entity 1', 
                 index: 'Entity-1', image: null, 
                 thumbnails: { '1:1': null, '16:9': null, '9:16': null }, 
+                imageSources: { '1:1': null, '16:9': null, '9:16': null },
                 selectedRatio: '1:1', prompt: '', fullDescription: '',
                 targetLanguage: 'en',
                 isOutput: true,
+                isActive: true,
                 isDescriptionCollapsed: false,
                 isImageCollapsed: false,
+                isPromptCollapsed: true,
                 additionalPrompt: "Full body character concept on a gray background"
             }]);
             return;
@@ -397,7 +433,14 @@ const CharacterCardNode: React.FC<NodeContentProps> = ({
         }
         const thumbnail = await generateThumbnail(newImageData, 256, 256);
         const newThumbnails = { ...char.thumbnails, [char.selectedRatio]: thumbnail };
-        handleUpdateCard(cardIdx, { thumbnails: newThumbnails, image: thumbnail });
+        // Update both image (display) and imageSources (data)
+        const newSources = { ...char.imageSources, [char.selectedRatio]: newImageData };
+        
+        handleUpdateCard(cardIdx, { 
+            thumbnails: newThumbnails, 
+            image: thumbnail, 
+            imageSources: newSources 
+        });
     };
 
     const handleRatioChange = (cardIdx: number, newRatio: string) => {
@@ -427,7 +470,13 @@ const CharacterCardNode: React.FC<NodeContentProps> = ({
                 if (fullRes) fullSources[ratio] = fullRes;
             });
         }
-        const dataToCopy = { type: 'character-card', ...char, imageSources: fullSources };
+        // Ensure imageSources is populated with full data for copy
+        const dataToCopy = { 
+            type: 'character-card', 
+            ...char, 
+            imageSources: fullSources,
+            nodeTitle: nodeTitle 
+        };
         delete (dataToCopy as any).id;
         try {
             await navigator.clipboard.writeText(JSON.stringify(dataToCopy, null, 2));
@@ -441,10 +490,10 @@ const CharacterCardNode: React.FC<NodeContentProps> = ({
             const parsed = JSON.parse(text);
             let cardData = Array.isArray(parsed) ? parsed[0] : parsed;
             if (cardData && (cardData.type === 'character-card' || cardData.name || cardData.prompt)) {
-                // ... (Logic from original file to update thumbnails cache) ...
-                // Simplified for brevity, same as original logic
                 const loadedSources = cardData.imageSources || { '1:1': null, '16:9': null, '9:16': null };
                 const newThumbnails: Record<string, string | null> = { '1:1': null, '16:9': null, '9:16': null };
+                
+                // If only single image provided, assign to 1:1
                 if (cardData.image && !cardData.imageSources) loadedSources['1:1'] = cardData.image;
 
                  for (const [ratio, src] of Object.entries(loadedSources)) {
@@ -464,6 +513,7 @@ const CharacterCardNode: React.FC<NodeContentProps> = ({
                     selectedRatio: ratio,
                     image: newThumbnails[ratio],
                     thumbnails: newThumbnails,
+                    imageSources: loadedSources // Persist full sources
                 });
                 addToast?.(t('toast.pasted'), 'success');
             }
@@ -496,20 +546,27 @@ const CharacterCardNode: React.FC<NodeContentProps> = ({
     const handleSaveCharacter = (char: CharacterData, index: number) => {
         const imageSources: Record<string, string | null> = {};
         const ratios = ['1:1', '16:9', '9:16'];
-        const sourceObj = char.thumbnails || char.imageSources || {};
+        
+        // Use existing imageSources first, fallback to thumbnails if needed
+        const sourceObj = char.imageSources || char.thumbnails || {};
+        
         ratios.forEach(ratio => {
             let src = sourceObj[ratio];
+            // Try to get from cache first for highest res
             if (getFullSizeImage) {
                 const highRes = getFullSizeImage(node.id, (index * 10) + (RATIO_INDICES[ratio] || 1));
                 if (highRes) src = highRes;
             }
+            // Fallback for 1:1 if generic image present
             if (ratio === '1:1' && !src) src = char.image;
+            
             if (src) imageSources[ratio] = src.startsWith('data:image') ? src : `data:image/png;base64,${src}`;
             else imageSources[ratio] = null;
         });
 
         const characterData = {
             type: 'character-card',
+            nodeTitle: nodeTitle,
             name: char.name,
             index: char.index,
             image: imageSources['1:1'] || null,
@@ -519,7 +576,11 @@ const CharacterCardNode: React.FC<NodeContentProps> = ({
             imageSources: imageSources,
             additionalPrompt: char.additionalPrompt,
             targetLanguage: char.targetLanguage,
-            isOutput: char.isOutput
+            isOutput: char.isOutput,
+            isActive: char.isActive,
+            isDescriptionCollapsed: char.isDescriptionCollapsed,
+            isImageCollapsed: char.isImageCollapsed,
+            isPromptCollapsed: char.isPromptCollapsed
         };
         const dataStr = JSON.stringify(characterData, null, 2);
         const blob = new Blob([dataStr], { type: "application/json" });
@@ -624,7 +685,7 @@ const CharacterCardNode: React.FC<NodeContentProps> = ({
                             onCrop1x1={() => { /* async */ }}
                             onRatioExpand={(r) => { /* async */ }}
                             onPasteImageToSlot={() => handlePasteImageToSlot(idx)}
-                            onClearImage={() => handleUpdateCard(idx, { thumbnails: { ...char.thumbnails, [char.selectedRatio]: null }, image: null })}
+                            onClearImage={() => handleUpdateCard(idx, { thumbnails: { ...char.thumbnails, [char.selectedRatio]: null }, image: null, imageSources: { ...char.imageSources, [char.selectedRatio]: null } })}
                             onViewImage={() => {
                                 if (setImageViewer) { 
                                      const ratioIdx = RATIO_INDICES[char.selectedRatio] || 1;

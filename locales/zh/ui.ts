@@ -1,6 +1,8 @@
 
 
 
+
+
 export const ui = {
     'toolbar.edit': '编辑 (V)',
     'toolbar.cutter': '断开连接 (C)',
@@ -18,6 +20,7 @@ export const ui = {
     'toolbar.closeProject': '关闭项目 / 清除',
     'toolbar.enterFullscreen': '全屏',
     'toolbar.exitFullscreen': '退出全屏',
+    'toolbar.home': '主页',
     'toolbar.addTextInput': '文本输入 (T)',
     'toolbar.addPromptAnalyzer': '提示词分析器 (A)',
     'toolbar.addCharacterAnalyzer': '角色分析器',

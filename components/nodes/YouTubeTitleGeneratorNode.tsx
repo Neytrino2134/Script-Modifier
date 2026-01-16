@@ -143,27 +143,33 @@ const YouTubeTitleGeneratorNode: React.FC<NodeContentProps> = ({
               ];
 
         return (
-            <div key={lang} className="flex flex-col flex-1 min-h-0 space-y-2 min-w-0">
-                <h4 className="font-semibold text-gray-300 text-sm border-b border-gray-700/50 pb-1">{langName}</h4>
-                <div className="flex-grow overflow-y-auto custom-scrollbar space-y-3 pr-1">
-                    {fields.map(field => (
-                        <div key={field.key} className="flex flex-col w-full">
-                            <div className="flex justify-between items-center mb-1">
-                                <label className="text-xs font-medium text-gray-400">{field.label}</label>
-                                <ActionButton title={t('node.action.copy')} onClick={() => handleCopy(data[field.key] || '')}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                                </ActionButton>
+            <div key={lang} className="flex flex-col flex-1 min-h-0 space-y-2 min-w-0 h-full">
+                <h4 className="font-semibold text-gray-300 text-sm border-b border-gray-700/50 pb-1 flex-shrink-0">{langName}</h4>
+                <div className="flex-grow flex flex-col min-h-0 space-y-2 pr-1">
+                    {fields.map(field => {
+                        // Distribute space: Description gets more weight (flex-4), others flex-1 or flex-2
+                        let flexClass = 'flex-1';
+                        if (field.key === 'description' || field.key === 'channelDescription') flexClass = 'flex-[4]';
+                        else if (field.key === 'thumbnailPrompt') flexClass = 'flex-[2]';
+                        
+                        return (
+                            <div key={field.key} className={`flex flex-col w-full min-h-[60px] ${flexClass}`}>
+                                <div className="flex justify-between items-center mb-1 shrink-0">
+                                    <label className="text-xs font-medium text-gray-400">{field.label}</label>
+                                    <ActionButton title={t('node.action.copy')} onClick={() => handleCopy(data[field.key] || '')}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                                    </ActionButton>
+                                </div>
+                                <textarea 
+                                    readOnly 
+                                    value={data[field.key] || ''} 
+                                    className="w-full p-2 bg-gray-900/50 rounded-md resize-none custom-scrollbar focus:border-emerald-500 focus:ring-0 focus:outline-none border border-transparent h-full"
+                                    onMouseDown={(e) => e.stopPropagation()}
+                                    onFocus={deselectAllNodes}
+                                />
                             </div>
-                            <textarea 
-                                readOnly 
-                                value={data[field.key] || ''} 
-                                className={`w-full p-2 bg-gray-900/50 rounded-md resize-none custom-scrollbar focus:border-emerald-500 focus:ring-0 focus:outline-none border border-transparent ${field.key === 'description' ? 'min-h-[100px]' : (field.key === 'thumbnailPrompt' ? 'min-h-[60px]' : 'min-h-[40px]')}`}
-                                onMouseDown={(e) => e.stopPropagation()}
-                                onFocus={deselectAllNodes}
-                                rows={field.key === 'description' ? 4 : (field.key === 'tags' ? 3 : 2)}
-                            />
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
         );

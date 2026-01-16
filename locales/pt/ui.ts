@@ -1,6 +1,8 @@
 
 
 
+
+
 export const ui = {
     'toolbar.edit': 'Editar (V)',
     'toolbar.cutter': 'Cortar Conexão (C)',
@@ -18,6 +20,7 @@ export const ui = {
     'toolbar.closeProject': 'Fechar Projeto / Limpar',
     'toolbar.enterFullscreen': 'Tela Cheia',
     'toolbar.exitFullscreen': 'Sair da Tela Cheia',
+    'toolbar.home': 'Início',
     'toolbar.addTextInput': 'Entrada de Texto (T)',
     'toolbar.addPromptAnalyzer': 'Analisador de Prompt (A)',
     'toolbar.addCharacterAnalyzer': 'Analisador de Personagem',
@@ -105,7 +108,7 @@ export const ui = {
     'search.node.gemini_chat.title': 'Chat Gemini',
     'search.node.gemini_chat.description': 'Conversa direta com Gemini AI. (M)',
     'search.node.translator.title': 'Tradutor',
-    'search.node.translator.description': 'Traduz texto para o idioma selecionado. (L)',
+    'search.node.translator.description': 'Traduz o texto de entrada para o idioma selecionado. (L)',
     'search.node.script_generator.title': 'Gerador de Roteiro',
     'search.node.script_generator.description': 'Converte uma ideia em cenas de roteiro. (Shift+S)',
     'search.node.script_analyzer.title': 'Analisador de Roteiro',
@@ -113,7 +116,7 @@ export const ui = {
     'search.node.script_prompt_modifier.title': 'Finalizador de Prompt',
     'search.node.script_prompt_modifier.description': 'Finaliza os prompts da análise para geração de imagens. (Shift+F)',
     'search.node.error_analyzer.title': 'Analisador de Erros',
-    'search.node.error_analyzer.description': 'Verifica e corrige gramática e ortografia.',
+    'search.node.error_analyzer.description': 'Verifica e corrige ortografia e gramática.',
     'search.node.note.title': 'Nota',
     'search.node.note.description': 'Uma área de texto simples para anotações. (N)',
     'search.node.reroute_dot.title': 'Ponto de Roteamento',
@@ -418,31 +421,10 @@ export const ui = {
     'node.content.commercialSafe': 'Comercialmente Seguro',
     'instruction.desc.commercial_safe': 'Evita estritamente marcas registradas (Disney, Pixar) e as substitui por descrições genéricas.',
     'node.content.findStack': 'Buscar na pilha...',
-    'help.tabs.hotkeys': 'Ajuda & Atalhos',
-    'help.tabs.links': 'Outros Apps & Links',
-    'help.category.socials': 'Redes Sociais',
-    'help.category.stable': 'Google AI Studio (Estável)',
-    'help.category.alpha': 'Google AI Studio (Alpha)',
-    'help.category.web': 'Web / Netlify',
-    'help.category.github': 'Repositórios GitHub',
-    'help.link.youtube': 'Canal YouTube',
-    'help.link.telegram_channel': 'Canal Telegram',
-    'help.link.telegram_chat': 'Chat Telegram',
-    'help.sub.news': 'Notícias & Atualizações',
-    'help.sub.discussion': 'Discussão',
-    'help.sub.stable': 'Versão Estável',
-    'help.sub.alpha': 'Versão Alpha',
 
-    // Language Names
-    'languages.ru': 'Russo',
-    'languages.en': 'Inglês',
-    'languages.es': 'Espanhol',
-    'languages.fr': 'Francês',
-    'languages.de': 'Alemão',
-    'languages.it': 'Italiano',
-    'languages.pt': 'Português',
-    'languages.zh': 'Chinês',
-    'languages.ja': 'Japonês',
-    'languages.ko': 'Coreano',
-    'languages.uz': 'Uzbeque',
+    // Prompt Finalizer Stack Headers
+    'node.content.spm_stack.priming': '1. Preparação e Contexto',
+    'node.content.spm_stack.physics': '2. Física e Lógica',
+    'node.content.spm_stack.hierarchy': '3. Hierarquia do Sujeito',
+    'node.content.spm_stack.construction': '4. Construção e Formato',
 };

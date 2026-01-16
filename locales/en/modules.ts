@@ -1,3 +1,4 @@
+
 export const modules = {
     'genre.general': 'General',
     'genre.comedy': 'Comedy',
@@ -10,7 +11,7 @@ export const modules = {
     'genre.childrens_animation': 'Animated cartoons for children',
     'genre.shorts_story': 'Short stories for shorts',
     'genre.scientific_historical': 'Scientific-Historical Narrative',
-    'character_generator.promptPlaceholder': 'Enter an idea for characters, e.g., "brave knight, keeper of the ancient forest, who protects a magical sword"',
+    'character_generator.promptPlaceholder': 'Enter an idea, e.g., "brave knight, keeper of the ancient forest, who protects a magical sword"',
     'idea_generator.randomTheme': 'Get a random theme',
     'idea_generator.randomCombination': 'Random Combination',
     'idea_generator.themePlaceholder': 'e.g., Space, Kitchen, Fantasy Forest',
@@ -86,7 +87,7 @@ export const modules = {
     'youtube_title_generator.channelName': 'Channel Name',
     'youtube_title_generator.channelDescription': 'Channel Description',
     'youtube_title_generator.channelKeywords': 'Keywords',
-    'youtube_title_generator.channelHandle': 'Handle',
+    'youtube_title_generator.channelHandle': 'Handle (@)',
     'music_idea_generator.mode.lyrics': 'Lyrics',
     'music_idea_generator.mode.music_prompt': 'Music Prompt',
     'music_idea_generator.ideaPlaceholder': 'Enter song theme or mood...',
@@ -98,4 +99,8 @@ export const modules = {
     'chat.mode.script': 'Script Expert',
     'chat.mode.prompt': 'Prompt Expert',
     'chat.mode.youtube': 'YouTube Expert',
+
+    'youtube_analytics.goalPlaceholder': 'e.g. 1000 Subscribers',
+    'youtube_analytics.videoDescriptionPlaceholder': 'Video description...',
+    'youtube_analytics.contextPlaceholder': 'Ask specific question or provide context...',
 };

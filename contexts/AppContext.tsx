@@ -236,6 +236,7 @@ export interface AppContextType {
     onOpenCatalog: () => void;
     handleClearCanvas: () => void;
     clearCanvasData: () => void;
+    clearProject: () => void; // Added for project reset
     handleResetToDefault: (silent?: boolean) => void;
     handleCloseCatalog: () => void;
     confirmRename: (newName: string) => void;
@@ -577,6 +578,32 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
              return tab;
         }));
     }, [setNodes, setConnections, setGroups, activeTabIndex]);
+    
+    // NEW: Completely clears all tabs and data for "Exit/Clear Project"
+    const clearProject = useCallback(() => {
+        // Create a single completely empty tab
+        const emptyState = {
+            nodes: [],
+            connections: [],
+            groups: [],
+            viewTransform: { scale: 1, translate: { x: 0, y: 0 } },
+            nodeIdCounter: 1
+        };
+
+        const newTab = createNewTab('Canvas 1', emptyState);
+
+        // Reset local state variables
+        setNodes([]);
+        setConnections([]);
+        setGroups([]);
+        setViewTransform(emptyState.viewTransform);
+        nodeIdCounter.current = 1;
+
+        // Reset global tabs state to just this new empty tab
+        setTabs([newTab]);
+        setActiveTabIndex(0);
+        loadedTabIdRef.current = newTab.id;
+    }, [createNewTab]);
 
     const addConnectionWithLogic = useCallback((newConnection: Omit<Connection, 'id'>, fromNode: Node) => {
         const toNode = nodes.find(n => n.id === newConnection.toNodeId);
@@ -690,7 +717,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const handleSaveProject = useCallback(() => {
         try {
             const now = new Date();
-            const dateString = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const dateTimeString = `${year}-${month}-${day}_${hours}-${minutes}-${seconds}`;
+            
             const projectData = {
                 type: 'script-modifier-project',
                 timestamp: Date.now(),
@@ -702,8 +736,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            // Changed extension from .json to .SMP (Script Modifier Project)
-            a.download = `Script_Modifier_Project_${dateString}.SMP`;
+            // Updated naming convention: Script_Modifier_Project_YYYY-MM-DD_HH-MM-SS.SMP
+            a.download = `Script_Modifier_Project_${dateTimeString}.SMP`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -767,8 +801,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            // Update regex to support .SMC and .json for canvas files
-            const regex = /^Script-Modifier-(.+)-\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.(SMC|json)$/i;
+            // Updated regex to support Script_Modifier_Canvas_Name_YYYY-MM-DD_HH-MM-SS format
+            const regex = /^Script_Modifier_Canvas_(.+)_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.(SMC|json)$/i;
             const match = file.name.match(regex);
             if (match && match[1]) {
                 const tabName = match[1].replace(/_/g, ' ');
@@ -876,6 +910,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         handleDuplicateGroup,
         translateGraph,
         clearCanvasData,
+        clearProject, // Export new function
         handleToggleNodeOutputVisibility,
         // Image Handling
         setFullSizeImage,

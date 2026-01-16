@@ -15,7 +15,7 @@ const TextInputNode: React.FC<NodeContentProps> = ({ node, onValueChange, librar
         <textarea
             value={node.value}
             onChange={(e) => onValueChange(node.id, e.target.value)}
-            placeholder={t('node.content.notePlaceholder')}
+            placeholder={t('node.content.textInputPlaceholder')}
             className="w-full flex-grow p-2 bg-gray-700 border border-transparent rounded-md resize-none focus:border-emerald-500 focus:ring-0 focus:outline-none custom-scrollbar overflow-y-scroll"
             onWheel={e => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}

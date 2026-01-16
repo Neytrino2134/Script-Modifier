@@ -1,4 +1,5 @@
 
+
 export const dialogs = {
     'dialog.rename.title': 'Переименование',
     'dialog.rename.group.title': 'Переименовать группу',
@@ -51,6 +52,7 @@ export const dialogs = {
     'toast.cleared': 'Очищено',
     'toast.resetComplete': 'Сброшено по умолчанию',
     'toast.projectSaved': 'Проект сохранен на диск',
+    'toast.canvasSaved': 'Холст сохранен на диск',
     'toast.saveFailed': 'Не удалось сохранить проект',
     'toast.connectionsCut': 'Соединения удалены',
     'toast.charSaved': 'Персонаж сохранен на диск',

@@ -1,6 +1,8 @@
 
 
 
+
+
 export const ui = {
     'toolbar.edit': 'Modifica (V)',
     'toolbar.cutter': 'Taglia connessione (C)',
@@ -18,6 +20,7 @@ export const ui = {
     'toolbar.closeProject': 'Chiudi progetto / Pulisci',
     'toolbar.enterFullscreen': 'Schermo intero',
     'toolbar.exitFullscreen': 'Esci da schermo intero',
+    'toolbar.home': 'Home',
     'toolbar.addTextInput': 'Input Testo (T)',
     'toolbar.addPromptAnalyzer': 'Analizzatore Prompt (A)',
     'toolbar.addCharacterAnalyzer': 'Analizzatore Personaggio',

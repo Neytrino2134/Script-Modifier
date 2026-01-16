@@ -1,4 +1,5 @@
 
+
 export const dialogs = {
     'dialog.rename.title': 'Nomni o‘zgartirish',
     'dialog.rename.group.title': 'Guruh nomini o‘zgartirish',
@@ -51,6 +52,7 @@ export const dialogs = {
     'toast.cleared': 'Tozalandi',
     'toast.resetComplete': 'Asl holatga qaytarildi',
     'toast.projectSaved': 'Loyiha diskka saqlandi',
+    'toast.canvasSaved': 'Kanvas diskka saqlandi',
     'toast.saveFailed': 'Loyihani saqlab bo‘lmadi',
     'toast.connectionsCut': 'Ulanishlar uzildi',
     'toast.charSaved': 'Personaj diskka saqlandi',

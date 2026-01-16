@@ -1,4 +1,5 @@
 
+
 export const dialogs = {
     'dialog.rename.title': '重命名',
     'dialog.rename.group.title': '重命名组',
@@ -51,6 +52,7 @@ export const dialogs = {
     'toast.cleared': '已清除',
     'toast.resetComplete': '已重置',
     'toast.projectSaved': '项目已保存',
+    'toast.canvasSaved': '画布已保存到磁盘',
     'toast.saveFailed': '保存失败',
     'toast.connectionsCut': '连接已切断',
     'toast.charSaved': '角色已保存',

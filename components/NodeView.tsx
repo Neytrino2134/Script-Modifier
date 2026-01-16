@@ -1,4 +1,5 @@
 
+
 import React, { useMemo } from 'react';
 import type { Node, Tool, ConnectingInfo, LibraryItem, Point, Connection, CatalogItemType } from '../types';
 import { NodeType } from '../types';
@@ -206,7 +207,7 @@ const NodeView: React.FC<NodeViewProps> = (props) => {
         case NodeType.AUDIO_TRANSCRIBER: return { minWidth: 400, minHeight: 480 };
         case NodeType.YOUTUBE_TITLE_GENERATOR: return { minWidth: 680, minHeight: 800 };
         case NodeType.MUSIC_IDEA_GENERATOR: return { minWidth: 680, minHeight: 800 };
-        case NodeType.YOUTUBE_ANALYTICS: return { minWidth: 680, minHeight: 800 };
+        case NodeType.YOUTUBE_ANALYTICS: return { minWidth: 1200, minHeight: 800 };
         case NodeType.REROUTE_DOT: return { minWidth: 60, minHeight: 40 };
         default: return { minWidth: 200, minHeight: 150 };
     }

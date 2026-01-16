@@ -239,7 +239,7 @@ export const OutputFramesPanel: React.FC<OutputFramesPanelProps> = React.memo(({
             {scenes.map((scene, sceneIndex) => {
                 const isSceneCollapsed = collapsedOutputScenes.has(sceneIndex);
                 const isContextCollapsed = collapsedContexts.has(sceneIndex);
-                const sceneTitle = scene.title || `Scene ${scene.sceneNumber}`;
+                const cleanTitle = (scene.title || '').replace(/^(Scene|Сцена|Scène|Escena|Szene)\s*\d+[:\s-]*/i, '').trim();
 
                 return (
                     <div key={scene.sceneNumber} className="mb-4">
@@ -272,7 +272,7 @@ export const OutputFramesPanel: React.FC<OutputFramesPanelProps> = React.memo(({
                                     ) : (
                                         <div className="flex items-center gap-2 min-w-0">
                                             <span className="truncate font-bold text-gray-300 text-sm">
-                                                {`${t('node.content.scene')} ${scene.sceneNumber}: ${scene.title || ''}`}
+                                                {`${t('node.content.scene')} ${scene.sceneNumber}${cleanTitle ? `: ${cleanTitle}` : ''}`}
                                             </span>
                                             <button 
                                                 onClick={(e) => startEditing(sceneIndex, scene.title || `Scene ${scene.sceneNumber}`, e)}

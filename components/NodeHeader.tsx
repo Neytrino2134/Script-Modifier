@@ -6,6 +6,7 @@ import { ActionButton } from './ActionButton';
 import { useAppContext } from '../contexts/Context';
 import Tooltip from './ui/Tooltip';
 import { NODE_WIDTH_STEP } from '../utils/nodeUtils';
+import { PasteIcon } from './icons/AppIcons';
 
 interface NodeHeaderProps {
     node: Node;
@@ -401,7 +402,7 @@ const NodeHeader: React.FC<NodeHeaderProps> = ({
                                                 type: typeString,
                                                 id: card.id || `char-card-${Date.now()}-${Math.random()}`,
                                                 name: card.name,
-                                                index: card.index || card.alias || 'Entity-1',
+                                                index: card.index || card.alias || 'Entity-1', // Default to Entity
                                                 image: mainImage,
                                                 selectedRatio: card.selectedRatio || '1:1',
                                                 prompt: card.prompt || '',
@@ -437,9 +438,9 @@ const NodeHeader: React.FC<NodeHeaderProps> = ({
                             </ActionButton>
                         )}
                         
-                        {(node.type === NodeType.TEXT_INPUT || node.type === NodeType.NOTE || node.type === NodeType.CHARACTER_CARD) && (
+                        {(node.type === NodeType.TEXT_INPUT || node.type === NodeType.NOTE || node.type === NodeType.CHARACTER_CARD || node.type === NodeType.YOUTUBE_ANALYTICS) && (
                             <ActionButton title={t('node.action.paste')} onClick={() => { onPasteNodeValue(node.id); addToast(t('toast.pasted')); }}>
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 012-2h2a2 2 0 012 2" /></svg>
+                                <PasteIcon className="h-4 w-4" />
                             </ActionButton>
                         )}
                         

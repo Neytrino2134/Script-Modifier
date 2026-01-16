@@ -1,5 +1,7 @@
 
 export interface CharacterData {
+    type?: string; // "character-card"
+    nodeTitle?: string;
     id: string;
     name: string;
     index: string;
@@ -11,9 +13,11 @@ export interface CharacterData {
     fullDescription: string;
     targetLanguage?: string;
     isOutput?: boolean;
+    isActive?: boolean;
     isDescriptionCollapsed?: boolean;
     isImageCollapsed?: boolean;
-    // Internal fields for drag/drop
+    isPromptCollapsed?: boolean;
+    // Internal fields for drag/drop or full resolution storage
     imageSources?: Record<string, string | null>;
     _fullResActive?: string | null;
     imageBase64?: string | null; // Legacy support

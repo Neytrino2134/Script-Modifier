@@ -298,7 +298,13 @@ const MusicIdeaGeneratorNode: React.FC<NodeContentProps> = ({
                 <button
                     onClick={isLoading ? onStopGeneration : handleGenerate}
                     disabled={isStopping || (!isLoading && !idea.trim() && !isInputConnected)}
-                    className={`flex-grow h-10 px-4 py-2 font-bold text-white rounded-md transition-colors duration-200 flex items-center justify-center gap-2 ${isStopping ? 'bg-yellow-600' : (isLoading ? 'bg-red-600 hover:bg-red-700' : 'bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed')}`}
+                    className={`flex-grow h-10 px-4 py-2 font-bold text-white rounded-md transition-colors duration-200 flex items-center justify-center gap-2 ${
+                        isStopping 
+                        ? 'bg-yellow-600' 
+                        : (isLoading 
+                            ? 'bg-cyan-600 hover:bg-cyan-700' 
+                            : 'bg-emerald-600 hover:bg-emerald-700 disabled:bg-gray-600 disabled:text-gray-400 disabled:cursor-not-allowed')
+                    }`}
                 >
                     {isLoading ? (
                         <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

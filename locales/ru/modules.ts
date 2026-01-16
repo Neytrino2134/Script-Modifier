@@ -1,3 +1,4 @@
+
 export const modules = {
     'genre.general': 'Общий',
     'genre.comedy': 'Комедия',
@@ -98,4 +99,8 @@ export const modules = {
     'chat.mode.script': 'Эксперт сценариев',
     'chat.mode.prompt': 'Эксперт промптов',
     'chat.mode.youtube': 'YouTube Эксперт',
+
+    'youtube_analytics.goalPlaceholder': 'напр. 1000 Подписчиков',
+    'youtube_analytics.videoDescriptionPlaceholder': 'Описание видео...',
+    'youtube_analytics.contextPlaceholder': 'Задайте конкретный вопрос или контекст...',
 };

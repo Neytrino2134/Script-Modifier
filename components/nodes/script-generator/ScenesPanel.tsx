@@ -22,10 +22,11 @@ const SceneItem: React.FC<{
 }> = React.memo(({ scene, index, isSelected, isCollapsed, narratorEnabled, isModifying, t, onToggleCollapse, onClick, onUpdate, onDelete, onAddAfter, onMove, onModifyScriptPart, deselectAllNodes }) => {
     const [modPrompt, setModPrompt] = useState('');
     
-    // Determine the display title
-    const displayTitle = scene.title?.startsWith(`${t('node.content.scene')} ${index + 1}`) 
-        ? scene.title 
-        : `${t('node.content.scene')} ${index + 1}: ${scene.title || ''}`;
+    // Determine the display title by stripping generic "Scene N" prefixes from the stored title to avoid duplication
+    const cleanTitle = (scene.title || '').replace(/^(Scene|Сцена|Scène|Escena|Szene)\s*\d+[:\s-]*/i, '').trim();
+    const displayTitle = cleanTitle 
+        ? `${t('node.content.scene')} ${index + 1}: ${cleanTitle}`
+        : `${t('node.content.scene')} ${index + 1}`;
 
     const handleAddCharacter = (e: React.MouseEvent) => {
         e.stopPropagation();

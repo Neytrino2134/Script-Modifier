@@ -598,7 +598,7 @@ const ScriptGeneratorNode: React.FC<NodeContentProps> = ({
 
                     <button
                         onClick={isLoading || isEntLoading ? onStopGeneration : handleStartGeneration}
-                        disabled={isStopping || (!isLoading && !isPromptConnected && !prompt.trim() && (!useExistingCharacters))}
+                        disabled={isStopping || !!isEntLoading || (!isLoading && !displayPrompt.trim())}
                         className={`flex-grow h-10 px-4 font-bold text-xs uppercase tracking-wide text-white rounded-lg transition-all duration-200 shadow-sm flex items-center justify-center ${
                             isStopping 
                             ? 'bg-yellow-600 hover:bg-yellow-500' 
@@ -849,6 +849,7 @@ const ScriptGeneratorNode: React.FC<NodeContentProps> = ({
                     onCreateKeyItemsChange={(val) => handleValueUpdate({ createKeyItems: val })}
                     
                     onSetTargetScrollId={setTargetScrollId}
+                    isScriptGenerating={!!isLoading} 
                 />
 
                 <ScenesPanel

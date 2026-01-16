@@ -1,4 +1,5 @@
 
+
 export const dialogs = {
     'dialog.rename.title': 'Renombrar Elemento',
     'dialog.rename.group.title': 'Renombrar Grupo',
@@ -51,6 +52,7 @@ export const dialogs = {
     'toast.cleared': 'Limpiado',
     'toast.resetComplete': 'Restablecido por defecto',
     'toast.projectSaved': 'Proyecto guardado en disco',
+    'toast.canvasSaved': '¡Lienzo guardado en disco!',
     'toast.saveFailed': 'Fallo al guardar proyecto',
     'toast.connectionsCut': 'Conexiones cortadas',
     'toast.charSaved': 'Personaje guardado en disco',

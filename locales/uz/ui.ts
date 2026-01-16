@@ -1,6 +1,8 @@
 
 
 
+
+
 export const ui = {
     'toolbar.edit': 'Tahrirlash (V)',
     'toolbar.cutter': 'Ulanishni Kesish (C)',
@@ -18,6 +20,7 @@ export const ui = {
     'toolbar.closeProject': 'Loyihani yopish / Tozalash',
     'toolbar.enterFullscreen': 'To‘liq Ekran',
     'toolbar.exitFullscreen': 'To‘liq Ekrandan Chiqish',
+    'toolbar.home': 'Bosh sahifa',
     'toolbar.addTextInput': 'Matn kiritish (T)',
     'toolbar.addPromptAnalyzer': 'Prompt Tahlilchisi (A)',
     'toolbar.addCharacterAnalyzer': 'Personaj Tahlilchisi',

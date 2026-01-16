@@ -26,7 +26,7 @@ export const getNodeDefaults = (type: NodeType, t: (key: string) => string) => {
         [NodeType.AUDIO_TRANSCRIBER]: 400,
         [NodeType.YOUTUBE_TITLE_GENERATOR]: 680,
         [NodeType.MUSIC_IDEA_GENERATOR]: 680,
-        [NodeType.YOUTUBE_ANALYTICS]: 680,
+        [NodeType.YOUTUBE_ANALYTICS]: 1200,
         [NodeType.IMAGE_EDITOR]: 800,
         [NodeType.REROUTE_DOT]: 60,
     };

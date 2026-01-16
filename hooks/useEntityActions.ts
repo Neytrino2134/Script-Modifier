@@ -294,31 +294,38 @@ export const useEntityActions = ({
                         dataToSave = { type: 'character-generator-data', characters: parsed.characters || [] };
                     } else if (node.type === NodeType.CHARACTER_CARD) {
                         const cards = Array.isArray(parsed) ? parsed : [parsed];
-                        // Process images for all cards (similar to NodeHeader logic)
+                        // Process images for all cards
                         const exportCards = cards.map((card: any) => {
                             const exportImageSources: Record<string, string | null> = {};
                             const ratios = ['1:1', '16:9', '9:16'];
-                            if (card.imageSources) {
-                                Object.keys(card.imageSources).forEach(key => {
-                                    const val = card.imageSources[key];
-                                    if (val) {
-                                        exportImageSources[key] = val.startsWith('data:image') ? val : `data:image/png;base64,${val}`;
-                                    }
-                                });
-                            }
-                            let mainImage = null;
-                            if (card.selectedRatio && exportImageSources[card.selectedRatio]) {
-                                mainImage = exportImageSources[card.selectedRatio];
-                            } else if (card.image) {
-                                mainImage = card.image.startsWith('data:image') ? card.image : `data:image/png;base64,${card.image}`;
-                            } else if (card.imageBase64) {
-                                mainImage = card.imageBase64.startsWith('data:image') ? card.imageBase64 : `data:image/png;base64,${card.imageBase64}`;
-                            }
-                            if (mainImage && !exportImageSources['1:1']) {
-                                exportImageSources['1:1'] = mainImage;
-                            }
-                            ratios.forEach(r => { if (!exportImageSources[r]) exportImageSources[r] = null; });
+                            
+                            // 1. Prioritize Existing ImageSources in data
+                            const sourceObj = card.imageSources || card.thumbnails || {};
 
+                            ratios.forEach(r => {
+                                let val = sourceObj[r];
+                                
+                                // Fallback for 1:1 if not found in map but present in base field
+                                if (r === '1:1' && !val) {
+                                    val = card.image || card.imageBase64;
+                                }
+
+                                if (val) {
+                                    exportImageSources[r] = val.startsWith('data:image') ? val : `data:image/png;base64,${val}`;
+                                } else {
+                                    exportImageSources[r] = null;
+                                }
+                            });
+
+                            let mainImage = exportImageSources['1:1'] || null;
+                            
+                            // Ensure we have at least one main image if 1:1 failed above but exists in root
+                            if (!mainImage && (card.image || card.imageBase64)) {
+                                 const raw = card.image || card.imageBase64;
+                                 mainImage = raw.startsWith('data:image') ? raw : `data:image/png;base64,${raw}`;
+                                 if (!exportImageSources['1:1']) exportImageSources['1:1'] = mainImage;
+                            }
+                            
                             return {
                                 type: 'character-card',
                                 nodeTitle: node.title,
@@ -329,10 +336,14 @@ export const useEntityActions = ({
                                 selectedRatio: card.selectedRatio || '1:1',
                                 prompt: card.prompt || '',
                                 fullDescription: card.fullDescription || '',
-                                imageSources: exportImageSources,
+                                imageSources: exportImageSources, // Save FULL structure
                                 additionalPrompt: card.additionalPrompt,
                                 targetLanguage: card.targetLanguage,
-                                isOutput: card.isOutput
+                                isOutput: card.isOutput,
+                                isActive: card.isActive !== false,
+                                isDescriptionCollapsed: !!card.isDescriptionCollapsed,
+                                isImageCollapsed: !!card.isImageCollapsed,
+                                isPromptCollapsed: card.isPromptCollapsed !== false // Default true if undefined
                             };
                         });
                         
@@ -480,6 +491,7 @@ export const useEntityActions = ({
         }
 
         const newNodeValue = JSON.stringify([{
+            type: "character-card",
             id: `char-card-${Date.now()}`,
             name: characterData.name || 'New Entity',
             index: characterData.index || characterData.alias || 'Entity-1', // Default to Entity
@@ -487,7 +499,9 @@ export const useEntityActions = ({
             selectedRatio: '1:1',
             prompt: characterData.prompt || '',
             fullDescription: characterData.fullDescription || '',
-            isOutput: true
+            isOutput: true,
+            isActive: true,
+            isPromptCollapsed: true
         }]);
 
         const newNode = {
@@ -529,6 +543,7 @@ export const useEntityActions = ({
              }
 
              return {
+                type: "character-card",
                 id: data.id || `char-card-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
                 name: data.name || 'Loaded Entity',
                 index: data.index || data.alias || 'Entity-1', // Default to Entity
@@ -539,7 +554,11 @@ export const useEntityActions = ({
                 fullDescription: data.fullDescription || '',
                 targetLanguage: data.targetLanguage || 'en',
                 isOutput: !!data.isOutput,
-                isDescriptionCollapsed: !!data.isDescriptionCollapsed
+                isActive: data.isActive !== false,
+                isDescriptionCollapsed: !!data.isDescriptionCollapsed,
+                isImageCollapsed: !!data.isImageCollapsed,
+                isPromptCollapsed: data.isPromptCollapsed !== false, // Default true
+                nodeTitle: data.nodeTitle
              };
         };
 
@@ -559,6 +578,9 @@ export const useEntityActions = ({
         nodeIdCounter.current++;
         const newNodeId = `node-${nodeIdCounter.current}-${Date.now()}`;
         
+        // Ensure the title is set on the object structure before creating node
+        cardsToProcess = cardsToProcess.map(c => ({ ...c, nodeTitle: title }));
+
         const newNode = {
             id: newNodeId,
             type: NodeType.CHARACTER_CARD,
@@ -633,16 +655,9 @@ export const useEntityActions = ({
                             try {
                                 const parsed = JSON.parse(text);
                                 
-                                // Handling array paste into existing node? 
-                                // Or single card update?
-                                // If it is an array of cards, we might want to APPEND them or REPLACE.
-                                // For now, let the existing logic handle array structure
-                                
                                 let cardData = parsed;
                                 if (Array.isArray(parsed) && parsed.length > 0) {
-                                     // If pasting an array into an existing node, maybe we append?
-                                     // Or if it's a single card inside array.
-                                     cardData = parsed[0]; // Take first for single update logic, OR implement merge
+                                     cardData = parsed[0]; // Take first for single update logic
                                 }
 
                                 if (cardData.type === 'character-card' || (cardData.name && cardData.fullDescription)) {
@@ -652,8 +667,12 @@ export const useEntityActions = ({
                                     // Append new card
                                     const newCard = {
                                         ...cardData,
+                                        type: "character-card",
+                                        nodeTitle: targetNode.title,
                                         id: `char-card-${Date.now()}`,
-                                        index: cardData.index || cardData.alias || `Entity-${currentCards.length + 1}`
+                                        index: cardData.index || cardData.alias || `Entity-${currentCards.length + 1}`,
+                                        isActive: true,
+                                        isPromptCollapsed: true
                                     };
                                     delete newCard.alias;
 
@@ -696,12 +715,10 @@ export const useEntityActions = ({
             }
             
             // 4. Text / JSON / Base64 String
-            // Fallback for Firefox or if read() didn't find image, try readText
             const text = await navigator.clipboard.readText().catch(() => '');
             
             if (text) {
                 // Check if text is a Base64 Data URI for an image
-                // Common format: "data:image/png;base64,..."
                 if (text.startsWith('data:image/') && text.includes('base64,')) {
                      const base64Data = text.split(',')[1];
                      const newNodeValue = JSON.stringify({ imageBase64: base64Data });

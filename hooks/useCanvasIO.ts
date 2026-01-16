@@ -66,17 +66,20 @@ export const useCanvasIO = ({
             const sanitizedTabName = activeTabName.replace(/ /g, '_').replace(/[^a-zA-Z0-9_.-]/g, '');
 
             a.href = url;
-            // Changed extension from .json to .SMC (Script Modifier Canvas)
-            a.download = `Script-Modifier-${sanitizedTabName}-${dateTimeString}.SMC`;
+            // Updated naming convention: Script_Modifier_Canvas_Name_YYYY-MM-DD_HH-MM-SS.SMC
+            a.download = `Script_Modifier_Canvas_${sanitizedTabName}_${dateTimeString}.SMC`;
             a.click();
             URL.revokeObjectURL(url);
             a.remove();
+            
+            addToast(t('toast.canvasSaved'), 'success');
+
             return null;
         } catch (err) {
             console.error("Failed to save canvas:", err);
             return "Could not save canvas state.";
         }
-    }, [nodes, connections, groups, viewTransform, nodeIdCounter, activeTabName]);
+    }, [nodes, connections, groups, viewTransform, nodeIdCounter, activeTabName, addToast, t]);
     
     const handleLoadCanvas = useCallback(() => {
         fileInputRef.current?.click();

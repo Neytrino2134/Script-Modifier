@@ -1,4 +1,5 @@
 
+
 export const nodes = {
     'node.title.text_input': 'Text Input',
     'node.title.prompt_processor': 'Prompt Processor',
@@ -333,6 +334,8 @@ export const nodes = {
     'node.content.commercialSafe': 'Commercial Safe',
     'instruction.desc.commercial_safe': 'Strictly avoids trademarks (Disney, Pixar, etc.) and replaces with generic descriptions.',
     'node.content.findStack': 'Find in stack...',
+    'node.content.notePlaceholder': 'Enter your note here...',
+    'node.content.textInputPlaceholder': 'Enter text here...',
     
     // Prompt Finalizer Stack Headers
     'node.content.spm_stack.priming': '1. Priming & Context',

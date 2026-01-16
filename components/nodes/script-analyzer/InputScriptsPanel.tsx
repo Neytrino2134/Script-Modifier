@@ -10,13 +10,15 @@ const UpstreamSceneDisplay: React.FC<{ scene: any, t: (key: string) => string, i
             return match ? `ENT-${match[1]}` : c;
         }).join(', ')
         : null;
+        
+    const cleanTitle = (scene.title || '').replace(/^(Scene|Сцена|Scène|Escena|Szene)\s*\d+[:\s-]*/i, '').trim();
 
     return (
         <div className="bg-gray-800/50 rounded-lg p-2 border border-transparent hover:border-gray-700/50 transition-colors">
             <div className="flex justify-between items-center cursor-pointer select-none" onClick={(e) => { e.stopPropagation(); onToggle(); }}>
                 <div className="flex flex-col min-w-0">
                     <span className="font-semibold text-gray-300 text-sm truncate pr-2">
-                        {`${t('node.content.scene')} ${scene.sceneNumber}${scene.title ? `: ${scene.title}` : ''}`}
+                        {`${t('node.content.scene')} ${scene.sceneNumber}${cleanTitle ? `: ${cleanTitle}` : ''}`}
                     </span>
                     <div className="flex items-center gap-2 mt-0.5">
                         {scene.recommendedFrames !== undefined && (

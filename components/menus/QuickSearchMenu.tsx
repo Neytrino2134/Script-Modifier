@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { NodeType } from '../../types';
 import { useLanguage } from '../../localization';
@@ -7,7 +8,7 @@ interface NodeOption {
   title: string;
   description: string;
   icon: React.ReactNode;
-  group: 'input' | 'process' | 'scripting' | 'character' | 'images' | 'ai' | 'audio';
+  group: 'input' | 'process' | 'scripting' | 'character' | 'images' | 'ai' | 'audio' | 'youtube';
 }
 
 interface QuickSearchMenuProps {
@@ -46,6 +47,7 @@ const QuickSearchMenu: React.FC<QuickSearchMenuProps> = ({ isOpen, onClose, onAd
     // Group: Images
     { group: 'images', type: NodeType.IMAGE_GENERATOR, title: t('search.node.image_generator.title'), description: t('search.node.image_generator.description'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> },
     { group: 'images', type: NodeType.IMAGE_PREVIEW, title: t('search.node.image_preview.title'), description: t('search.node.image_preview.description'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg> },
+    { group: 'images', type: NodeType.IMAGE_EDITOR, title: t('search.node.image_editor.title'), description: t('search.node.image_editor.description'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42" /></svg> },
     // Group: AI Tools
     { group: 'ai', type: NodeType.TRANSLATOR, title: t('search.node.translator.title'), description: t('search.node.translator.description'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L12 6l6 12M8 14h8" /></svg> },
     { group: 'ai', type: NodeType.GEMINI_CHAT, title: t('search.node.gemini_chat.title'), description: t('search.node.gemini_chat.description'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
@@ -57,16 +59,20 @@ const QuickSearchMenu: React.FC<QuickSearchMenuProps> = ({ isOpen, onClose, onAd
     { group: 'audio', type: NodeType.NARRATOR_TEXT_GENERATOR, title: t('search.node.narrator_text_generator.title'), description: t('search.node.narrator_text_generator.description'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /><path strokeLinecap="round" strokeLinejoin="round" d="M3 12h3M18 12h3" /></svg> },
     { group: 'audio', type: NodeType.AUDIO_TRANSCRIBER, title: t('search.node.audio_transcriber.title'), description: t('search.node.audio_transcriber.description'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 12h5m-5 3h5m-5 3h5" /></svg> },
     { group: 'audio', type: NodeType.MUSIC_IDEA_GENERATOR, title: t('search.node.music_idea_generator.title'), description: t('search.node.music_idea_generator.description'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 6l12-3" /></svg> },
+    // Group: YouTube
+    { group: 'youtube', type: NodeType.YOUTUBE_TITLE_GENERATOR, title: t('search.node.youtube_title_generator.title'), description: t('search.node.youtube_title_generator.description'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 6v.75m0 3v.75m0 3v.75m0 3V18m-9-12v.75m0 3v.75m0 3v.75m0 3V18m-3 .75h18A2.25 2.25 0 0021 16.5V7.5A2.25 2.25 0 0018.75 5.25H5.25A2.25 2.25 0 003 7.5v9A2.25 2.25 0 005.25 18.75z" /></svg> },
+    { group: 'youtube', type: NodeType.YOUTUBE_ANALYTICS, title: t('node.title.youtube_analytics'), description: t('node.help.youtube_analytics'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" /></svg> },
   ], [t]);
 
   const groupTitles = useMemo(() => ({
     input: t('search.group.input'),
     process: t('search.group.process'),
     scripting: t('search.group.scripting'),
-    character: t('search.group.characters'),
+    character: t('search.group.character'), // Changed from characters to character
     images: t('search.group.images'),
     ai: t('search.group.ai'),
     audio: t('search.group.audio'),
+    youtube: t('search.group.youtube'), // Added youtube
   }), [t]);
 
   const groupStyles: Record<NodeOption['group'], string> = {
@@ -77,6 +83,7 @@ const QuickSearchMenu: React.FC<QuickSearchMenuProps> = ({ isOpen, onClose, onAd
     images: 'bg-yellow-800/50 text-yellow-300',
     ai: 'bg-green-800/50 text-green-300',
     audio: 'bg-blue-800/50 text-blue-300',
+    youtube: 'bg-red-800/50 text-red-300',
   };
 
   const filteredNodes = nodeOptions.filter(node => 

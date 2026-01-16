@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { NodeType, Tool, LineStyle, Point } from '../types';
 import { useLanguage } from '../localization';
@@ -237,9 +238,9 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 title={isToolbarCollapsed ? t('toolbar.expand') : t('toolbar.collapse')}
               >
                 {isToolbarCollapsed ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5l-7 14h14l-7-14z" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" /></svg>
                 ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 19l-7-14h14l-7 14z" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
                 )}
               </button>
           </div>
@@ -474,8 +475,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
                     className="h-9 w-9 flex-shrink-0 flex items-center justify-center rounded-md hover:bg-emerald-600 bg-gray-700 text-gray-300 hover:text-white transition-colors"
                 >
                     {isCanvasControlsCollapsed 
-                        ? <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z" /></svg>
-                        : <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3l-14 9 14 9V3z" /></svg>
+                        ? <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+                        : <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
                     }
                 </button>
             </Tooltip>

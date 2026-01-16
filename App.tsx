@@ -29,6 +29,21 @@ import Tooltip from './components/ui/Tooltip';
 import ContextMenu from './components/menus/ContextMenu';
 import ConnectionQuickAddMenu from './components/menus/ConnectionQuickAddMenu';
 import ImageViewer from './components/ui/ImageViewer';
+import { 
+    CloseIcon, 
+    CopyIcon, 
+    CheckIcon, 
+    ChevronLeftIcon, 
+    ChevronRightIcon, 
+    HomeIcon, 
+    SettingsIcon, 
+    ResetIcon, 
+    FullScreenIcon, 
+    ExitFullScreenIcon, 
+    PlusIcon, 
+    LogoIcon, 
+    ExitIcon 
+} from './components/icons/AppIcons';
 
 const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [language, setLanguage] = useState<LanguageCode>('en');
@@ -50,7 +65,7 @@ const Editor: React.FC = () => {
   if (!context) return null; // Should not happen within AppProvider
 
   const { 
-    tabs, activeTabIndex, switchTab, addTab, closeTab, renameTab,
+    tabs, activeTabIndex, switchTab, addTab, closeTab, renameTab, nodes,
     t, isSnapToGrid, setIsSnapToGrid, lineStyle, setLineStyle, viewTransform,
     fileInputRef, handleFileChange, catalogFileInputRef, handleCatalogFileChange, libraryFileInputRef, handleLibraryFileChange,
     isQuickSearchOpen, handleCloseAddNodeMenus: baseHandleCloseAddNodeMenus, onAddNode, isQuickAddOpen, quickAddPosition, setActiveTool,
@@ -61,7 +76,7 @@ const Editor: React.FC = () => {
     renameInfo, confirmRename, setRenameInfo, promptEditInfo, confirmPromptEdit, confirmInfo, setConfirmInfo,
     error, handleCopyError, isErrorCopied, setError, showDialog, requestPermission, declinePermission,
     effectiveTool, handleSaveCanvas, handleSaveProject, handleLoadCanvas, openQuickSearchMenu, openQuickAddMenu,
-    handleClearCanvas, handleResetToDefault, clearCanvasData,
+    handleClearCanvas, handleResetToDefault, clearProject,
     clientPointerPosition, selectedNodeIds,
     deselectAllNodes,
     toasts,
@@ -404,11 +419,10 @@ const Editor: React.FC = () => {
   }
 
   const handleExitApp = () => {
-     // Check if current tab is empty to decide whether to show confirmation
-     const currentTab = tabs[activeTabIndex];
-     const isEmpty = !currentTab || currentTab.nodes.length === 0;
+     // Check if current project has any content across any tabs
+     const hasAnyData = tabs.some(tab => tab.nodes.length > 0) || nodes.length > 0;
 
-     if (isEmpty) {
+     if (!hasAnyData) {
         // Just go to welcome screen (effectively clearing view context)
         setIsWelcomeDialogOpen(true);
         // Ensure restart state logic
@@ -418,9 +432,12 @@ const Editor: React.FC = () => {
             title: t('dialog.exit.title'),
             message: t('dialog.exit.message'),
             onConfirm: () => {
-                clearCanvasData();
+                // Completely reset application state (all tabs, nodes, etc)
+                clearProject();
+                
+                // Show welcome screen
                 setIsWelcomeDialogOpen(true);
-                // Reset this flag so next time it shows "Let's Go" and resets canvas properly
+                // Reset this flag so next time it shows "Let's Go" and looks fresh
                 setHasWelcomeBeenShown(false); 
             }
         });
@@ -551,10 +568,10 @@ const Editor: React.FC = () => {
               </div>
               <div className="flex flex-col space-y-1 flex-shrink-0">
                   <button onClick={() => setError(null)} className="p-1 text-blue-300 rounded-full hover:bg-blue-700/50 hover:text-white transition-colors" aria-label={t('node.action.close')} title={t('node.action.close')} >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                      <CloseIcon className="h-5 w-5" />
                   </button>
                   <button onClick={handleCopyError} className="p-1 text-blue-300 rounded-full hover:bg-blue-700/50 hover:text-white transition-colors" aria-label={t('app.error.copy')} title={isErrorCopied ? t('app.error.copied') : t('app.error.copy')} >
-                      {isErrorCopied ? (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>) : (<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>)}
+                      {isErrorCopied ? (<CheckIcon className="h-5 w-5 text-emerald-400" />) : (<CopyIcon className="h-5 w-5" />)}
                   </button>
               </div>
           </div>
@@ -586,8 +603,8 @@ const Editor: React.FC = () => {
                     className="h-9 w-9 flex-shrink-0 flex items-center justify-center rounded-md hover:bg-emerald-600 bg-gray-700 text-gray-300 hover:text-white transition-colors"
                   >
                     {isTopPanelCollapsed 
-                        ? <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3l14 9-14 9V3z" /></svg>
-                        : <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3l-14 9 14 9V3z" /></svg>
+                        ? <ChevronRightIcon className="h-5 w-5" />
+                        : <ChevronLeftIcon className="h-5 w-5" />
                     }
                   </button>
               </Tooltip>
@@ -598,9 +615,7 @@ const Editor: React.FC = () => {
                             onClick={() => setIsWelcomeDialogOpen(true)}
                             className="p-1.5 rounded-md transition-colors duration-200 focus:outline-none flex items-center justify-center h-9 w-9 bg-gray-700 hover:bg-emerald-600 text-gray-300 hover:text-white"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                            </svg>
+                            <HomeIcon className="h-5 w-5" />
                         </button>
                     </Tooltip>
                     <HelpPanel />
@@ -609,10 +624,7 @@ const Editor: React.FC = () => {
                           onClick={() => setIsApiKeyDialogOpen(true)}
                           className="p-1.5 rounded-md transition-colors duration-200 focus:outline-none flex items-center justify-center h-9 w-9 bg-gray-700 hover:bg-emerald-600 text-gray-300 hover:text-white"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
+                          <SettingsIcon className="h-5 w-5" />
                         </button>
                     </Tooltip>
                     <Tooltip title={t('toolbar.resetToDefault')} position="bottom">
@@ -620,9 +632,7 @@ const Editor: React.FC = () => {
                           onClick={() => handleResetToDefault(false)}
                           className="p-1.5 rounded-md transition-colors duration-200 focus:outline-none flex items-center justify-center h-9 w-9 bg-gray-700 hover:bg-emerald-600 text-gray-300 hover:text-white"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                          </svg>
+                          <ResetIcon className="h-5 w-5" />
                         </button>
                     </Tooltip>
                     <Tooltip title={isFullscreen ? t('toolbar.exitFullscreen') : t('toolbar.enterFullscreen')} position="bottom">
@@ -631,13 +641,9 @@ const Editor: React.FC = () => {
                             className="p-1.5 rounded-md transition-colors duration-200 focus:outline-none flex items-center justify-center h-9 w-9 bg-gray-700 hover:bg-emerald-600 text-gray-300 hover:text-white"
                         >
                              {isFullscreen ? (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5M15 15l5.25 5.25" />
-                                </svg>
+                                <ExitFullScreenIcon className="h-5 w-5" />
                              ) : (
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
-                                </svg>
+                                <FullScreenIcon className="h-5 w-5" />
                              )}
                         </button>
                     </Tooltip>
@@ -655,25 +661,13 @@ const Editor: React.FC = () => {
                             onClick={addTab}
                             className="flex items-center justify-center h-full w-9 text-gray-300 hover:bg-emerald-600 bg-gray-700 rounded-md transition-colors hover:text-white"
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg>
+                            <PlusIcon className="h-5 w-5" />
                           </button>
                       </Tooltip>
                     </div>
                     <div className="flex items-center justify-start pl-3 pr-2 h-full">
                       <div className="mr-3 text-emerald-400">
-                        <svg 
-                          xmlns="http://www.w3.org/2000/svg" 
-                          className="w-5 h-5"
-                          viewBox="0 0 24 24" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          strokeWidth="1.5" 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round"
-                        >
-                          <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
-                          <path d="m15 5 4 4"/>
-                        </svg>
+                        <LogoIcon className="w-5 h-5" />
                       </div>
                       <div className="text-left">
                         <h1 className="text-lg font-bold text-emerald-400 select-none leading-tight">{t('app.title')}</h1>
@@ -685,9 +679,7 @@ const Editor: React.FC = () => {
                           onClick={handleExitApp}
                           className="p-1.5 rounded-md transition-colors duration-200 focus:outline-none flex items-center justify-center h-9 w-9 bg-gray-700 hover:bg-red-600 text-gray-300 hover:text-white"
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
-                          </svg>
+                          <ExitIcon className="h-5 w-5" />
                         </button>
                     </Tooltip>
                   </div>

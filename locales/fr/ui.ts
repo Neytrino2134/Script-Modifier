@@ -1,6 +1,8 @@
 
 
 
+
+
 export const ui = {
     'toolbar.edit': 'Éditer (V)',
     'toolbar.cutter': 'Couper la connexion (C)',
@@ -18,6 +20,7 @@ export const ui = {
     'toolbar.closeProject': 'Fermer le projet / Effacer',
     'toolbar.enterFullscreen': 'Plein écran',
     'toolbar.exitFullscreen': 'Quitter le plein écran',
+    'toolbar.home': 'Accueil',
     'toolbar.addTextInput': 'Entrée de texte (T)',
     'toolbar.addPromptAnalyzer': 'Analyseur de Prompt (A)',
     'toolbar.addCharacterAnalyzer': 'Analyseur de Personnage',
@@ -138,7 +141,7 @@ export const ui = {
     'search.node.image_editor.description': 'Éditez des images avec l\'IA (Inpainting, Outpainting).',
     'search.group.input': 'Entrée',
     'search.group.process': 'Traitement & Analyse',
-    'search.group.scripting': 'Outils Scénario',
+    'search.group.scripting': 'Scénarisation',
     'search.group.character': 'Outils Personnage',
     'search.group.images': 'Outils Image',
     'search.group.ai': 'Outils IA',

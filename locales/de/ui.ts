@@ -1,6 +1,8 @@
 
 
 
+
+
 export const ui = {
     'toolbar.edit': 'Bearbeiten (V)',
     'toolbar.cutter': 'Verbindung trennen (C)',
@@ -18,6 +20,7 @@ export const ui = {
     'toolbar.closeProject': 'Projekt schließen / Leeren',
     'toolbar.enterFullscreen': 'Vollbild',
     'toolbar.exitFullscreen': 'Vollbild beenden',
+    'toolbar.home': 'Startseite',
     'toolbar.addTextInput': 'Texteingabe (T)',
     'toolbar.addPromptAnalyzer': 'Prompt-Analysator (A)',
     'toolbar.addCharacterAnalyzer': 'Charakter-Analysator',
@@ -119,7 +122,7 @@ export const ui = {
     'search.node.reroute_dot.title': 'Umlenkpunkt',
     'search.node.reroute_dot.description': 'Ein Punkt zum Umleiten und Verzweigen von Verbindungen.',
     'search.node.data_reader.title': 'Daten-Leser',
-    'search.node.data_reader.description': 'Zeigt Rohdaten einer Verbindung an.',
+    'search.node.data_reader.description': 'Zeigt Rohdaten eines verbundenen Knotens an.',
     'search.node.speech_synthesizer.title': 'Sprachsynthesizer',
     'search.node.speech_synthesizer.description': 'Wandelt Text in Sprache um. (Shift+N)',
     'search.node.idea_generator.title': 'Ideen-Generator',
