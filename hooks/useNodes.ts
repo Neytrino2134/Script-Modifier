@@ -135,7 +135,58 @@ export const useNodes = (initialNodes: Node[], initialCounter: number) => {
     const handleCopyNodeValue = useCallback(async (nodeId: string) => {
         const node = nodes.find(n => n.id === nodeId);
         if (node) {
-             await navigator.clipboard.writeText(node.value);
+             let textToCopy = node.value;
+
+             // Special handling for clean data export on copy (matching file export structure)
+             if (node.type === NodeType.SCRIPT_PROMPT_MODIFIER) {
+                 try {
+                     const rawData = JSON.parse(node.value);
+                     const cleanData = {
+                        type: 'script-prompt-modifier-data',
+                        finalPrompts: rawData.finalPrompts || [],
+                        videoPrompts: rawData.videoPrompts || [],
+                        usedCharacters: rawData.usedCharacters || [],
+                        sceneContexts: rawData.sceneContexts || {},
+                        visualStyle: rawData.styleOverride || '',
+                        title: node.title
+                     };
+                     textToCopy = JSON.stringify(cleanData, null, 2);
+                 } catch (e) {
+                     console.error("Failed to parse script prompt modifier data for copy", e);
+                 }
+             } else if (node.type === NodeType.SCRIPT_GENERATOR) {
+                 try {
+                     const rawData = JSON.parse(node.value);
+                     const cleanData = {
+                        type: 'script-generator-data',
+                        scenes: rawData.scenes || [],
+                        detailedCharacters: rawData.detailedCharacters || [],
+                        prompt: rawData.prompt || '',
+                        summary: rawData.summary || '',
+                        generatedStyle: rawData.generatedStyle || '',
+                        title: node.title
+                     };
+                     textToCopy = JSON.stringify(cleanData, null, 2);
+                 } catch (e) {
+                     console.error("Failed to parse script generator data for copy", e);
+                 }
+             } else if (node.type === NodeType.SCRIPT_ANALYZER) {
+                 try {
+                     const rawData = JSON.parse(node.value);
+                     const cleanData = {
+                        type: 'script-analyzer-data',
+                        scenes: rawData.scenes || [],
+                        characters: rawData.characters || [],
+                        visualStyle: rawData.visualStyle || rawData.generatedStyle || '',
+                        title: node.title
+                     };
+                     textToCopy = JSON.stringify(cleanData, null, 2);
+                 } catch (e) {
+                     console.error("Failed to parse script analyzer data for copy", e);
+                 }
+             }
+
+             await navigator.clipboard.writeText(textToCopy);
         }
     }, [nodes]);
 
