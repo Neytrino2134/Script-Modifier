@@ -145,9 +145,10 @@ export const useNodes = (initialNodes: Node[], initialCounter: number) => {
                         type: 'script-prompt-modifier-data',
                         finalPrompts: rawData.finalPrompts || [],
                         videoPrompts: rawData.videoPrompts || [],
+                        sceneContexts: rawData.sceneContexts || {}, // Added to match save format
                         usedCharacters: rawData.usedCharacters || [],
-                        sceneContexts: rawData.sceneContexts || {},
-                        visualStyle: rawData.styleOverride || '',
+                        // Logic to prioritize active style similar to handleDownloadJson
+                        visualStyle: rawData.styleOverride || (rawData.generatedStyle) || (rawData.visualStyle) || '',
                         title: node.title
                     };
                     textToCopy = JSON.stringify(cleanData, null, 2);
@@ -183,6 +184,44 @@ export const useNodes = (initialNodes: Node[], initialCounter: number) => {
                     textToCopy = JSON.stringify(cleanData, null, 2);
                 } catch (e) {
                     console.error("Failed to parse script analyzer data for copy", e);
+                }
+            } else if (node.type === NodeType.CHARACTER_CARD) {
+                try {
+                    const rawData = JSON.parse(node.value);
+                    const cleanData = Array.isArray(rawData) ? rawData.map((char: any) => {
+                        const imageSources: Record<string, string | null> = {};
+                        const ratios = ['1:1', '16:9', '9:16'];
+                        const sourceObj = char.imageSources || char.thumbnails || {};
+
+                        ratios.forEach(ratio => {
+                            let src = sourceObj[ratio];
+                            if (ratio === '1:1' && !src) src = char.image;
+                            if (src) imageSources[ratio] = src.startsWith('data:image') ? src : `data:image/png;base64,${src}`;
+                            else imageSources[ratio] = null;
+                        });
+
+                        return {
+                            type: 'character-card',
+                            nodeTitle: node.title,
+                            name: char.name,
+                            index: char.index,
+                            image: imageSources['1:1'] || null,
+                            selectedRatio: char.selectedRatio || '1:1',
+                            prompt: char.prompt,
+                            fullDescription: char.fullDescription,
+                            imageSources: imageSources,
+                            additionalPrompt: char.additionalPrompt,
+                            targetLanguage: char.targetLanguage,
+                            isOutput: char.isOutput,
+                            isActive: char.isActive,
+                            isDescriptionCollapsed: char.isDescriptionCollapsed,
+                            isImageCollapsed: char.isImageCollapsed,
+                            isPromptCollapsed: char.isPromptCollapsed
+                        };
+                    }) : [];
+                    textToCopy = JSON.stringify(cleanData, null, 2);
+                } catch (e) {
+                    console.error("Failed to parse character card data for copy", e);
                 }
             }
 

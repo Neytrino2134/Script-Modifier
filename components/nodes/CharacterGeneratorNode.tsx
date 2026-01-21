@@ -379,7 +379,7 @@ const CharacterGeneratorNode: React.FC<NodeContentProps> = ({
                                         type="text"
                                         value={char.name}
                                         onChange={e => updateCharacter(char.id, 'name', e.target.value)}
-                                        className="font-semibold text-white bg-transparent w-32 focus:bg-gray-800 rounded px-1"
+                                        className="font-semibold text-white bg-gray-800 w-32 focus:bg-gray-900 rounded px-1"
                                         onFocus={deselectAllNodes}
                                         onMouseDown={e => e.stopPropagation()}
                                     />

@@ -12,8 +12,8 @@ import { useAppContext } from '../../contexts/Context';
 import { CharacterData } from './character-card/types';
 import { CharacterCardItem } from './character-card/CharacterCardItem';
 
-// Optimized width to fit 420px node (380 card + 24 gap + border padding)
-const SINGLE_CARD_WIDTH = 380;
+// Optimized width to fit 460px node (420 card + 24 gap + border padding)
+const SINGLE_CARD_WIDTH = 420;
 
 const CharacterCardNode: React.FC<NodeContentProps> = ({
     node,

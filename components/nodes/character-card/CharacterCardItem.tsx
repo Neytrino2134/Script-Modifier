@@ -8,7 +8,7 @@ import { InputWithSpinners } from './InputWithSpinners';
 import { DescriptionFields } from './DescriptionFields';
 
 // Optimized width to fit 420px node (380 card + 24 gap + border padding)
-const SINGLE_CARD_WIDTH = 380;
+const SINGLE_CARD_WIDTH = 420;
 
 interface CharacterCardItemProps {
     char: CharacterData;
@@ -85,7 +85,7 @@ export const CharacterCardItem: React.FC<CharacterCardItemProps> = ({
 
     return (
         <div
-            className="flex flex-col h-full border border-gray-700/50 rounded-xl bg-gray-800/40 p-2.5 overflow-hidden shadow-xl hover:border-gray-600 transition-colors flex-shrink-0"
+            className="flex flex-col h-full border border-gray-700/50 rounded-xl bg-gray-900/80 p-2.5 overflow-hidden shadow-xl hover:border-gray-600 transition-colors flex-shrink-0"
             style={{ width: `${SINGLE_CARD_WIDTH}px`, opacity: isDragging ? 0.4 : 1, transform: isDragging ? 'scale(0.95)' : 'none' }}
             onDragOver={handleSmartCardDragOver}
         >
