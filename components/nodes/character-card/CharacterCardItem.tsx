@@ -132,7 +132,7 @@ export const CharacterCardItem: React.FC<CharacterCardItemProps> = ({
                     onChange={(val) => onUpdate({ index: val })}
                     placeholder="Index"
                     onFocus={deselectAllNodes}
-                    onCopy={() => navigator.clipboard.writeText(char.index)}
+                    onCopy={() => navigator.clipboard.writeText(`[${char.index}]`)}
                     className={`w-28 shrink-0 ${isDuplicate ? '!border-red-500 !ring-1 !ring-red-500' : ''}`}
                 />
             </div>
