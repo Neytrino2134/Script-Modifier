@@ -46,6 +46,9 @@ const ScriptAnalyzerNode: React.FC<NodeContentProps> = ({
     // Timers & Stats
     const [timers, setTimers] = useState<{ current: number; total: number; last: number }>({ current: 0, total: 0, last: 0 });
 
+    // Range Step State
+    const [rangeStep, setRangeStep] = useState(5);
+
     const isLoading = isAnalyzingScript === node.id;
     const { viewTransform } = useAppContext();
 
@@ -74,8 +77,8 @@ const ScriptAnalyzerNode: React.FC<NodeContentProps> = ({
                 extendedAnalysis: !!parsed.extendedAnalysis,
                 microActionBreakdown: !!parsed.microActionBreakdown,
                 batchProcessing: parsed.batchProcessing !== false,
-                professionalStoryboard: parsed.professionalStoryboard !== false,
-                cinematographyEnabled: parsed.cinematographyEnabled !== false,
+                professionalStoryboard: !!parsed.professionalStoryboard, // Default FALSE (MS default)
+                cinematographyEnabled: !!parsed.cinematographyEnabled, // Default FALSE
                 safeGeneration: !!parsed.safeGeneration,
                 thinkingEnabled: !!parsed.thinkingEnabled,
                 shotFilter: parsed.shotFilter || 'all',
@@ -97,7 +100,8 @@ const ScriptAnalyzerNode: React.FC<NodeContentProps> = ({
                 characters: [], scenes: [], targetLanguage: language, model: 'gemini-3-pro-preview', 
                 uiState: { isSettingsCollapsed: true, isCharStyleCollapsed: true },
                 settingsPaneHeight: 380, characterPaneHeight: 170, anatomicalStrictness: true, propConsistency: true,
-                minFrames: null, maxFrames: null, framesPerScene: null
+                minFrames: null, maxFrames: null, framesPerScene: null,
+                professionalStoryboard: false, cinematographyEnabled: false
             };
         }
     }, [node.value, language]);
@@ -338,18 +342,23 @@ const ScriptAnalyzerNode: React.FC<NodeContentProps> = ({
         setTimeout(() => onAnalyzeScript(node.id), 50);
     };
 
-    // Range Handlers (Previous/Next +5 Logic)
+    // Range Handlers (Previous/Next Logic with variable step)
     const handleRangeNext = () => {
+        const step = rangeStep;
         const currentStart = startSceneNumber || 1;
-        const nextStart = Math.ceil(currentStart / 5) * 5 + 1;
-        const nextEnd = nextStart + 4;
+        // Align to grid of 'step'
+        const nextStart = Math.ceil(currentStart / step) * step + 1;
+        const nextEnd = nextStart + step - 1;
         handleValueUpdate({ startSceneNumber: nextStart, endSceneNumber: nextEnd });
     };
 
     const handleRangePrev = () => {
+        const step = rangeStep;
         const currentStart = startSceneNumber || 1;
-        const prevStart = Math.max(1, Math.floor((currentStart - 1) / 5) * 5 - 4);
-        const prevEnd = prevStart + 4;
+        // Calculate previous start aligned to grid
+        let prevStart = Math.floor((currentStart - 1) / step) * step - (step - 1);
+        prevStart = Math.max(1, prevStart);
+        const prevEnd = prevStart + step - 1;
         handleValueUpdate({ startSceneNumber: prevStart, endSceneNumber: prevEnd });
     };
 
@@ -659,10 +668,18 @@ const ScriptAnalyzerNode: React.FC<NodeContentProps> = ({
                         </div>
 
                          <div className="flex items-center space-x-1">
-                            <button onClick={handleRangePrev} className="p-1 text-gray-400 hover:text-white bg-gray-800 rounded hover:bg-gray-700" title="-5">
+                            <button onClick={handleRangePrev} className="p-1 text-gray-400 hover:text-white bg-gray-800 rounded hover:bg-gray-700" title={`-${rangeStep}`}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
                             </button>
-                            <button onClick={handleRangeNext} className="p-1 text-gray-400 hover:text-white bg-gray-800 rounded hover:bg-gray-700" title="+5">
+                            <input 
+                                type="number" 
+                                min="1" 
+                                value={rangeStep}
+                                onChange={(e) => setRangeStep(Math.max(1, parseInt(e.target.value) || 1))}
+                                className="w-8 p-1 bg-gray-800 text-white rounded-md text-center text-xs focus:ring-1 focus:ring-emerald-500 outline-none border border-gray-700"
+                                onMouseDown={(e) => e.stopPropagation()}
+                            />
+                            <button onClick={handleRangeNext} className="p-1 text-gray-400 hover:text-white bg-gray-800 rounded hover:bg-gray-700" title={`+${rangeStep}`}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
                             </button>
                             <button onClick={handleClearRange} className="p-1 text-gray-400 hover:text-red-400 bg-gray-800 rounded hover:bg-gray-700 ml-1" title="Clear Range">
@@ -894,68 +911,69 @@ const ScriptAnalyzerNode: React.FC<NodeContentProps> = ({
                         targetScrollId={targetScrollId}
                         onSetTargetScrollId={setTargetScrollId}
                     />
+
+                    {/* CharactersPanel moved here */}
+                     <CharactersPanel 
+                        uiState={uiState}
+                        initialHeight={characterPaneHeight || 170}
+                        onHeightChange={(h) => handleValueUpdate({ characterPaneHeight: h })}
+                        scale={viewTransform.scale}
+                        onUpdateUiState={handleUiStateUpdate}
+                        onUpdateValue={handleValueUpdate}
+                        onApplyAliases={onApplyAliases}
+                        nodeId={node.id}
+                        autoIndexCharacters={autoIndexCharacters}
+                        charactersToDisplay={characters}
+                        selectedCharacters={selectedCharacters}
+                        collapsedCharacters={collapsedCharacters}
+                        areAllCharactersCollapsed={characters.length > 0 && collapsedCharacters.size === characters.length}
+                        onToggleAllCharacters={() => {
+                            if (collapsedCharacters.size === characters.length) setCollapsedCharacters(new Set());
+                            else setCollapsedCharacters(new Set<string | number>(characters.map((c: any) => c.id || c.name)));
+                        }}
+                        handleCharacterClick={(e, id) => {
+                            setSelectedCharacters(prev => {
+                                const newSet = new Set(prev);
+                                if (newSet.has(id)) newSet.delete(id); else newSet.add(id);
+                                return newSet;
+                            });
+                        }}
+                        handleToggleCharacterCollapse={(id) => {
+                            setCollapsedCharacters(prev => {
+                                const newSet = new Set(prev);
+                                if (newSet.has(id)) newSet.delete(id); else newSet.add(id);
+                                return newSet;
+                            });
+                        }}
+                        updateCharacter={(id, field, value) => {
+                            const newChars = characters.map((c: any) => (c.id === id || c.index === id) ? { ...c, [field]: value } : c);
+                            handleValueUpdate({ characters: newChars });
+                        }}
+                        visualStyle={visualStyle}
+                        upstreamVisualStyle={upstreamScriptData?.generatedStyle || ''}
+                        deselectAllNodes={deselectAllNodes}
+                        t={t}
+                        onEmbedCharacter={(char) => {
+                            // Logic to "Embed" - convert linked to manual by removing isLinked
+                            // This creates a detached copy within the analyzer
+                            const newChars = characters.map((c: any) => {
+                                if (c.id === char.id || c.index === char.index) {
+                                    // Create new detached copy
+                                    const { isLinked, ...rest } = c;
+                                    return { ...rest, id: `detached-${Date.now()}-${c.id || Math.random()}` };
+                                }
+                                return c;
+                            });
+                            handleValueUpdate({ characters: newChars });
+                        }}
+                        onSyncCharacters={refreshUpstream}
+                        isSyncAvailable={true}
+                        onMoveCharacter={() => {}} 
+                        onClearCharacters={() => handleValueUpdate({ characters: [] })}
+                        onDeleteCharacter={handleDeleteCharacter}
+                    />
                 </div>
             </div>
-
-            <CharactersPanel 
-                uiState={uiState}
-                initialHeight={characterPaneHeight || 170}
-                onHeightChange={(h) => handleValueUpdate({ characterPaneHeight: h })}
-                scale={viewTransform.scale}
-                onUpdateUiState={handleUiStateUpdate}
-                onUpdateValue={handleValueUpdate}
-                onApplyAliases={onApplyAliases}
-                nodeId={node.id}
-                autoIndexCharacters={autoIndexCharacters}
-                charactersToDisplay={characters}
-                selectedCharacters={selectedCharacters}
-                collapsedCharacters={collapsedCharacters}
-                areAllCharactersCollapsed={characters.length > 0 && collapsedCharacters.size === characters.length}
-                onToggleAllCharacters={() => {
-                     if (collapsedCharacters.size === characters.length) setCollapsedCharacters(new Set());
-                     else setCollapsedCharacters(new Set<string | number>(characters.map((c: any) => c.id || c.name)));
-                }}
-                handleCharacterClick={(e, id) => {
-                     setSelectedCharacters(prev => {
-                        const newSet = new Set(prev);
-                        if (newSet.has(id)) newSet.delete(id); else newSet.add(id);
-                        return newSet;
-                    });
-                }}
-                handleToggleCharacterCollapse={(id) => {
-                    setCollapsedCharacters(prev => {
-                        const newSet = new Set(prev);
-                        if (newSet.has(id)) newSet.delete(id); else newSet.add(id);
-                        return newSet;
-                    });
-                }}
-                updateCharacter={(id, field, value) => {
-                     const newChars = characters.map((c: any) => (c.id === id || c.index === id) ? { ...c, [field]: value } : c);
-                     handleValueUpdate({ characters: newChars });
-                }}
-                visualStyle={visualStyle}
-                upstreamVisualStyle={upstreamScriptData?.generatedStyle || ''}
-                deselectAllNodes={deselectAllNodes}
-                t={t}
-                onEmbedCharacter={(char) => {
-                    // Logic to "Embed" - convert linked to manual by removing isLinked
-                    // This creates a detached copy within the analyzer
-                    const newChars = characters.map((c: any) => {
-                        if (c.id === char.id || c.index === char.index) {
-                             // Create new detached copy
-                             const { isLinked, ...rest } = c;
-                             return { ...rest, id: `detached-${Date.now()}-${c.id || Math.random()}` };
-                        }
-                        return c;
-                    });
-                    handleValueUpdate({ characters: newChars });
-                }}
-                onSyncCharacters={refreshUpstream}
-                isSyncAvailable={true}
-                onMoveCharacter={() => {}} 
-                onClearCharacters={() => handleValueUpdate({ characters: [] })}
-                onDeleteCharacter={handleDeleteCharacter}
-            />
             
             <div className="flex-grow flex flex-row min-h-0 items-stretch bg-gray-900 rounded-b-md overflow-hidden border-t border-gray-600">
                 <InputScriptsPanel 

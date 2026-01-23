@@ -117,6 +117,9 @@ export const generateScript = async (
     const ai = getAiClient();
     const languageName = getLanguageName(targetLanguage);
     const instructions = [];
+    
+    // Check if Shorts genre is active
+    const isShorts = advancedOptions.genre === 'shorts_story' || advancedOptions.genre2 === 'shorts_story';
 
     // System Core
     instructions.push(SCRIPT_GENERATOR_INSTRUCTIONS.CORE.text);
@@ -146,13 +149,25 @@ export const generateScript = async (
         instructions.push(SCRIPT_GENERATOR_INSTRUCTIONS.SEAMLESS_FLOW.text);
         instructions.push(SCRIPT_GENERATOR_INSTRUCTIONS.ATMOSPHERE.text);
         instructions.push(SCRIPT_GENERATOR_INSTRUCTIONS.VISUAL_METAPHOR.text);
-        instructions.push(SCRIPT_GENERATOR_INSTRUCTIONS.PACING_RHYTHM.text);
+        
+        // Adaptive Pacing Instruction
+        if (isShorts) {
+            instructions.push(SCRIPT_GENERATOR_INSTRUCTIONS.SHORTS_PACING.text);
+        } else {
+            instructions.push(SCRIPT_GENERATOR_INSTRUCTIONS.PACING_RHYTHM.text);
+        }
+
         instructions.push(SCRIPT_GENERATOR_INSTRUCTIONS.SUBTEXT.text);
         instructions.push(SCRIPT_GENERATOR_INSTRUCTIONS.NO_CAMERA_DIRECTIVES.text);
         instructions.push(SCRIPT_GENERATOR_INSTRUCTIONS.OBJECT_AGENCY.text);
     }
 
-    instructions.push(SCRIPT_GENERATOR_INSTRUCTIONS.FRAME_ESTIMATION.text);
+    // Adaptive Frame Estimation Instruction
+    if (isShorts) {
+         instructions.push(SCRIPT_GENERATOR_INSTRUCTIONS.SHORTS_FRAME_ESTIMATION.text);
+    } else {
+         instructions.push(SCRIPT_GENERATOR_INSTRUCTIONS.FRAME_ESTIMATION.text);
+    }
 
     if (advancedOptions.safeGeneration) {
         instructions.push(SAFE_GENERATION_INSTRUCTIONS.text);
@@ -179,7 +194,7 @@ export const generateScript = async (
         instructions.push(CHAR_GEN_INSTRUCTIONS.STRICT_NO_NEW.text);
 
         // Redundant safety check to prevent hallucination of "Entity-3" for objects
-        instructions.push("ABSOLUTE PROHIBITION: Do NOT invent new `Entity-N` tags for objects or props in the scene text. Refer to objects by their names (e.g. 'table', 'sword'), NOT as Entities.");
+        instructions.push("ABSOLUTE PROHIBITION: Do NOT invent new `Entity-N` tags for objects, props, or background elements that are NOT in the Cast List. Refer to them by their generic names (e.g., 'a sword', 'a table').\n**CORRECT:** 'Entity-1 picks up a sword.' \n**INCORRECT:** 'Entity-1 picks up Entity-2.'");
     } else if (advancedOptions.noCharacters) {
         instructions.push("No specific characters. Focus on events and atmosphere.");
     } else {
@@ -267,9 +282,15 @@ export const analyzeScript = async (
     }
     instructions.push(frameConstraint);
 
-    if (options.professionalStoryboard) {
+    // If professional storyboard is OFF (default), we inject a rule to force Medium Shots
+    if (!options.professionalStoryboard) {
+        instructions.push(SCRIPT_ANALYZER_INSTRUCTIONS.DEFAULT_MS.text);
+    } else {
+        // Only include advanced rules if toggled ON
         instructions.push(SCRIPT_ANALYZER_INSTRUCTIONS.STORYBOARD_RULES.text);
-        instructions.push(SCRIPT_ANALYZER_INSTRUCTIONS.TECHNICAL_DIRECTIVES.text);
+        if (options.cinematographyEnabled) {
+            instructions.push(SCRIPT_ANALYZER_INSTRUCTIONS.TECHNICAL_DIRECTIVES.text);
+        }
     }
 
     instructions.push(SCRIPT_ANALYZER_INSTRUCTIONS.MANDATORY_BG.text); // Force specific Set Design instruction

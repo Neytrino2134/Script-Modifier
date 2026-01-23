@@ -868,6 +868,27 @@ export const useEntityActions = ({
                         addToast(t('toast.pasted'), 'success', clientPointerPositionRef.current);
                         return;
                     }
+                    
+                    // Check for Script Analyzer data
+                    if (parsed.type === 'script-analyzer-data') {
+                        onAddNode(NodeType.SCRIPT_ANALYZER, pastePosition, text, parsed.title);
+                        addToast(t('toast.pasted'), 'success', clientPointerPositionRef.current);
+                        return;
+                    }
+
+                    // Check for Script Generator data
+                    if (parsed.type === 'script-generator-data') {
+                        onAddNode(NodeType.SCRIPT_GENERATOR, pastePosition, text, parsed.title);
+                        addToast(t('toast.pasted'), 'success', clientPointerPositionRef.current);
+                        return;
+                    }
+
+                    // Check for Script Prompt Modifier data
+                    if (parsed.type === 'script-prompt-modifier-data') {
+                        onAddNode(NodeType.SCRIPT_PROMPT_MODIFIER, pastePosition, text, parsed.title);
+                        addToast(t('toast.pasted'), 'success', clientPointerPositionRef.current);
+                        return;
+                    }
 
                     // Check for Image Preview JSON (imageBase64)
                     if (parsed.imageBase64 && typeof parsed.imageBase64 === 'string') {

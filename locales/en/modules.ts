@@ -9,7 +9,7 @@ export const modules = {
     'genre.horror': 'Horror',
     'genre.thriller': 'Thriller',
     'genre.childrens_animation': 'Animated cartoons for children',
-    'genre.shorts_story': 'Short stories for shorts',
+    'genre.shorts_story': 'YouTube Shorts / TikTok Story',
     'genre.scientific_historical': 'Scientific-Historical Narrative',
     'character_generator.promptPlaceholder': 'Enter an idea, e.g., "brave knight, keeper of the ancient forest, who protects a magical sword"',
     'idea_generator.randomTheme': 'Get a random theme',

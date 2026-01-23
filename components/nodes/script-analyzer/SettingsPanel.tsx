@@ -1,6 +1,7 @@
 
 
 
+
 import React, { useState, useRef, useEffect } from 'react';
 import { InstructionBrick } from './InstructionBrick';
 import { SCRIPT_ANALYZER_INSTRUCTIONS } from '../../../utils/prompts/scriptAnalyzer';
@@ -497,6 +498,18 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = React.memo(({
                         <div className="space-y-1 mb-3">
                             <h6 className="text-[9px] font-bold text-gray-500 uppercase px-1 border-b border-gray-700/50 pb-0.5">{t('node.content.stack.cinematography')}</h6>
 
+                            {/* DEFAULT MS BRICK - Only visible when Professional Storyboard is OFF */}
+                            {!professionalStoryboard && (
+                                <InstructionBrick 
+                                    id={SCRIPT_ANALYZER_INSTRUCTIONS.DEFAULT_MS.id}
+                                    index={++stepCount}
+                                    label={SCRIPT_ANALYZER_INSTRUCTIONS.DEFAULT_MS.label}
+                                    originalText={SCRIPT_ANALYZER_INSTRUCTIONS.DEFAULT_MS.text}
+                                    isMandatory
+                                    color='gray'
+                                />
+                            )}
+
                             {shouldShow(SCRIPT_ANALYZER_INSTRUCTIONS.SHOT_FILTER_WIDE.text, t('node.content.shotFilter.wideOnly')) && (
                                 <InstructionBrick
                                     ref={el => { brickRefs.current[SCRIPT_ANALYZER_INSTRUCTIONS.SHOT_FILTER_WIDE.id] = el; }}
@@ -545,14 +558,13 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = React.memo(({
                                 <InstructionBrick
                                     ref={el => { brickRefs.current[techId] = el; }}
                                     id={techId}
-                                    index={++stepCount}
+                                    index={cinematographyEnabled ? ++stepCount : undefined}
                                     label={t(isWideOnly ? 'instruction.tech_directives_wide' : 'instruction.tech_directives')}
                                     originalText={techText}
                                     translatedText={t(techDescKey)}
-                                    isEnabled={true}
-                                    isMandatory={true}
+                                    isEnabled={cinematographyEnabled}
+                                    onToggle={() => onUpdateValue({ cinematographyEnabled: !cinematographyEnabled })}
                                     color='emerald'
-                                    className="opacity-100"
                                     isHighlighted={targetScrollId === techId}
                                 />
                             )}

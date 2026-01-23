@@ -9,7 +9,7 @@ export const modules = {
     'genre.horror': 'Ужасы',
     'genre.thriller': 'Триллер',
     'genre.childrens_animation': 'Анимационные мультфильмы для детей',
-    'genre.shorts_story': 'Короткометражные истории для шортс',
+    'genre.shorts_story': 'YouTube Shorts / TikTok История',
     'genre.scientific_historical': 'Научно-исторический рассказ',
     'character_generator.promptPlaceholder': 'Введите идею для персонажей, например: "храбрый рыцарь, хранитель древнего леса, который защищает волшебный меч"',
     'idea_generator.randomTheme': 'Получить случайную тему',

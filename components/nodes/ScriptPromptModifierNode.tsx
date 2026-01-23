@@ -34,6 +34,9 @@ const ScriptPromptModifierNode: React.FC<NodeContentProps> = ({
     
     const [localSettingsHeight, setLocalSettingsHeight] = useState<number>(360);
 
+    // Range Step State
+    const [rangeStep, setRangeStep] = useState(5);
+
     const isStyleConnected = connectedInputs?.has('style');
     // Check if main data input is connected
     const isDataConnected = !!connections.find(c => c.toNodeId === node.id && (c.toHandleId === 'all-script-analyzer-data' || !c.toHandleId));
@@ -253,12 +256,9 @@ const ScriptPromptModifierNode: React.FC<NodeContentProps> = ({
 
     useEffect(() => {
         // Prioritize the generator's style if available
-        // Only autofill if it is a real description (generatedStyle)
-        // We ignore 'none' or simple preset names that might come from visualStyle
-        const generated = upstreamAnalyzerData?.generatedStyle;
-        
-        if (generated && generated !== 'none' && generated.trim() !== '' && !styleOverride && !isStyleConnected) {
-            handleValueUpdate({ styleOverride: generated });
+        const analyzerStyle = upstreamAnalyzerData?.generatedStyle || upstreamAnalyzerData?.visualStyle || '';
+        if (analyzerStyle && !styleOverride && !isStyleConnected) {
+            handleValueUpdate({ styleOverride: analyzerStyle });
         }
     }, [upstreamAnalyzerData, styleOverride, isStyleConnected, handleValueUpdate]);
 
@@ -490,30 +490,62 @@ const ScriptPromptModifierNode: React.FC<NodeContentProps> = ({
     };
 
     const handleStartRangeChange = (val: number) => { 
-        if (isProcessWholeScene) handleValueUpdate({ startSceneNumber: val });
-        else handleValueUpdate({ startFrameNumber: val });
+        const newStart = Math.max(1, val);
+        const updates: any = {};
+        if (isProcessWholeScene) {
+            updates.startSceneNumber = newStart;
+            const currentEnd = endSceneNumber;
+            if (currentEnd !== null && newStart > currentEnd) {
+                updates.endSceneNumber = newStart;
+            }
+        } else {
+            updates.startFrameNumber = newStart;
+            const currentEnd = endFrameNumber;
+            if (currentEnd !== null && newStart > currentEnd) {
+                updates.endFrameNumber = newStart;
+            }
+        }
+        handleValueUpdate(updates);
     };
     
     const handleEndRangeChange = (val: number) => { 
-        if (isProcessWholeScene) handleValueUpdate({ endSceneNumber: val });
-        else handleValueUpdate({ endFrameNumber: val });
+        const newEnd = Math.max(1, val);
+        const updates: any = {};
+
+        if (isProcessWholeScene) {
+            updates.endSceneNumber = newEnd;
+            const currentStart = startSceneNumber || 1;
+            if (newEnd < currentStart) {
+                updates.startSceneNumber = newEnd;
+            }
+        } else {
+            updates.endFrameNumber = newEnd;
+            const currentStart = startFrameNumber || 1;
+            if (newEnd < currentStart) {
+                updates.startFrameNumber = newEnd;
+            }
+        }
+        handleValueUpdate(updates);
     };
     
     const handleClearRange = () => handleValueUpdate({ startSceneNumber: null, endSceneNumber: null, startFrameNumber: null, endFrameNumber: null });
 
     const handleRangeNext = () => {
+        const step = rangeStep;
         const currentStart = (isProcessWholeScene ? startSceneNumber : startFrameNumber) || 1;
-        const nextStart = Math.ceil(currentStart / 5) * 5 + 1;
-        const nextEnd = nextStart + 4;
+        const nextStart = Math.ceil(currentStart / step) * step + 1;
+        const nextEnd = nextStart + step - 1;
         
         if (isProcessWholeScene) handleValueUpdate({ startSceneNumber: nextStart, endSceneNumber: nextEnd });
         else handleValueUpdate({ startFrameNumber: nextStart, endFrameNumber: nextEnd });
     };
 
     const handleRangePrev = () => {
+        const step = rangeStep;
         const currentStart = (isProcessWholeScene ? startSceneNumber : startFrameNumber) || 1;
-        const prevStart = Math.max(1, Math.floor((currentStart - 1) / 5) * 5 - 4);
-        const prevEnd = prevStart + 4;
+        let prevStart = Math.floor((currentStart - 1) / step) * step - (step - 1);
+        prevStart = Math.max(1, prevStart);
+        const prevEnd = prevStart + step - 1;
         
         if (isProcessWholeScene) handleValueUpdate({ startSceneNumber: prevStart, endSceneNumber: prevEnd });
         else handleValueUpdate({ startFrameNumber: prevStart, endFrameNumber: prevEnd });
@@ -735,10 +767,18 @@ const ScriptPromptModifierNode: React.FC<NodeContentProps> = ({
                             </div>
                         </div>
                         <div className="flex items-center space-x-1">
-                            <button onClick={handleRangePrev} className="p-1 text-gray-400 hover:text-white bg-gray-800 rounded hover:bg-gray-700" title="-5">
+                            <button onClick={handleRangePrev} className="p-1 text-gray-400 hover:text-white bg-gray-800 rounded hover:bg-gray-700" title={`-${rangeStep}`}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
                             </button>
-                            <button onClick={handleRangeNext} className="p-1 text-gray-400 hover:text-white bg-gray-800 rounded hover:bg-gray-700" title="+5">
+                            <input 
+                                type="number" 
+                                min="1" 
+                                value={rangeStep}
+                                onChange={(e) => setRangeStep(Math.max(1, parseInt(e.target.value) || 1))}
+                                className="w-8 p-1 bg-gray-800 text-white rounded-md text-center text-xs focus:ring-1 focus:ring-emerald-500 outline-none border border-gray-700"
+                                onMouseDown={(e) => e.stopPropagation()}
+                            />
+                            <button onClick={handleRangeNext} className="p-1 text-gray-400 hover:text-white bg-gray-800 rounded hover:bg-gray-700" title={`+${rangeStep}`}>
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
                             </button>
                             <button onClick={handleClearRange} className="p-1 text-gray-400 hover:text-red-400 bg-gray-800 rounded hover:bg-gray-700 ml-1" title="Clear Range">
@@ -817,7 +857,6 @@ const ScriptPromptModifierNode: React.FC<NodeContentProps> = ({
                 </div>
 
                 <SettingsPanel 
-                    nodeId={node.id}
                     uiState={uiState}
                     localSettingsHeight={localSettingsHeight}
                     setLocalSettingsHeight={setLocalSettingsHeight}

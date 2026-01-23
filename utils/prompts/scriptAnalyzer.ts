@@ -13,17 +13,17 @@ export const SCRIPT_ANALYZER_INSTRUCTIONS = {
     NO_POV: {
         id: 'ana_no_pov',
         label: 'No POV',
-        text: "**CRITICAL NEGATIVE CONSTRAINT: NO POV/FIRST-PERSON.** You are strictly FORBIDDEN from generating 'Point of View' shots. The camera must ALWAYS be an external observer. \n1. **FORBIDDEN PHRASES:** 'looking down at', 'seen through eyes', 'view from', 'my hands'. \n2. **CORRECTION:** Describe the subject's position relative to the environment and the camera angle (e.g., 'Close-up high angle', 'Side view'). \n3. **CAMERA:** Always position the camera as a Third-Person observer (Over-the-Shoulder, Side, Front, High Angle)."
+        text: "**CRITICAL NEGATIVE CONSTRAINT: NO POV/FIRST-PERSON.** You are strictly FORBIDDEN from generating 'Point of View' shots. The camera must ALWAYS be an external observer. \n1. **FORBIDDEN PHRASES:** 'looking down at', 'seen through eyes', 'view from', 'my hands'. \n2. **CORRECTION:** Describe the subject's position relative to the environment and the camera angle (e.g., 'High angle', 'Side view'). \n3. **CAMERA:** Always position the camera as a Third-Person observer (Over-the-Shoulder, Side, Front, High Angle)."
     },
     CINEMATOGRAPHY: {
         id: 'ana_cinema',
         label: 'Cinematography',
-        text: "Use professional terms for framing, lighting and PERSPECTIVE. \n**CRITICAL FORMATTING RULE:** Determine the Shot Type (WS, CU, etc.) and put it **ONLY** in the `shotType` JSON field. \n**FORBIDDEN:** Do NOT write 'Wide Shot', 'Close-up', or 'WS' inside the `imagePrompt` text. The `imagePrompt` must contain ONLY the visual description of the scene content."
+        text: "**CLEAN PROMPT & SHOT TYPE RULE:**\n1. **SHOT TYPE FIELD:** Determine the Shot Size (MS, WS, LS) and put the **ABBREVIATION ONLY** in the `shotType` JSON field.\n2. **IMAGE PROMPT FIELD:** Do **NOT** write the Shot Size (e.g., 'Medium Shot', 'Close-up', 'MS') inside the `imagePrompt` text. \n3. **STARTING TEXT:** Start the `imagePrompt` directly with the Camera Angle (e.g., 'Front view...') or the Subject (e.g., 'Entity-1...')."
     },
     CINEMATOGRAPHY_WIDE: {
         id: 'ana_cinema_wide',
         label: 'Cinematography (Wide)',
-        text: "Use professional terms for framing and spatial geometry. \n1. **FRAMING:** Wide Shot, Long Shot, Establishing Shot. (NO Close-ups). \n2. **ANGLES:** Aerial, Bird's Eye, Worm's Eye, Low Angle, Side Tracking. \n3. **PERSPECTIVE:** Full Body Side View, Full Body Rear View, Distant Frontal."
+        text: "Use professional terms for framing and spatial geometry. \n1. **FRAMING:** Wide Shot (WS), Long Shot (LS). (NO Close-ups). \n2. **ANGLES:** Aerial, Bird's Eye, Worm's Eye, Low Angle, Side Tracking. \n3. **PERSPECTIVE:** Full Body Side View, Full Body Rear View, Distant Frontal."
     },
     STATIC_FRAME_LOGIC: {
         id: 'static_frame_logic',
@@ -83,7 +83,7 @@ export const SCRIPT_ANALYZER_INSTRUCTIONS = {
     MANDATORY_BG_WIDE: {
         id: 'rule_mandatory_bg_wide',
         label: 'Mandatory Global BG (Wide)',
-        text: "**CRITICAL RULE: MANDATORY GLOBAL BACKGROUND.** The 'environmentPrompt' field can NEVER be empty. Since you are generating WIDE SHOTS only, you must provide a comprehensive description of the geography, horizon, and weather, and spatial layout in every frame. Ensure the environment feels vast and grounded."
+        text: "**CRITICAL RULE: MANDATORY GLOBAL BACKGROUND.** The 'environmentPrompt' field can NEVER be empty. Since you are using WIDE SHOTS only, you must provide a comprehensive description of the geography, horizon, and weather, and spatial layout in every frame. Ensure the environment feels vast and grounded."
     },
     LIVING_WORLD: {
         id: 'rule_living_world',
@@ -157,8 +157,13 @@ export const SCRIPT_ANALYZER_INSTRUCTIONS = {
     },
     SHOT_FILTER_WIDE: {
         id: 'shot_filter_wide',
-        label: 'Wide Shots Only',
-        text: "**ULTRA-STRICT CINEMATOGRAPHY FILTER:** For ALL generated frames, you are ABSOLUTELY FORBIDDEN from using Close-Up (CU), Extreme Close-Up (ECU), or Detail shots. \n\n**TRANSLATION PROTOCOL:** If the script describes a detail (e.g., 'a tear rolling down a cheek'), you MUST TRANSLATE it into a Full Body pose within a Wide Shot (e.g., 'Wide Shot: Character slumps shoulders, head low, body language conveys grief').\n\n**RULE:** Use ONLY Wide Shots (WS), Long Shots (LS), or Medium Shots (MS). Reject the impulse to zoom in."
+        label: 'No Close-Ups (MS/WS)',
+        text: "**NO CLOSE-UPS ALLOWED.** \n1. **ALLOWED SHOTS:** MS (Medium Shot), WS (Wide Shot), LS (Long Shot). \n2. **BANNED:** CU (Close-up), ECU (Extreme Close-up). \n3. **FORMATTING:** Put the abbreviation ('MS', 'WS') ONLY in the `shotType` field. Do not write it in the prompt text."
+    },
+    DEFAULT_MS: {
+        id: 'default_ms',
+        label: 'Default Medium Shot',
+        text: "**MANDATORY FRAMING: MEDIUM SHOT (MS).** \n1. **SHOT TYPE JSON:** The `shotType` field MUST be exactly **'MS'**. \n2. **NO TEXT POLLUTION:** Do NOT write 'Medium Shot' or 'MS' inside the `imagePrompt` text description. \n3. **NO CLOSE-UPS:** Close-ups (CU) are strictly FORBIDDEN. Always frame from waist up."
     },
     ENTITY_LIMIT: {
         id: 'entity_limit',

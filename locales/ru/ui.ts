@@ -222,4 +222,29 @@ export const ui = {
     'youtube_analytics.vids_wk': 'Видео/Нед',
     'youtube_analytics.vids_mo': 'Видео/Мес',
     'youtube_analytics.subs_short': 'Подп.',
+    'node.content.findStack': 'Найти в стеке...',
+
+    // Prompt Finalizer Stack Headers
+    'node.content.spm_stack.priming': '1. Прайминг и Контекст',
+    'node.content.spm_stack.physics': '2. Физика и Логика',
+    'node.content.spm_stack.hierarchy': '3. Иерархия Субъекта',
+    'node.content.spm_stack.construction': '4. Конструкция и Формат',
+    'node.content.suffix': 'Суффикс',
+
+    // Script Generator Stack Headers
+    'node.content.scriptGenerationStack': 'СТЕК ГЕНЕРАЦИИ СЦЕНАРИЯ',
+    'node.content.entityGenerationStack': 'СТЕК ГЕНЕРАЦИИ СУЩНОСТЕЙ',
+    'node.content.sg_stack.priming': '1. ПРАЙМИНГ И КОНТЕКСТ',
+    'node.content.sg_stack.narrative': '2. НАРРАТИВНЫЙ ДВИЖОК',
+    'node.content.sg_stack.world': '3. ВИЗУАЛЬНЫЙ МИР',
+    'node.content.sg_stack.constraints': '4. ФОРМАТ И ОГРАНИЧЕНИЯ',
+    'node.content.mainChars': 'ГЛАВНЫЕ',
+    'node.content.secChars': 'ВТОРОСТЕПЕННЫЕ',
+    'node.content.keyItems': 'ПРЕДМЕТЫ',
+
+    // Script Analyzer Stack Headers
+    'node.content.stack.system': '1. СИСТЕМА И КОНТЕКСТ',
+    'node.content.stack.role': '2. РОЛЬ И ЛОГИКА',
+    'node.content.stack.cinematography': '3. КИНЕМАТОГРАФИЯ',
+    'node.content.stack.world': '4. МИР И НЕПРЕРЫВНОСТЬ',
 };

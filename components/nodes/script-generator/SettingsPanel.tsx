@@ -225,6 +225,7 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
         return text.toLowerCase().includes(q) || label.toLowerCase().includes(q);
     };
 
+    const isShorts = genre === 'shorts_story' || genre2 === 'shorts_story';
     let stepCount = 0;
 
     return (
@@ -603,7 +604,8 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                     SCRIPT_GENERATOR_INSTRUCTIONS.ATMOSPHERE,
                                     SCRIPT_GENERATOR_INSTRUCTIONS.DELAYED_REVEAL,
                                     SCRIPT_GENERATOR_INSTRUCTIONS.VISUAL_METAPHOR,
-                                    SCRIPT_GENERATOR_INSTRUCTIONS.PACING_RHYTHM,
+                                    // Pacing: Adaptive based on Genre
+                                    isShorts ? SCRIPT_GENERATOR_INSTRUCTIONS.SHORTS_PACING : SCRIPT_GENERATOR_INSTRUCTIONS.PACING_RHYTHM,
                                     SCRIPT_GENERATOR_INSTRUCTIONS.SUBTEXT
                                 ] : [
                                     // When Sceneless Mode is ON, only show relevant visual instructions
@@ -676,15 +678,15 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                                     <InstructionBrick key={instr.id} ref={el => { brickRefs.current[instr.id] = el; }} id={instr.id} index={++stepCount} label={t(`instruction.${instr.id}`) || instr.label} text={instr.text} translatedText={t(`instruction.desc.${instr.id}`)} isMandatory color={instr.id === 'sg_visual_dna' ? 'cyan' : 'emerald'} isHighlighted={highlightedId === instr.id} />
                                 ))}
 
-                                {/* Frame Estimation */}
+                                {/* Frame Estimation - Adaptive for Shorts */}
                                 {shouldShow(SCRIPT_GENERATOR_INSTRUCTIONS.FRAME_ESTIMATION.text, t('node.content.recommendedFrames')) && (
                                     <InstructionBrick
                                         ref={el => { brickRefs.current['sg_frame_estimation'] = el; }}
                                         id="sg_frame_estimation"
                                         index={++stepCount}
                                         label={t('node.content.recommendedFrames')}
-                                        text={SCRIPT_GENERATOR_INSTRUCTIONS.FRAME_ESTIMATION.text}
-                                        translatedText={t('instruction.desc.sg_frame_estimation')}
+                                        text={isShorts ? SCRIPT_GENERATOR_INSTRUCTIONS.SHORTS_FRAME_ESTIMATION.text : SCRIPT_GENERATOR_INSTRUCTIONS.FRAME_ESTIMATION.text}
+                                        translatedText={isShorts ? t('instruction.desc.sg_frame_estimation_shorts') : t('instruction.desc.sg_frame_estimation')}
                                         isMandatory={true}
                                         color='emerald'
                                         isHighlighted={highlightedId === 'sg_frame_estimation'}

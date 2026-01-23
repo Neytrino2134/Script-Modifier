@@ -50,6 +50,11 @@ export const SCRIPT_GENERATOR_INSTRUCTIONS = {
         label: 'Action Atomization',
         text: "**CRITICAL: ACTION ATOMIZATION.** Never summarize an activity. Break it down into physical steps. \n**Expand every verb into a sequence of constituent motions.**"
     },
+    SHORTS_PACING: {
+        id: 'sg_pacing_shorts',
+        label: 'Shorts Pacing',
+        text: "**CRITICAL: SHORTS DYNAMICS.** \n1. **HYPER-FAST PACING:** No slow buildups. Immediate hook in the first sentence. \n2. **DENSITY:** High visual information per second. \n3. **CONSTANT MOTION:** Every line must involve significant physical change or revelation."
+    },
     SUBTEXT: {
         id: 'sg_subtext',
         label: 'Subtext',
@@ -59,6 +64,11 @@ export const SCRIPT_GENERATOR_INSTRUCTIONS = {
         id: 'sg_frame_estimation',
         label: 'Conservative Frames',
         text: "**CRITICAL: REALISTIC FRAME COUNT.** Analyze the 'Visual Density' of the scene description to set 'recommendedFrames'. Be conservative. Do not hallucinate length.\n- **LOW DENSITY (Dialogue/Simple Action):** 2-5 Frames.\n- **MID DENSITY (Interaction/Activity):** 6-10 Frames.\n- **HIGH DENSITY (Complex Action/Montage):** 11-16 Frames."
+    },
+    SHORTS_FRAME_ESTIMATION: {
+        id: 'sg_frame_estimation_shorts',
+        label: 'Shorts Frames',
+        text: "**CRITICAL: SHORTS FRAME COUNT.** Optimize for rapid editing typical of YouTube Shorts/TikTok. \n- **FAST:** 2-3 Frames per beat. \n- **STANDARD:** 3-4 Frames per beat. \n- **MAX:** 5-6 Frames for complex sequences. \nDo not create long, slow scenes."
     },
     VISUALS_FIRST: {
         id: 'rule_visuals',

@@ -140,14 +140,8 @@ export const CharactersPanel: React.FC<CharactersPanelProps> = React.memo(({
             const dy = (moveEvent.clientY - startY) / scale;
             currentHeight = Math.max(100, Math.min(800, startHeight + dy));
             
-            // Optimization: Update DOM directly to bypass React render cycle during drag
-            if (panelRef.current) {
-                requestAnimationFrame(() => {
-                     if (panelRef.current) {
-                        panelRef.current.style.height = `${currentHeight}px`;
-                     }
-                });
-            }
+            // Standard React State update for smoothness without fighting CSS transitions
+            setHeight(currentHeight);
         };
 
         const handleMouseUp = (upEvent: MouseEvent) => {
@@ -157,8 +151,7 @@ export const CharactersPanel: React.FC<CharactersPanelProps> = React.memo(({
             window.removeEventListener('mousemove', handleMouseMove);
             window.removeEventListener('mouseup', handleMouseUp);
             
-            // Sync React state at the end
-            setHeight(currentHeight);
+            // Persist the final height
             onHeightChange(currentHeight); 
         };
 
@@ -200,7 +193,7 @@ export const CharactersPanel: React.FC<CharactersPanelProps> = React.memo(({
         <div 
             ref={panelRef}
             style={{ height: uiState.isCharStyleCollapsed ? 'auto' : `${height}px` }} 
-            className={`flex-shrink-0 mb-1 bg-gray-900 rounded-md border ${isResizerHovered ? 'border-emerald-500' : 'border-gray-700'} hover:border-gray-400 overflow-hidden flex flex-col transition-all duration-200 relative`}
+            className={`flex-shrink-0 mb-1 bg-gray-900 rounded-md border ${isResizerHovered ? 'border-emerald-500' : 'border-gray-700'} hover:border-gray-400 overflow-hidden flex flex-col transition-colors duration-200 relative`}
         >
             <div 
                 className="flex justify-between items-center p-2 bg-gray-800/50 cursor-pointer select-none hover:bg-gray-700/50 transition-colors flex-shrink-0"
