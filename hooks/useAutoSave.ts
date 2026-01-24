@@ -77,7 +77,7 @@ export const useAutoSave = (
                     console.error("Failed to auto-save state:", e);
                 }
             });
-        }, 1000); // Debounce save by 1 second
+        }, 60000); // Debounce save by 60 seconds (1 minute)
 
         return () => clearTimeout(handler);
     }, [tabs, activeTabIndex]);

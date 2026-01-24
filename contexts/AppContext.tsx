@@ -20,6 +20,7 @@ import {
   useEntityActions,
   useDerivedMemo,
   useAutoSave,
+  loadAutoSavedState,
 } from '../hooks';
 import { getOutputHandleType, getInputHandleType } from '../utils/nodeUtils';
 import type { Toast } from '../components/ui/ToastContainer';
@@ -145,7 +146,7 @@ export interface AppContextType {
     handleAddNodeFromConnectionMenu: (type: NodeType) => void;
     handleRenameNode: (nodeId: string, currentTitle: string) => void;
     handleToggleNodeOutputVisibility: (nodeId: string) => void;
-    handleDownloadChat: (nodeId: string) => void; // Added for chat download
+    handleDownloadChat: (nodeId: string) => void;
 
     // Group Handlers
     handleGroupMouseDown: (e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>, groupId: string) => void;
@@ -237,7 +238,7 @@ export interface AppContextType {
     onOpenCatalog: () => void;
     handleClearCanvas: () => void;
     clearCanvasData: () => void;
-    clearProject: () => void; // Added for project reset
+    clearProject: () => void;
     handleResetToDefault: (silent?: boolean) => void;
     handleCloseCatalog: () => void;
     confirmRename: (newName: string) => void;
@@ -297,6 +298,9 @@ export interface AppContextType {
     toggleContextMenuPin: () => void;
     isQuickAddPinned: boolean;
     toggleQuickAddPin: () => void;
+    
+    // Auto-Save Loading
+    handleLoadAutoSave: () => Promise<void>;
 
     // Image Caching & Viewer
     setFullSizeImage: (nodeId: string, slotIndex: number, imageBase64: string) => void;
@@ -538,6 +542,33 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             };
         }));
     }, [t, setNodes]);
+    
+    // NEW: Handle loading auto-saved state
+    const handleLoadAutoSave = useCallback(async () => {
+        const savedState = await loadAutoSavedState();
+        if (savedState && savedState.tabs.length > 0) {
+            setTabs(savedState.tabs);
+            
+            // Validate index to prevent out of bounds
+            let targetIndex = savedState.activeTabIndex;
+            if (targetIndex >= savedState.tabs.length) targetIndex = 0;
+            
+            setActiveTabIndex(targetIndex);
+            
+            // Explicitly set the current nodes/connections to match the active tab to ensure immediate render update
+            const targetTab = savedState.tabs[targetIndex];
+            setNodes(targetTab.nodes);
+            setConnections(targetTab.connections);
+            setGroups(targetTab.groups);
+            setViewTransform(targetTab.viewTransform);
+            nodeIdCounter.current = targetTab.nodeIdCounter;
+            loadedTabIdRef.current = targetTab.id;
+            
+            baseAddToast(t('toast.projectLoaded'), 'success'); 
+        } else {
+             // If no save found, we are already at default state from initialization
+        }
+    }, [t]);
 
     const handleResetToDefault = useCallback((silent: boolean = false) => {
         const doReset = () => {
@@ -737,7 +768,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            // Updated naming convention: Script_Modifier_Project_YYYY-MM-DD_HH-MM-SS.SMP
             a.download = `Script_Modifier_Project_${dateTimeString}.SMP`;
             document.body.appendChild(a);
             a.click();
@@ -802,7 +832,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            // Updated regex to support Script_Modifier_Canvas_Name_YYYY-MM-DD_HH-MM-SS format
             const regex = /^Script_Modifier_Canvas_(.+)_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}\.(SMC|json)$/i;
             const match = file.name.match(regex);
             if (match && match[1]) {
@@ -911,7 +940,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         handleDuplicateGroup,
         translateGraph,
         clearCanvasData,
-        clearProject, // Export new function
+        clearProject,
         handleToggleNodeOutputVisibility,
         // Image Handling
         setFullSizeImage,
@@ -928,7 +957,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         handleExtractTextFromImage: geminiContext.handleExtractTextFromImage,
         isExtractingText: geminiContext.isExtractingText,
         isAnalyzingYouTubeStats: geminiContext.isAnalyzingYouTubeStats,
-        handleDownloadChat // Export
+        handleDownloadChat,
+        handleLoadAutoSave, // Exported
     };
 
     return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;

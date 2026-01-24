@@ -93,6 +93,7 @@ const Editor: React.FC = () => {
     setImageViewer,
     onDownloadImage,
     onCopyImageToClipboard,
+    handleLoadAutoSave // Import the new handler
   } = context;
 
   const [isApiKeyDialogOpen, setIsApiKeyDialogOpen] = useState(false);
@@ -101,8 +102,9 @@ const Editor: React.FC = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   // Track if the user has already passed the welcome screen in this session or previously
+  // We use this to distinguish between "Fresh Start" (Let's Go) and "Resume" (Resume) on the Welcome Screen
   const [hasWelcomeBeenShown, setHasWelcomeBeenShown] = useState(() => {
-    // If API key exists, we consider welcome shown previously
+    // If API key exists, we consider welcome shown previously (Resume mode)
     return !!(localStorage.getItem('gemini-api-key') || localStorage.getItem('gemini-use-free-key') === 'true');
   });
 
@@ -117,21 +119,10 @@ const Editor: React.FC = () => {
 
   const [radialMenuHoveredItem, setRadialMenuHoveredItem] = useState<NodeType | null>(null);
 
+  // Initial Check: Always show welcome screen on mount to allow Resume/Reset choice
   useEffect(() => {
-    // Check key presence on mount
-    const hasApiKeyInStorage = localStorage.getItem('gemini-api-key');
-    const hasUseFreeKeyInStorage = localStorage.getItem('gemini-use-free-key');
-    const isFree = hasUseFreeKeyInStorage === 'true';
-
-    // Only show welcome if it hasn't been shown AND there's no key
-    // OR if we specifically need an API key and it's missing (but not first run)
-    if (!hasWelcomeBeenShown && !hasApiKeyInStorage && !isFree) {
-      setIsWelcomeDialogOpen(true);
-    } else if (!apiSettings.hasApiKey && hasWelcomeBeenShown) {
-      // Settings exist but are empty/invalid, show specific dialog
-      setIsApiKeyDialogOpen(true);
-    }
-  }, [hasWelcomeBeenShown]); // Dependency changed to prevent loop on apiSettings update
+     setIsWelcomeDialogOpen(true);
+  }, []);
 
   // Handle Full Screen Changes
   useEffect(() => {
@@ -157,7 +148,7 @@ const Editor: React.FC = () => {
     }
   };
 
-  const handleSaveApiSettings = (apiKey: string, useFreeKey: boolean) => {
+  const handleSaveApiSettings = async (apiKey: string, useFreeKey: boolean) => {
     const cleanedKey = apiKey.trim();
     localStorage.setItem('gemini-use-free-key', useFreeKey ? 'true' : 'false');
 
@@ -179,17 +170,17 @@ const Editor: React.FC = () => {
       useFreeKey: storedFree,
     });
 
-    // If it was the first run (Welcome Screen), reset to default if requested implicitly
-    // However, if the user just clicked "Resume" (empty key string passed), we don't reset.
-    // We only reset if they entered a key on the Welcome Screen (First Run flow usually implies reset)
-    // BUT we want to avoid double reset.
-
     // Logic: If Welcome was OPEN, close it.
     if (isWelcomeDialogOpen) {
-      // Determine if this is a "Fresh Start". If hasWelcomeBeenShown is FALSE, it's fresh.
+      // "Let's Go" -> Clean slate (Default state already loaded by AppContext on init)
       if (!hasWelcomeBeenShown) {
-        handleResetToDefault(true); // Silent reset to clean slate
+        // Just ensure translation is applied to default nodes
+        translateGraph(); 
+      } else {
+        // "Resume" -> Load auto-saved state
+        await handleLoadAutoSave();
       }
+      
       setIsWelcomeDialogOpen(false);
       setHasWelcomeBeenShown(true);
     }
@@ -203,7 +194,8 @@ const Editor: React.FC = () => {
     }, 50);
 
     if (cleanedKey || useFreeKey) {
-      addToast(t('toast.apiKeySaved'), 'success');
+      // Don't show toast on initial load, only if manually updated later
+      if (isApiKeyDialogOpen) addToast(t('toast.apiKeySaved'), 'success');
     }
   };
 
@@ -556,7 +548,6 @@ const Editor: React.FC = () => {
           setActiveCategory={setActiveCategory}
         />
         <RenameDialog isOpen={!!renameInfo} initialValue={renameInfo?.currentTitle || ''} onConfirm={confirmRename} onClose={() => setRenameInfo(null)} title={getRenameDialogTitle()} label={t('dialog.rename.label')} confirmButtonText={t('dialog.rename.confirm')} cancelButtonText={t('dialog.rename.cancel')} deselectAllNodes={deselectAllNodes} />
-        {/* Fixed: Removed duplicate PromptEditDialog instance */}
         <PromptEditDialog isOpen={!!promptEditInfo} initialName={promptEditInfo?.name || ''} initialContent={promptEditInfo?.content || ''} onConfirm={confirmPromptEdit} onClose={() => setPromptEditInfo(null)} deselectAllNodes={deselectAllNodes} />
         <ConfirmDialog isOpen={!!confirmInfo} onClose={() => setConfirmInfo(null)} onConfirm={() => { confirmInfo?.onConfirm(); setConfirmInfo(null); }} title={confirmInfo?.title || ''} message={confirmInfo?.message || ''} />
 
