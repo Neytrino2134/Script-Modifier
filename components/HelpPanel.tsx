@@ -184,7 +184,7 @@ const HelpPanel: React.FC = () => {
       { key: 'T', description: t('node.title.text_input') },
       { key: 'P', description: t('node.title.prompt_processor') },
       { key: 'A', description: t('node.title.prompt_analyzer') },
-      { key: 'M', description: t('node.title.gemini_chat') },
+      { key: 'Shift+M', description: t('node.title.gemini_chat') },
       { key: 'L', description: t('node.title.translator') },
       { key: 'N', description: t('node.title.note') },
       { key: 'O', description: t('node.title.image_generator') },
@@ -201,7 +201,7 @@ const HelpPanel: React.FC = () => {
       { key: 'Shift+B', description: t('node.title.audio_transcriber') },
       { key: 'Shift+T', description: t('node.title.youtube_title_generator') },
       { key: 'Shift+Y', description: t('node.title.youtube_analytics') },
-      { key: 'Shift+M', description: t('node.title.music_idea_generator') },
+      { key: 'M', description: t('node.title.music_idea_generator') },
     ],
   };
 

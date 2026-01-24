@@ -5,6 +5,8 @@
 
 
 
+
+
 export const ui = {
     'toolbar.edit': 'Editar (V)',
     'toolbar.cutter': 'Cortar Conexão (C)',
@@ -31,7 +33,7 @@ export const ui = {
     'toolbar.addImagePreview': 'Pré-visualização de Imagem (I)',
     'toolbar.addCharacterCard': 'Cartão de Personagem (Ctrl+Shift+C)',
     'toolbar.addPromptProcessor': 'Processador de Prompt (P)',
-    'toolbar.addGeminiChat': 'Chat Gemini (G)',
+    'toolbar.addGeminiChat': 'Chat Gemini (Shift+M)',
     'toolbar.addTranslator': 'Tradutor (L)',
     'toolbar.addIdeaGenerator': 'Gerador de Ideias (Shift+A)',
     'toolbar.addScriptGenerator': 'Gerador de Roteiro (Shift+S)',
@@ -44,7 +46,7 @@ export const ui = {
     'toolbar.addNarratorTextGenerator': 'Gerador de Texto Narrador (Shift+G)',
     'toolbar.addAudioTranscriber': 'Transcritor de Áudio (Shift+B)',
     'toolbar.addYouTubeTitleGenerator': 'Gerador de Títulos YouTube (Shift+T)',
-    'toolbar.addMusicIdeaGenerator': 'Gerador de Ideias Musicais (Shift+M)',
+    'toolbar.addMusicIdeaGenerator': 'Gerador de Ideias Musicais (M)',
     'toolbar.addYouTubeAnalytics': 'YouTube Analytics (Shift+Y)',
     'toolbar.saveCanvas': 'Salvar Canvas (Ctrl+S)',
     'toolbar.saveProject': 'Salvar Projeto (Ctrl+Shift+S)',
@@ -108,7 +110,7 @@ export const ui = {
     'search.node.character_card.title': 'Cartão de Personagem',
     'search.node.character_card.description': 'Armazena imagem, nome e prompt de um personagem. (Ctrl+Shift+C)',
     'search.node.gemini_chat.title': 'Chat Gemini',
-    'search.node.gemini_chat.description': 'Conversa direta com Gemini AI. (G)',
+    'search.node.gemini_chat.description': 'Conversa direta com Gemini AI. (Shift+M)',
     'search.node.translator.title': 'Tradutor',
     'search.node.translator.description': 'Traduz o texto de entrada para o idioma selecionado. (L)',
     'search.node.script_generator.title': 'Gerador de Roteiro',
@@ -136,7 +138,7 @@ export const ui = {
     'search.node.youtube_title_generator.title': 'Gerador de Títulos YouTube',
     'search.node.youtube_title_generator.description': 'Gera títulos, descrições e tags para YouTube.',
     'search.node.music_idea_generator.title': 'Gerador de Ideias Musicais',
-    'search.node.music_idea_generator.description': 'Gera letras ou prompts musicais. (Shift+M)',
+    'search.node.music_idea_generator.description': 'Gera letras ou prompts musicais. (M)',
     'search.node.youtube_analytics': 'YouTube Analytics',
     'search.node.youtube_analytics.description': 'Analisa estatísticas do canal e oferece dicas.',
     'search.node.image_editor.title': 'Editor de Imagem',

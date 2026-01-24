@@ -125,7 +125,7 @@ const ConnectionQuickAddMenu: React.FC<ConnectionQuickAddMenuProps> = ({
     [NodeType.TEXT_INPUT]: 'T',
     [NodeType.PROMPT_PROCESSOR]: 'P',
     [NodeType.PROMPT_ANALYZER]: 'A',
-    [NodeType.GEMINI_CHAT]: 'G',
+    [NodeType.GEMINI_CHAT]: 'Shift+M',
     [NodeType.TRANSLATOR]: 'L',
     [NodeType.NOTE]: 'N',
     [NodeType.IMAGE_GENERATOR]: 'O',
@@ -142,7 +142,7 @@ const ConnectionQuickAddMenu: React.FC<ConnectionQuickAddMenuProps> = ({
     [NodeType.AUDIO_TRANSCRIBER]: 'Shift+B',
     [NodeType.YOUTUBE_TITLE_GENERATOR]: 'Shift+T',
     [NodeType.YOUTUBE_ANALYTICS]: 'Shift+Y',
-    [NodeType.MUSIC_IDEA_GENERATOR]: 'Shift+M',
+    [NodeType.MUSIC_IDEA_GENERATOR]: 'M',
   };
 
   const nodeGroups = useMemo(() => [
@@ -184,8 +184,8 @@ const ConnectionQuickAddMenu: React.FC<ConnectionQuickAddMenuProps> = ({
            { type: NodeType.GEMINI_CHAT, title: t('node.title.gemini_chat'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
            { type: NodeType.ERROR_ANALYZER, title: t('node.title.error_analyzer'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg> },
         ]
-    },
-    {
+      },
+      {
         title: t('toolbar.group.audio'),
         items: [
           { type: NodeType.SPEECH_SYNTHESIZER, title: t('node.title.speech_synthesizer'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg> },

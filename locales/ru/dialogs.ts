@@ -1,3 +1,6 @@
+
+
+
 export const dialogs = {
     'dialog.rename.title': 'Переименование',
     'dialog.rename.group.title': 'Переименовать группу',
@@ -28,13 +31,6 @@ export const dialogs = {
     'dialog.apiKey.save': 'Сохранить ключ',
     'dialog.apiKey.update': 'Обновить ключ',
     'dialog.apiKey.useFreeKey': 'Использовать бесплатный ключ (для разработки)',
-    'dialog.googleDrive.title': 'Интеграция с Google Drive',
-    'dialog.googleDrive.clientIdLabel': 'Google Client ID',
-    'dialog.googleDrive.clientIdPlaceholder': 'Введите ваш Google Client ID',
-    'dialog.googleDrive.connect': 'Подключить Google Drive',
-    'dialog.googleDrive.disconnect': 'Отключить',
-    'dialog.googleDrive.statusConnected': 'Подключено',
-    'dialog.googleDrive.statusDisconnected': 'Не подключено',
     'dialog.permission.title': 'Доступ к буферу обмена',
     'dialog.permission.description': 'Приложение запрашивает доступ к буферу обмена для функции "Вставить" в узлах. Мы читаем буфер только при явном использовании этой функции.',
     'dialog.permission.decline': 'Отклонить',
@@ -52,6 +48,8 @@ export const dialogs = {
     'dialog.confirmDelete.cancel': 'Отмена',
     'dialog.confirmClear.title': 'Подтверждение очистки',
     'dialog.confirmClear.message': 'Вы уверены, что хотите удалить всё с холста? Это действие нельзя отменить.',
+    'dialog.closeTab.title': 'Закрыть вкладку?',
+    'dialog.closeTab.message': 'Вкладка "{tabName}" содержит узлы. Вы уверены, что хотите закрыть её? Несохраненные изменения в этой вкладке будут утеряны.',
     'toast.copied': 'Скопировано в буфер',
     'toast.pasted': 'Вставлено!',
     'toast.cleared': 'Очищено',
@@ -68,6 +66,4 @@ export const dialogs = {
     'toast.apiKeyCleared': 'API ключ удален',
     'toast.projectLoaded': 'Проект успешно загружен',
     'alert.batchMismatch': 'Внимание: Сцена {scene} несовпадение кадров (Ожидалось: {expected}, Получено: {got}). Сопоставление может быть неточным.',
-    'toast.googleDriveConnected': 'Google Drive успешно подключен',
-    'toast.googleDriveDisconnected': 'Google Drive отключен',
 };

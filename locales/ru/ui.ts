@@ -4,6 +4,10 @@
 
 
 
+
+
+
+
 export const ui = {
     'toolbar.edit': 'Редактировать (V)',
     'toolbar.cutter': 'Разрезать (C)',
@@ -30,7 +34,7 @@ export const ui = {
     'toolbar.addImagePreview': 'Просмотр изображений (I)',
     'toolbar.addCharacterCard': 'Карточка персонажа (Ctrl+Shift+C)',
     'toolbar.addPromptProcessor': 'Обработчик промпта (P)',
-    'toolbar.addGeminiChat': 'Чат Gemini (G)',
+    'toolbar.addGeminiChat': 'Чат Gemini (Shift+M)',
     'toolbar.addTranslator': 'Переводчик (L)',
     'toolbar.addIdeaGenerator': 'Генератор идей (Shift+A)',
     'toolbar.addScriptGenerator': 'Генератор сценариев (Shift+S)',
@@ -43,7 +47,7 @@ export const ui = {
     'toolbar.addNarratorTextGenerator': 'Генератор текста диктора (Shift+G)',
     'toolbar.addAudioTranscriber': 'Аудио транскрибер (Shift+B)',
     'toolbar.addYouTubeTitleGenerator': 'Генератор заголовков YouTube (Shift+T)',
-    'toolbar.addMusicIdeaGenerator': 'Генератор муз. идей (Shift+M)',
+    'toolbar.addMusicIdeaGenerator': 'Генератор муз. идей (M)',
     'toolbar.addYouTubeAnalytics': 'YouTube Аналитика (Shift+Y)',
     'toolbar.addImageEditor': 'Редактор изображений',
     'toolbar.saveCanvas': 'Сохранить холст (Ctrl+S)',
@@ -63,6 +67,21 @@ export const ui = {
     'toolbar.expand': 'Развернуть панель',
     'toolbar.collapse': 'Свернуть панель',
     'toolbar.toggleHeaders': 'Переключить заголовки',
+
+    // Settings & Cloud
+    'settings.tab.general': 'Общие',
+    'settings.tab.cloud': 'Облако (Drive)',
+    'settings.tab.appearance': 'Внешний вид',
+    'settings.cloud.connect': 'Подключить Google Drive',
+    'settings.cloud.connected': 'Подключено',
+    'settings.cloud.clientId': 'Google Client ID',
+    'settings.cloud.sync': 'Синхронизация каталогов',
+    'settings.cloud.saveProject': 'Сохранить проект в облако',
+    'settings.cloud.cleanup': 'Удалить дубликаты',
+    'settings.appearance.theme': 'Тема',
+    'settings.appearance.animations': 'Анимации',
+    'settings.appearance.instantClose': 'Мгновенное закрытие узлов',
+
     'hotkeys.file.title': 'Файл',
     'hotkeys.file.save': 'Сохранить холст (Ctrl+S)',
     'hotkeys.file.saveProject': 'Сохранить проект (Ctrl+Shift+S)',
@@ -108,7 +127,7 @@ export const ui = {
     'search.node.character_card.title': 'Карточка персонажа',
     'search.node.character_card.description': 'Хранит изображение, имя и промпт персонажа. (Ctrl+Shift+C)',
     'search.node.gemini_chat.title': 'Чат Gemini',
-    'search.node.gemini_chat.description': 'Прямое общение с Gemini AI. (G)',
+    'search.node.gemini_chat.description': 'Прямое общение с Gemini AI. (Shift+M)',
     'search.node.translator.title': 'Переводчик',
     'search.node.translator.description': 'Переводит текст на выбранный язык. (L)',
     'search.node.script_generator.title': 'Генератор сценариев',
@@ -136,7 +155,7 @@ export const ui = {
     'search.node.youtube_title_generator.title': 'Генератор заголовков YouTube',
     'search.node.youtube_title_generator.description': 'Создает кликабельные заголовки и теги. (Shift+T)',
     'search.node.music_idea_generator.title': 'Генератор муз. идей',
-    'search.node.music_idea_generator.description': 'Генерирует тексты песен или промпты для музыки. (Shift+M)',
+    'search.node.music_idea_generator.description': 'Генерирует тексты песен или промпты для музыки. (M)',
     'search.node.youtube_analytics': 'YouTube Аналитика',
     'search.node.youtube_analytics.description': 'Анализирует статистику канала и дает советы по росту. (Shift+Y)',
     'search.node.image_editor': 'Редактор изображений',
@@ -183,19 +202,20 @@ export const ui = {
     'help.sub.discussion': 'Обсуждение',
     'help.sub.stable': 'Стабильная Версия',
     'help.sub.alpha': 'Альфа Версия',
-    
+    'imageViewer.title': 'Просмотр изображения',
+
     // Language Names
     'languages.ru': 'Русский',
-    'languages.en': 'English',
-    'languages.es': 'Español',
-    'languages.fr': 'Français',
-    'languages.de': 'Deutsch',
-    'languages.it': 'Italiano',
-    'languages.pt': 'Português',
-    'languages.zh': '中文',
-    'languages.ja': '日本語',
-    'languages.ko': '한국어',
-    'languages.uz': 'O‘zbek',
+    'languages.en': 'Английский',
+    'languages.es': 'Испанский',
+    'languages.fr': 'Французский',
+    'languages.de': 'Немецкий',
+    'languages.it': 'Итальянский',
+    'languages.pt': 'Португальский',
+    'languages.zh': 'Китайский',
+    'languages.ja': 'Японский',
+    'languages.ko': 'Корейский',
+    'languages.uz': 'Узбекский',
     
     'youtube_analytics.mode.analytics': 'Аналитика',
     'youtube_analytics.mode.planner': 'Планировщик',

@@ -1,5 +1,4 @@
 
-
 import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { LibraryItem, LibraryItemType } from '../types';
 
@@ -273,6 +272,21 @@ export const usePromptLibrary = (t: (key: string) => string) => {
         persistItems(items);
     }, []);
 
+    // NEW: Merge items from Cloud
+    const mergeLibraryItems = useCallback((incomingItems: LibraryItem[]) => {
+         setLibraryItems(prev => {
+            const existingIds = new Set(prev.map(i => i.id));
+            const newItems = incomingItems.filter(i => !existingIds.has(i.id)).map(i => ({
+                ...i,
+                id: i.id || `cloud-lib-${Date.now()}-${Math.random()}`
+            }));
+            
+            const updated = [...prev, ...newItems];
+            persistItems(updated);
+            return updated;
+        });
+    }, []);
+
     return {
         libraryItems,
         currentLibraryItems,
@@ -287,6 +301,7 @@ export const usePromptLibrary = (t: (key: string) => string) => {
         handleLibraryFileChange,
         triggerLoadLibraryFromFile,
         moveLibraryItem,
-        importLibrary
+        importLibrary,
+        mergeLibraryItems
     };
 };

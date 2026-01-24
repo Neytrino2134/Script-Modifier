@@ -17,6 +17,7 @@ import PromptEditDialog from './components/dialogs/PromptEditDialog';
 import ToastContainer from './components/ui/ToastContainer';
 import FPSCounter from './components/ui/FPSCounter';
 import ApiKeyDialog from './components/dialogs/ApiKeyDialog';
+import SettingsDialog from './components/dialogs/SettingsDialog';
 import WelcomeDialog from './components/dialogs/WelcomeDialog';
 import VersionInfo from './components/VersionInfo';
 import { LanguageContext, translations, LanguageCode, getTranslation } from './localization';
@@ -97,6 +98,7 @@ const Editor: React.FC = () => {
   } = context;
 
   const [isApiKeyDialogOpen, setIsApiKeyDialogOpen] = useState(false);
+  const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
   const [isWelcomeDialogOpen, setIsWelcomeDialogOpen] = useState(false);
   const [isTopPanelCollapsed, setIsTopPanelCollapsed] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -112,6 +114,7 @@ const Editor: React.FC = () => {
     const useFree = localStorage.getItem('gemini-use-free-key') === 'true';
     const userKey = localStorage.getItem('gemini-api-key');
     return {
+      apiKey: userKey || '',
       hasApiKey: useFree || (!!userKey && userKey.trim() !== ''),
       useFreeKey: useFree,
     };
@@ -166,6 +169,7 @@ const Editor: React.FC = () => {
     const newHasApiKey = storedFree || (!!storedKey && storedKey.length > 0);
 
     setApiSettings({
+      apiKey: storedKey || '',
       hasApiKey: newHasApiKey,
       useFreeKey: storedFree,
     });
@@ -186,6 +190,7 @@ const Editor: React.FC = () => {
     }
 
     setIsApiKeyDialogOpen(false);
+    setIsSettingsDialogOpen(false);
 
     // Trigger translation of the canvas using the currently selected language
     // Use setTimeout to ensure language context update has propagated
@@ -195,15 +200,8 @@ const Editor: React.FC = () => {
 
     if (cleanedKey || useFreeKey) {
       // Don't show toast on initial load, only if manually updated later
-      if (isApiKeyDialogOpen) addToast(t('toast.apiKeySaved'), 'success');
+      if (isApiKeyDialogOpen || isSettingsDialogOpen) addToast(t('toast.apiKeySaved'), 'success');
     }
-  };
-
-  const handleClearApiKey = () => {
-    localStorage.removeItem('gemini-api-key');
-    localStorage.removeItem('gemini-use-free-key');
-    setApiSettings({ hasApiKey: false, useFreeKey: false });
-    addToast(t('toast.apiKeyCleared'), 'info');
   };
 
   const handleCloseAddNodeMenus = useCallback(() => {
@@ -285,14 +283,14 @@ const Editor: React.FC = () => {
           case 'KeyB': nodeTypeToAdd = NodeType.AUDIO_TRANSCRIBER; break;
           case 'KeyT': nodeTypeToAdd = NodeType.YOUTUBE_TITLE_GENERATOR; break;
           case 'KeyY': nodeTypeToAdd = NodeType.YOUTUBE_ANALYTICS; break;
-          case 'KeyM': nodeTypeToAdd = NodeType.MUSIC_IDEA_GENERATOR; break;
+          case 'KeyM': nodeTypeToAdd = NodeType.GEMINI_CHAT; break; // Shift+M is now Gemini Chat
         }
       } else if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
         switch (e.code) {
           case 'KeyT': nodeTypeToAdd = NodeType.TEXT_INPUT; break;
           case 'KeyA': nodeTypeToAdd = NodeType.PROMPT_ANALYZER; break;
           case 'KeyP': nodeTypeToAdd = NodeType.PROMPT_PROCESSOR; break;
-          case 'KeyM': nodeTypeToAdd = NodeType.GEMINI_CHAT; break;
+          case 'KeyM': nodeTypeToAdd = NodeType.MUSIC_IDEA_GENERATOR; break; // M is now Music Generator
           case 'KeyL': nodeTypeToAdd = NodeType.TRANSLATOR; break;
           case 'KeyN': nodeTypeToAdd = NodeType.NOTE; break;
           case 'KeyO': nodeTypeToAdd = NodeType.IMAGE_GENERATOR; break;
@@ -468,14 +466,32 @@ const Editor: React.FC = () => {
           onSave={handleSaveApiSettings}
           isFirstRun={!hasWelcomeBeenShown}
         />
-        <ApiKeyDialog
-          isOpen={isApiKeyDialogOpen}
-          onSave={handleSaveApiSettings}
-          onClose={() => setIsApiKeyDialogOpen(false)}
-          onClear={handleClearApiKey}
-          hasExistingKey={apiSettings.hasApiKey}
-          initialUseFreeKey={apiSettings.useFreeKey}
-        />
+        
+        {/* Only show one settings dialog, we prefer SettingsDialog over ApiKeyDialog now */}
+        {isSettingsDialogOpen ? (
+             <SettingsDialog
+                isOpen={isSettingsDialogOpen}
+                onSave={({ key, useFree }) => handleSaveApiSettings(key, useFree)}
+                onClose={() => setIsSettingsDialogOpen(false)}
+                currentApiKey={apiSettings.apiKey}
+                useFreeKeyProp={apiSettings.useFreeKey}
+             />
+        ) : (
+            <ApiKeyDialog
+                isOpen={isApiKeyDialogOpen}
+                onSave={handleSaveApiSettings}
+                onClose={() => setIsApiKeyDialogOpen(false)}
+                onClear={() => {
+                    localStorage.removeItem('gemini-api-key');
+                    localStorage.removeItem('gemini-use-free-key');
+                    setApiSettings({ apiKey: '', hasApiKey: false, useFreeKey: false });
+                    addToast(t('toast.apiKeyCleared'), 'info');
+                }}
+                hasExistingKey={apiSettings.hasApiKey}
+                initialUseFreeKey={apiSettings.useFreeKey}
+            />
+        )}
+
 
         {imageViewerState && (
           <ImageViewer
@@ -610,9 +626,10 @@ const Editor: React.FC = () => {
                   </button>
                 </Tooltip>
                 <HelpPanel />
-                <Tooltip title={t('dialog.apiKey.title')} position="bottom">
+                <Tooltip title={t('toolbar.settings')} position="bottom">
                   <button
-                    onClick={() => setIsApiKeyDialogOpen(true)}
+                    id="settings-button-trigger" // Added ID for positioning
+                    onClick={() => setIsSettingsDialogOpen(true)}
                     className="p-1.5 rounded-md transition-colors duration-200 focus:outline-none flex items-center justify-center h-9 w-9 bg-gray-700 hover:bg-emerald-600 text-gray-300 hover:text-white"
                   >
                     <SettingsIcon className="h-5 w-5" />

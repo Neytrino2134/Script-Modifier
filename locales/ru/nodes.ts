@@ -1,4 +1,7 @@
 
+
+
+
 export const nodes = {
     'node.title.text_input': 'Текстовый ввод',
     'node.title.prompt_processor': 'Обработчик промпта',
@@ -9,7 +12,6 @@ export const nodes = {
     'node.title.image_preview': 'Просмотр изображений',
     'node.title.character_card': 'Карточка персонажа',
     'node.title.gemini_chat': 'Чат Gemini',
-    'node.title.prompt_modifier': 'Модификатор промптов',
     'node.title.translator': 'Переводчик',
     'node.title.script_generator': 'Генератор сценариев',
     'node.title.script_analyzer': 'Анализатор сценария',
@@ -23,7 +25,7 @@ export const nodes = {
     'node.title.narrator_text_generator': 'Генератор текста диктора',
     'node.title.audio_transcriber': 'Аудио транскрибер',
     'node.title.youtube_title_generator': 'Генератор заголовков YouTube',
-    'node.title.music_idea_generator': 'Генератор муз. идей',
+    'node.title.music_idea_generator': 'Генератор музыкальных идей',
     'node.title.youtube_analytics': 'YouTube Аналитика',
     'node.title.image_editor': 'Редактор Изображений',
     'node.help.text_input': 'Простое текстовое поле для ваших идей. (T)',
@@ -35,7 +37,6 @@ export const nodes = {
     'node.help.image_preview': 'Отображает изображение из файла. (I)',
     'node.help.character_card': 'Хранит изображение, имя и промпт персонажа. (Ctrl+Shift+C)',
     'node.help.gemini_chat': 'Прямое общение с Gemini AI. (G)',
-    'node.help.prompt_modifier': 'Специализированный чат для модификации и улучшения промптов.',
     'node.help.translator': 'Переводит текст на выбранный язык. (L)',
     'node.help.script_generator': 'Преобразует идею в сцены сценария. (Shift+S)',
     'node.help.script_analyzer': 'Разбивает сценарий на кадры и промпты. (Shift+D)',

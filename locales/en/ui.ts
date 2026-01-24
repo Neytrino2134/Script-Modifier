@@ -5,6 +5,9 @@
 
 
 
+
+
+
 export const ui = {
     'toolbar.edit': 'Edit (V)',
     'toolbar.cutter': 'Cut Connection (C)',
@@ -31,7 +34,7 @@ export const ui = {
     'toolbar.addImagePreview': 'Image Preview (I)',
     'toolbar.addCharacterCard': 'Character Card (Ctrl+Shift+C)',
     'toolbar.addPromptProcessor': 'Prompt Processor (P)',
-    'toolbar.addGeminiChat': 'Gemini Chat (G)',
+    'toolbar.addGeminiChat': 'Gemini Chat (Shift+M)',
     'toolbar.addTranslator': 'Translator (L)',
     'toolbar.addIdeaGenerator': 'Idea Generator (Shift+A)',
     'toolbar.addScriptGenerator': 'Script Generator (Shift+S)',
@@ -44,7 +47,7 @@ export const ui = {
     'toolbar.addNarratorTextGenerator': 'Narrator Text Generator (Shift+G)',
     'toolbar.addAudioTranscriber': 'Audio Transcriber (Shift+B)',
     'toolbar.addYouTubeTitleGenerator': 'YouTube Title Generator (Shift+T)',
-    'toolbar.addMusicIdeaGenerator': 'Music Idea Generator (Shift+M)',
+    'toolbar.addMusicIdeaGenerator': 'Music Idea Generator (M)',
     'toolbar.addYouTubeAnalytics': 'YouTube Analytics (Shift+Y)',
     'toolbar.addImageEditor': 'Image Editor',
     'toolbar.saveCanvas': 'Save Canvas (Ctrl+S)',
@@ -64,6 +67,21 @@ export const ui = {
     'toolbar.expand': 'Expand Panel',
     'toolbar.collapse': 'Collapse Panel',
     'toolbar.toggleHeaders': 'Toggle Headers',
+    
+    // Settings & Cloud
+    'settings.tab.general': 'General',
+    'settings.tab.cloud': 'Cloud Storage',
+    'settings.tab.appearance': 'Appearance',
+    'settings.cloud.connect': 'Connect Google Drive',
+    'settings.cloud.connected': 'Connected',
+    'settings.cloud.clientId': 'Google Client ID',
+    'settings.cloud.sync': 'Sync Catalogs',
+    'settings.cloud.saveProject': 'Save Project to Cloud',
+    'settings.cloud.cleanup': 'Cleanup Duplicates',
+    'settings.appearance.theme': 'Theme',
+    'settings.appearance.animations': 'Animations',
+    'settings.appearance.instantClose': 'Instant Node Close',
+
     'hotkeys.file.title': 'File',
     'hotkeys.file.save': 'Save Canvas (Ctrl+S)',
     'hotkeys.file.saveProject': 'Save Project (Ctrl+Shift+S)',
@@ -99,7 +117,7 @@ export const ui = {
     'search.node.prompt_analyzer.title': 'Prompt Analyzer',
     'search.node.prompt_analyzer.description': 'Splits a prompt into environment, character, and action. (A)',
     'search.node.character_analyzer.title': 'Character Analyzer',
-    'search.node.character_analyzer.description': 'Splits a description into character and clothing.',
+    'search.node.character_analyzer.description': 'Analyzes a character description and splits it into physical appearance and clothing.',
     'search.node.character_generator.title': 'Character Generator',
     'search.node.character_generator.description': 'Creates detailed characters from an idea. (Shift+C)',
     'search.node.image_generator.title': 'Image Generator',
@@ -109,7 +127,7 @@ export const ui = {
     'search.node.character_card.title': 'Character Card',
     'search.node.character_card.description': 'Stores a character\'s image, name, and prompt. Allows image generation, saving, and loading. (Ctrl+Shift+C)',
     'search.node.gemini_chat.title': 'Gemini Chat',
-    'search.node.gemini_chat.description': 'Node for direct conversation with Gemini AI. Maintains chat history. (G)',
+    'search.node.gemini_chat.description': 'Node for direct conversation with Gemini AI. Maintains chat history. (Shift+M)',
     'search.node.translator.title': 'Translator',
     'search.node.translator.description': 'Translates incoming text to the selected language. (L)',
     'search.node.script_generator.title': 'Script Generator',
@@ -129,7 +147,7 @@ export const ui = {
     'search.node.speech_synthesizer.title': 'Speech Synthesizer',
     'search.node.speech_synthesizer.description': 'Converts text to speech using a selected voice. (Shift+N)',
     'search.node.idea_generator.title': 'Idea Generator',
-    'search.node.idea_generator.description': 'Generates categories (Action, Place, Obstacle) and combines them into a story idea. (Shift+A)',
+    'search.node.idea_generator.description': 'Two-stage node for generating ideas (Categories -> Idea).',
     'search.node.narrator_text_generator.title': 'Narrator Text Generator',
     'search.node.narrator_text_generator.description': 'Generates text for a narrator or announcer based on a short prompt and style. (Shift+G)',
     'search.node.audio_transcriber.title': 'Audio Transcriber',
@@ -137,7 +155,7 @@ export const ui = {
     'search.node.youtube_title_generator.title': 'YouTube Title Generator',
     'search.node.youtube_title_generator.description': 'Generates catchy titles, descriptions, and tags for a YouTube video. (Shift+T)',
     'search.node.music_idea_generator.title': 'Music Idea Generator',
-    'search.node.music_idea_generator.description': 'Generates song lyrics or a musical prompt based on an idea. (Shift+M)',
+    'search.node.music_idea_generator.description': 'Generates song lyrics or a musical prompt based on an idea. (M)',
     'search.node.youtube_analytics': 'YouTube Analytics',
     'search.node.youtube_analytics.description': 'Analyzes channel statistics and provides growth strategy advice. (Shift+Y)',
     'search.node.image_editor.title': 'Image Editor',

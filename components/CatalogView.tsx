@@ -3,7 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import type { CatalogItem, LibraryItem } from '../types';
 import { CatalogItemType, LibraryItemType } from '../types';
 import { useLanguage } from '../localization';
-import { useAppContext } from '../contexts/Context';
+import { useAppContext } from '../contexts/Context'; // Import context to access cloud functions
+import { CloudIcon, CloudDownloadIcon } from './icons/AppIcons'; // Assume these icons exist
 
 interface CatalogViewProps {
   isOpen: boolean;
@@ -36,13 +37,13 @@ interface CatalogViewProps {
   onMoveLibraryItem: (itemId: string, newParentId: string | null) => void;
 }
 
-const ActionButton: React.FC<{ title: string; onClick: (e: React.MouseEvent) => void; children: React.ReactNode; className?: string }> = ({ title, onClick, children, className = "" }) => (
+const ActionButton: React.FC<{ title: string; onClick: (e: React.MouseEvent) => void; children: React.ReactNode }> = ({ title, onClick, children }) => (
     <button
         onClick={onClick}
         onMouseDown={e => e.stopPropagation()}
         aria-label={title}
         title={title}
-        className={`p-2 text-gray-300 rounded-full hover:bg-gray-600 hover:text-white transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-emerald-500 ${className}`}
+        className="p-2 text-gray-300 rounded-full hover:bg-gray-600 hover:text-white transition-colors duration-150 focus:outline-none focus:ring-1 focus:ring-emerald-500"
     >
         {children}
     </button>
@@ -56,14 +57,14 @@ const CatalogItemCard: React.FC<{
   onRename: (itemId: string, currentName: string) => void;
   onSave: (itemId: string) => void;
   onDelete: (itemId: string) => void;
-  onUploadCloud?: () => void;
   draggedItem: { id: string; tab: 'groups' | 'library' | 'generic' } | null;
   onDragStart: () => void;
   onDragEnd: () => void;
   onMoveItem: (targetFolderId: string) => void;
   isDragOver: boolean;
   setIsDragOver: (isOver: boolean) => void;
-}> = ({ item, onAddToCanvas, onNavigate, onRename, onSave, onDelete, onUploadCloud, draggedItem, onDragStart, onDragEnd, onMoveItem, isDragOver, setIsDragOver }) => {
+  onUploadToCloud: (item: CatalogItem) => void; // New Prop
+}> = ({ item, onAddToCanvas, onNavigate, onRename, onSave, onDelete, draggedItem, onDragStart, onDragEnd, onMoveItem, isDragOver, setIsDragOver, onUploadToCloud }) => {
   const { t } = useLanguage();
   const isFolder = item.type === CatalogItemType.FOLDER;
 
@@ -74,7 +75,7 @@ const CatalogItemCard: React.FC<{
     e.dataTransfer.setData('application/prompt-modifier-drag-item', JSON.stringify({
         type: item.type === CatalogItemType.GROUP ? 'catalog-group' : `catalog-data-${item.type.toLowerCase()}`,
         itemId: item.id,
-        itemData: item.data 
+        itemData: item.data // Passing basic data if small, but primarily ID
     }));
     e.dataTransfer.effectAllowed = 'copyMove';
   };
@@ -95,6 +96,7 @@ const CatalogItemCard: React.FC<{
       }
   };
 
+  // Dynamic icon based on type
   const renderIcon = () => {
       if (isFolder) return <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z" /></svg>;
       
@@ -110,9 +112,11 @@ const CatalogItemCard: React.FC<{
           case CatalogItemType.FINAL_PROMPTS:
               return <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>;
           case CatalogItemType.YOUTUBE:
+              // Analytics Data - Chart Icon
               if (item.data && item.data.type === 'youtube-analytics-data') {
-                  return <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>;
+                  return <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>;
               }
+              // Title Generator Data (default) - Thumbnail/Preview Icon
               return <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>;
           case CatalogItemType.MUSIC:
               return <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 6l12-3" /></svg>;
@@ -150,14 +154,15 @@ const CatalogItemCard: React.FC<{
         <ActionButton title={t('catalog.card.rename')} onClick={() => onRename(item.id, item.name)}>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
         </ActionButton>
-        {onUploadCloud && (
-             <ActionButton title="Save to Cloud" onClick={onUploadCloud} className={item.driveFileId ? 'text-blue-400' : 'text-gray-400'}>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
-             </ActionButton>
-        )}
         <ActionButton title={t('catalog.card.save')} onClick={() => onSave(item.id)}>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
         </ActionButton>
+        {/* Upload to Cloud Button */}
+        {!isFolder && (
+            <ActionButton title="Upload to Cloud" onClick={() => onUploadToCloud(item)}>
+               <CloudIcon className="h-5 w-5" />
+            </ActionButton>
+        )}
         <ActionButton title={t('catalog.card.delete')} onClick={() => onDelete(item.id)}>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
         </ActionButton>
@@ -173,13 +178,14 @@ const LibraryItemCard: React.FC<{
   onRename: (itemId: string, currentName: string) => void;
   onSave: (item: LibraryItem) => void;
   onDelete: (itemId: string) => void;
-  onMoveItem: (targetFolderId: string | null) => void;
   draggedItem: { id: string; tab: 'groups' | 'library' | 'generic' } | null;
   onDragStart: () => void;
   onDragEnd: () => void;
+  onMoveItem: (targetFolderId: string) => void;
   isDragOver: boolean;
   setIsDragOver: (isOver: boolean) => void;
-}> = ({ item, onNavigate, onEdit, onRename, onSave, onDelete, onMoveItem, draggedItem, onDragStart, onDragEnd, isDragOver, setIsDragOver }) => {
+  onUploadToCloud: (item: LibraryItem) => void; // New Prop
+}> = ({ item, onNavigate, onEdit, onRename, onSave, onDelete, draggedItem, onDragStart, onDragEnd, onMoveItem, isDragOver, setIsDragOver, onUploadToCloud }) => {
   const { t } = useLanguage();
   const isFolder = item.type === LibraryItemType.FOLDER;
 
@@ -263,6 +269,12 @@ const LibraryItemCard: React.FC<{
         <ActionButton title={t('catalog.card.save')} onClick={() => onSave(item)}>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
         </ActionButton>
+        {/* Upload to Cloud Button */}
+        {!isFolder && (
+            <ActionButton title="Upload to Cloud" onClick={() => onUploadToCloud(item)}>
+               <CloudIcon className="h-5 w-5" />
+            </ActionButton>
+        )}
         <ActionButton title={t('catalog.card.delete')} onClick={() => onDelete(item.id)}>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
         </ActionButton>
@@ -276,10 +288,12 @@ const CatalogView: React.FC<CatalogViewProps> = (props) => {
   const { 
     isOpen, onClose,
     currentCatalogItems, catalogPath, onCatalogNavigateBack, onCatalogNavigateToFolder, onCreateCatalogFolder, onAddGroupFromCatalog, onRenameCatalogItem, onSaveCatalogItem, onDeleteCatalogItem, onLoadCatalogItemFromFile, onMoveCatalogItem, activeCategory, setActiveCategory,
-    libraryItems = [], libraryPath = [], onNavigateBack, onNavigateToFolder, onCreateLibraryItem, onEditLibraryItem, onRenameLibraryItem, onDeleteLibraryItem, onSaveLibraryItem, onLoadLibraryItemFromFile, onMoveLibraryItem
+    libraryItems, libraryPath, onNavigateBack, onNavigateToFolder, onCreateLibraryItem, onEditLibraryItem, onRenameLibraryItem, onDeleteLibraryItem, onSaveLibraryItem, onLoadLibraryItemFromFile, onMoveLibraryItem
   } = props;
   const { t } = useLanguage();
-  const { isSyncing, handleSyncCloud, handleUploadToCloud } = useAppContext();
+  const context = useAppContext(); // Get context for cloud functions
+  const { uploadCatalogItem, syncCloudItems } = context || { uploadCatalogItem: () => {}, syncCloudItems: () => {} };
+
   const [activeTab, setActiveTab] = useState<string>(CatalogItemType.GROUP);
   const [draggedItem, setDraggedItem] = useState<{ id: string; tab: 'groups' | 'library' | 'generic' } | null>(null);
   const [dragOverTarget, setDragOverTarget] = useState<string | null>(null);
@@ -298,7 +312,7 @@ const CatalogView: React.FC<CatalogViewProps> = (props) => {
       setActiveTab(id);
       if (id !== 'library') {
           setActiveCategory(id as CatalogItemType);
-          onCatalogNavigateToFolder(null);
+          onCatalogNavigateToFolder(null); 
       } else {
           onNavigateToFolder(null);
       }
@@ -312,14 +326,35 @@ const CatalogView: React.FC<CatalogViewProps> = (props) => {
         const containerCenter = containerRect.left + containerRect.width / 2;
         const tabCenter = tabRect.left + tabRect.width / 2;
         const offset = tabCenter - containerCenter;
+
         container.scrollTo({
             left: container.scrollLeft + offset,
             behavior: 'smooth'
         });
       }
   };
+  
+  // Mapping for context
+  const getContextForTab = (tab: string) => {
+      switch(tab) {
+          case CatalogItemType.CHARACTERS: return 'characters';
+          case CatalogItemType.FINAL_PROMPTS: return 'sequences';
+          case CatalogItemType.SCRIPT: return 'scripts';
+          case 'library': return 'library';
+          default: return 'scripts'; // Fallback
+      }
+  };
 
-  const tabsList = [
+  const handleUploadClick = (item: CatalogItem | LibraryItem) => {
+       const contextStr = getContextForTab(activeTab);
+       uploadCatalogItem(item, contextStr as any);
+  };
+
+  const handleCloudSync = () => {
+       syncCloudItems();
+  };
+
+  const tabs = [
       { id: CatalogItemType.GROUP, label: t('catalog.tabs.groups') },
       { id: 'library', label: t('catalog.tabs.library') },
       { id: CatalogItemType.CHARACTERS, label: t('catalog.tabs.characters') },
@@ -360,14 +395,12 @@ const CatalogView: React.FC<CatalogViewProps> = (props) => {
           </div>
         </div>
         <div className="flex space-x-2 flex-shrink-0">
-          <button 
-            onClick={handleSyncCloud} 
-            disabled={isSyncing}
-            className={`px-3 py-2 text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center space-x-2 transition-all ${isSyncing ? 'animate-pulse' : ''}`}
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 ${isSyncing ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-            <span>{isSyncing ? 'Syncing...' : 'Sync Cloud'}</span>
+           {/* Cloud Sync Button */}
+          <button onClick={handleCloudSync} className="px-3 py-2 text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center space-x-2" title="Sync with Google Drive">
+            <CloudDownloadIcon className="h-5 w-5" />
+            <span className="hidden sm:inline">Sync Cloud</span>
           </button>
+
           <button onClick={onLoadCatalogItemFromFile} className="px-3 py-2 text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-md flex items-center space-x-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
             <span>{t('catalog.loadFromFile')}</span>
@@ -379,7 +412,7 @@ const CatalogView: React.FC<CatalogViewProps> = (props) => {
         </div>
       </div>
       <div className="flex-grow overflow-y-auto p-4">
-        {(currentCatalogItems && currentCatalogItems.length > 0) ? (
+        {currentCatalogItems.length > 0 ? (
           <div className="grid grid-cols-3 gap-4">
             {currentCatalogItems.map((item) => (
               <CatalogItemCard 
@@ -390,13 +423,13 @@ const CatalogView: React.FC<CatalogViewProps> = (props) => {
                 onRename={onRenameCatalogItem} 
                 onSave={onSaveCatalogItem} 
                 onDelete={onDeleteCatalogItem}
-                onUploadCloud={() => handleUploadToCloud(item)}
                 draggedItem={draggedItem}
                 onDragStart={() => setDraggedItem({ id: item.id, tab: item.type === CatalogItemType.GROUP ? 'groups' : 'generic' })}
                 onDragEnd={handleDragEnd}
-                onMoveItem={(targetFolderId) => onMoveCatalogItem(item.id, targetFolderId)}
+                onMoveItem={(targetFolderId) => onMoveCatalogItem(draggedItem!.id, targetFolderId)}
                 isDragOver={dragOverTarget === item.id}
                 setIsDragOver={(isOver) => setDragOverTarget(isOver ? item.id : null)}
+                onUploadToCloud={handleUploadClick}
               />
             ))}
           </div>
@@ -441,6 +474,12 @@ const CatalogView: React.FC<CatalogViewProps> = (props) => {
           </div>
         </div>
         <div className="flex space-x-2 flex-shrink-0">
+           {/* Cloud Sync Button */}
+           <button onClick={handleCloudSync} className="px-3 py-2 text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white rounded-md flex items-center space-x-2" title="Sync with Google Drive">
+            <CloudDownloadIcon className="h-5 w-5" />
+            <span className="hidden sm:inline">Sync Cloud</span>
+          </button>
+
           <button onClick={onLoadLibraryItemFromFile} className="px-3 py-2 text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-md flex items-center space-x-2">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" /></svg>
             <span>{t('library.loadFromFile')}</span>
@@ -456,7 +495,7 @@ const CatalogView: React.FC<CatalogViewProps> = (props) => {
         </div>
       </div>
       <div className="flex-grow overflow-y-auto p-4">
-        {(libraryItems && libraryItems.length > 0) ? (
+        {libraryItems.length > 0 ? (
           <div className="grid grid-cols-3 gap-4">
             {libraryItems.map((item) => (
               <LibraryItemCard 
@@ -467,12 +506,13 @@ const CatalogView: React.FC<CatalogViewProps> = (props) => {
                 onRename={onRenameLibraryItem} 
                 onSave={onSaveLibraryItem} 
                 onDelete={onDeleteLibraryItem} 
-                onMoveItem={(targetId) => onMoveLibraryItem(item.id, targetId)}
                 draggedItem={draggedItem}
                 onDragStart={() => setDraggedItem({ id: item.id, tab: 'library' })}
                 onDragEnd={handleDragEnd}
+                onMoveItem={(targetFolderId) => onMoveLibraryItem(draggedItem!.id, targetFolderId)}
                 isDragOver={dragOverTarget === item.id}
                 setIsDragOver={(isOver) => setDragOverTarget(isOver ? item.id : null)}
+                onUploadToCloud={handleUploadClick}
               />
             ))}
           </div>
@@ -496,7 +536,7 @@ const CatalogView: React.FC<CatalogViewProps> = (props) => {
              className="flex items-end space-x-1 overflow-x-auto pb-2 w-full mr-4 no-scrollbar relative"
              style={{ scrollbarWidth: 'none' }} 
           >
-                {tabsList.map((tab, index) => (
+                {tabs.map((tab, index) => (
                     <button 
                         key={tab.id}
                         ref={(el) => { tabRefs.current[index] = el }}

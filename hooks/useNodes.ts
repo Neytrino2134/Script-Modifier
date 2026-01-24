@@ -16,7 +16,6 @@ export const getNodeDefaults = (type: NodeType, t: (key: string) => string) => {
         [NodeType.IMAGE_GENERATOR]: 400,
         [NodeType.IMAGE_PREVIEW]: 300,
         [NodeType.GEMINI_CHAT]: 400,
-        [NodeType.PROMPT_MODIFIER]: 460,
         [NodeType.TRANSLATOR]: 380,
         [NodeType.ERROR_ANALYZER]: 380,
         [NodeType.NOTE]: 440,
@@ -45,7 +44,6 @@ export const getNodeDefaults = (type: NodeType, t: (key: string) => string) => {
         [NodeType.IMAGE_GENERATOR]: 520,
         [NodeType.IMAGE_PREVIEW]: 340,
         [NodeType.GEMINI_CHAT]: 640,
-        [NodeType.PROMPT_MODIFIER]: 800,
         [NodeType.TRANSLATOR]: 640,
         [NodeType.ERROR_ANALYZER]: 280,
         [NodeType.NOTE]: 640,
@@ -92,12 +90,6 @@ export const getNodeDefaults = (type: NodeType, t: (key: string) => string) => {
             prompt: '',
             scenes: [],
             detailedCharacters: []
-        });
-    } else if (type === NodeType.PROMPT_MODIFIER) {
-        value = JSON.stringify({
-            messages: [],
-            currentInput: '',
-            mode: 'prompt'
         });
     }
 

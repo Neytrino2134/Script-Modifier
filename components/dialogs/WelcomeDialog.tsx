@@ -8,11 +8,10 @@ interface WelcomeDialogProps {
   isFirstRun: boolean;
 }
 
-const MASKED_KEY = '●●●●●●●●';
-
 const WelcomeDialog: React.FC<WelcomeDialogProps> = ({ isOpen, onSave, isFirstRun }) => {
   const { t, language, setLanguage } = useLanguage();
   const [apiKey, setApiKey] = useState('');
+  const [currentMask, setCurrentMask] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   
   // Animation States
@@ -40,7 +39,16 @@ const WelcomeDialog: React.FC<WelcomeDialogProps> = ({ isOpen, onSave, isFirstRu
     if (isOpen) {
       setShouldRender(true);
       const storedKey = localStorage.getItem('gemini-api-key');
-      setApiKey(storedKey ? MASKED_KEY : '');
+      
+      if (storedKey) {
+          const mask = '●'.repeat(storedKey.length);
+          setApiKey(mask);
+          setCurrentMask(mask);
+      } else {
+          setApiKey('');
+          setCurrentMask('');
+      }
+
       setIsExiting(false);
       requestAnimationFrame(() => {
         setIsVisible(true);
@@ -95,7 +103,8 @@ const WelcomeDialog: React.FC<WelcomeDialogProps> = ({ isOpen, onSave, isFirstRu
   };
 
   const handleSave = () => {
-    const keyToSave = apiKey.trim() === MASKED_KEY ? '' : apiKey.trim();
+    // If key matches mask, send empty string to indicate "no change" (or use existing)
+    const keyToSave = (currentMask && apiKey === currentMask) ? '' : apiKey.trim();
     triggerSaveSequence(keyToSave, false);
   };
 

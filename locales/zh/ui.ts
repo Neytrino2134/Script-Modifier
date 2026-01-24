@@ -5,6 +5,8 @@
 
 
 
+
+
 export const ui = {
     'toolbar.edit': '编辑 (V)',
     'toolbar.cutter': '断开连接 (C)',
@@ -31,7 +33,7 @@ export const ui = {
     'toolbar.addImagePreview': '图像预览 (I)',
     'toolbar.addCharacterCard': '角色卡片 (Ctrl+Shift+C)',
     'toolbar.addPromptProcessor': '提示词处理器 (P)',
-    'toolbar.addGeminiChat': 'Gemini 聊天 (G)',
+    'toolbar.addGeminiChat': 'Gemini 聊天 (Shift+M)',
     'toolbar.addTranslator': '翻译器 (L)',
     'toolbar.addIdeaGenerator': '创意生成器 (Shift+A)',
     'toolbar.addScriptGenerator': '剧本生成器 (Shift+S)',
@@ -44,7 +46,7 @@ export const ui = {
     'toolbar.addNarratorTextGenerator': '旁白文本生成器 (Shift+G)',
     'toolbar.addAudioTranscriber': '音频转录器 (Shift+B)',
     'toolbar.addYouTubeTitleGenerator': 'YouTube 标题生成器 (Shift+T)',
-    'toolbar.addMusicIdeaGenerator': '音乐创意生成器 (Shift+M)',
+    'toolbar.addMusicIdeaGenerator': '音乐创意生成器 (M)',
     'toolbar.addYouTubeAnalytics': 'YouTube 分析 (Shift+Y)',
     'toolbar.saveCanvas': '保存画布 (Ctrl+S)',
     'toolbar.saveProject': '保存项目 (Ctrl+Shift+S)',
@@ -108,7 +110,7 @@ export const ui = {
     'search.node.character_card.title': '角色卡片',
     'search.node.character_card.description': '存储角色的图像、名称和提示词。(Ctrl+Shift+C)',
     'search.node.gemini_chat.title': 'Gemini 聊天',
-    'search.node.gemini_chat.description': '与 Gemini AI 直接对话。(G)',
+    'search.node.gemini_chat.description': '与 Gemini AI 直接对话。(Shift+M)',
     'search.node.translator.title': '翻译器',
     'search.node.translator.description': '将文本翻译成选定语言。(L)',
     'search.node.script_generator.title': '剧本生成器',
@@ -136,7 +138,7 @@ export const ui = {
     'search.node.youtube_title_generator.title': 'YouTube 标题生成器',
     'search.node.youtube_title_generator.description': '生成吸引人的标题、描述和标签。',
     'search.node.music_idea_generator.title': '音乐创意生成器',
-    'search.node.music_idea_generator.description': '生成歌词或音乐提示词。(Shift+M)',
+    'search.node.music_idea_generator.description': '生成歌词或音乐提示词。(M)',
     'search.node.youtube_analytics.description': '分析频道统计数据并提供增长建议。',
     'search.node.image_editor.title': '图像编辑器',
     'search.node.image_editor.description': '使用 AI 编辑图像（修复、扩展）。',

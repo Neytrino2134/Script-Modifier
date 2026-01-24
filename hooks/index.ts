@@ -6,7 +6,7 @@ export * from './useCanvasIO';
 export * from './useGroups';
 export * from './useInteraction';
 export * from './useUIState';
-export { useContentCatalog as useCatalog } from './useCatalog';
+export * from './useCatalog';
 export * from './usePermissions';
 export * from './usePromptLibrary';
 export * from './useDialogsAndUI';

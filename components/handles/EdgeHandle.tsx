@@ -24,12 +24,8 @@ const EdgeHandle: React.FC<EdgeHandleProps> = ({ id, title, color, handleCursor,
       display: 'flex',
       alignItems: 'center',
       zIndex: 16,
+      ...(position === 'left' ? { left: '-10px' } : { right: '-10px' })
     };
-    if (position === 'left') {
-        containerStyle.left = '-10px';
-    } else {
-        containerStyle.right = '-10px';
-    }
 
     return (
         <div

@@ -5,6 +5,8 @@
 
 
 
+
+
 export const ui = {
     'toolbar.edit': 'Bearbeiten (V)',
     'toolbar.cutter': 'Verbindung trennen (C)',
@@ -31,7 +33,7 @@ export const ui = {
     'toolbar.addImagePreview': 'Bild-Vorschau (I)',
     'toolbar.addCharacterCard': 'Charakterkarte (Strg+Shift+C)',
     'toolbar.addPromptProcessor': 'Prompt-Prozessor (P)',
-    'toolbar.addGeminiChat': 'Gemini Chat (G)',
+    'toolbar.addGeminiChat': 'Gemini Chat (Shift+M)',
     'toolbar.addTranslator': 'Übersetzer (L)',
     'toolbar.addIdeaGenerator': 'Ideen-Generator (Shift+A)',
     'toolbar.addScriptGenerator': 'Drehbuch-Generator (Shift+S)',
@@ -44,7 +46,7 @@ export const ui = {
     'toolbar.addNarratorTextGenerator': 'Erzählertext-Generator (Shift+G)',
     'toolbar.addAudioTranscriber': 'Audio-Transkribierer (Shift+B)',
     'toolbar.addYouTubeTitleGenerator': 'YouTube Titel-Generator (Shift+T)',
-    'toolbar.addMusicIdeaGenerator': 'Musikideen-Generator (Shift+M)',
+    'toolbar.addMusicIdeaGenerator': 'Musikideen-Generator (M)',
     'toolbar.addYouTubeAnalytics': 'YouTube Analytics (Shift+Y)',
     'toolbar.saveCanvas': 'Canvas speichern (Strg+S)',
     'toolbar.saveProject': 'Projekt speichern (Strg+Shift+S)',
@@ -98,7 +100,7 @@ export const ui = {
     'search.node.prompt_analyzer.title': 'Prompt-Analysator',
     'search.node.prompt_analyzer.description': 'Teilt einen Prompt in Umgebung, Charakter und Aktion auf. (A)',
     'search.node.character_analyzer.title': 'Charakter-Analysator',
-    'search.node.character_analyzer.description': 'Teilt eine Beschreibung in Charakter & Kleidung auf.',
+    'search.node.character_analyzer.description': 'Teilt eine Beschreibung in Aussehen und Kleidung auf.',
     'search.node.character_generator.title': 'Charakter-Generator',
     'search.node.character_generator.description': 'Erstellt detaillierte Charaktere aus einer Idee. (Shift+C)',
     'search.node.image_generator.title': 'Bild-Generator',
@@ -108,7 +110,7 @@ export const ui = {
     'search.node.character_card.title': 'Charakterkarte',
     'search.node.character_card.description': 'Speichert Bild, Name und Prompt eines Charakters. (Strg+Shift+C)',
     'search.node.gemini_chat.title': 'Gemini Chat',
-    'search.node.gemini_chat.description': 'Direkte Unterhaltung mit Gemini KI. (G)',
+    'search.node.gemini_chat.description': 'Direkte Unterhaltung mit Gemini KI. (Shift+M)',
     'search.node.translator.title': 'Übersetzer',
     'search.node.translator.description': 'Übersetzt Text in eine gewählte Sprache. (L)',
     'search.node.script_generator.title': 'Drehbuch-Generator',
@@ -136,7 +138,7 @@ export const ui = {
     'search.node.youtube_title_generator.title': 'YouTube Titel-Generator',
     'search.node.youtube_title_generator.description': 'Generiert ansprechende Titel, Beschreibungen und Tags für YouTube.',
     'search.node.music_idea_generator.title': 'Musikideen-Generator',
-    'search.node.music_idea_generator.description': 'Generiert Songtexte oder Musik-Prompts. (Shift+M)',
+    'search.node.music_idea_generator.description': 'Generiert Songtexte oder Musik-Prompts. (M)',
     'search.node.youtube_analytics': 'YouTube Analytics',
     'search.node.youtube_analytics.description': 'Analysiert Kanalstatistiken und gibt Wachstumstipps.',
     'search.node.image_editor.title': 'Bild-Editor',

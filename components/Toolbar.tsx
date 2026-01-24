@@ -1,8 +1,10 @@
 
+
 import React, { useState, useRef, useEffect } from 'react';
 import { NodeType, Tool, LineStyle, Point } from '../types';
 import { useLanguage } from '../localization';
 import Tooltip from './ui/Tooltip';
+import { useAppContext } from '../contexts/Context'; // Added import
 
 interface ToolbarProps {
   activeTool: Tool;
@@ -31,7 +33,8 @@ const ToolButton: React.FC<{
     customClasses?: string;
     hoverBgClass?: string;
     sizeClass?: string;
-}> = ({ title, onClick, isActive = false, children, tooltipPosition = 'top', customClasses, hoverBgClass, sizeClass = "h-9 w-9" }) => {
+    id?: string;
+}> = ({ title, onClick, isActive = false, children, tooltipPosition = 'top', customClasses, hoverBgClass, sizeClass = "h-9 w-9", id }) => {
     const baseClasses = `p-1.5 rounded-md transition-colors duration-200 focus:outline-none flex items-center justify-center ${sizeClass}`;
     const activeClasses = "bg-emerald-600 text-white shadow-md";
     // Default hover is now emerald-600 unless overridden (e.g., for color groups)
@@ -44,6 +47,7 @@ const ToolButton: React.FC<{
     return (
         <Tooltip title={title} position={tooltipPosition}>
             <button
+                id={id}
                 onClick={onClick}
                 aria-label={title}
                 className={combinedClasses}
