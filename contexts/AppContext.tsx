@@ -1,4 +1,3 @@
-
 import React, { createContext, useCallback, useMemo, useState, ReactNode, useContext, useRef, useEffect } from 'react';
 import type { Node, Connection, Point, Group, LibraryItem, LineStyle, Tool, CatalogItem, TabState, ConnectingInfo } from '../types';
 import { NodeType, LibraryItemType, CatalogItemType } from '../types';
@@ -535,6 +534,29 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         mergeCatalogItems,
         mergeLibraryItems
     );
+
+    // *** ELECTRON EXIT HANDLING ***
+    useEffect(() => {
+        // If running in Electron, attach the listener for the close request
+        if ((window as any).electronAPI) {
+            (window as any).electronAPI.onCloseRequested(() => {
+                const hasContent = tabs.some(tab => tab.nodes.length > 0);
+                if (hasContent) {
+                    setConfirmInfo({
+                        title: t('dialog.exit.title'),
+                        message: t('dialog.exit.message'),
+                        onConfirm: () => {
+                            (window as any).electronAPI.confirmClose();
+                        }
+                    });
+                } else {
+                     // No content, just close immediately
+                     (window as any).electronAPI.confirmClose();
+                }
+            });
+        }
+    }, [tabs, t, setConfirmInfo]);
+
 
     const closeTab = useCallback((index: number) => {
         setTabs(currentTabs => {

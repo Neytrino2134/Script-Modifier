@@ -3,6 +3,85 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import type { NodeContentProps } from '../../types';
 import { ActionButton } from '../ActionButton';
 
+// Simple Markdown Parser to avoid external dependencies for basic chat formatting
+const renderMarkdown = (text: string) => {
+    if (!text) return null;
+    
+    // Helper to parse inline styles (Bold and Code)
+    const parseInline = (str: string) => {
+        // 1. Split by Bold (**text**)
+        const parts = str.split(/(\*\*.*?\*\*)/g);
+        return parts.map((part, i) => {
+            if (part.startsWith('**') && part.endsWith('**')) {
+                // Remove asterisks and style
+                return <strong key={i} className="text-emerald-200 font-bold">{part.slice(2, -2)}</strong>;
+            }
+            
+            // 2. Split by Inline Code (`text`) within non-bold parts
+            const codeParts = part.split(/(`.*?`)/g);
+            return codeParts.map((cp, j) => {
+                if (cp.startsWith('`') && cp.endsWith('`')) {
+                    return <code key={`${i}-${j}`} className="bg-gray-900/80 text-cyan-300 px-1.5 py-0.5 rounded font-mono text-xs border border-gray-700">{cp.slice(1, -1)}</code>;
+                }
+                return cp;
+            });
+        });
+    };
+
+    const lines = text.split('\n');
+    
+    return lines.map((line, index) => {
+        const trimmed = line.trim();
+
+        // Headers
+        if (trimmed.startsWith('### ')) {
+            return <h5 key={index} className="text-emerald-400 font-bold text-sm mt-3 mb-1 uppercase tracking-wide">{parseInline(trimmed.substring(4))}</h5>;
+        }
+        if (trimmed.startsWith('## ')) {
+            return <h4 key={index} className="text-cyan-400 font-bold text-base mt-4 mb-2 border-b border-gray-600/50 pb-1">{parseInline(trimmed.substring(3))}</h4>;
+        }
+        if (trimmed.startsWith('# ')) {
+            return <h3 key={index} className="text-white font-black text-lg mt-5 mb-2">{parseInline(trimmed.substring(2))}</h3>;
+        }
+
+        // Lists
+        if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+            return (
+                <div key={index} className="flex items-start ml-2 mb-1">
+                    <span className="mr-2 text-emerald-500 font-bold">•</span>
+                    <span className="text-gray-200">{parseInline(trimmed.substring(2))}</span>
+                </div>
+            );
+        }
+        
+        // Numbered Lists (Simple check for "1. ")
+        if (/^\d+\.\s/.test(trimmed)) {
+             const dotIndex = trimmed.indexOf('.');
+             const number = trimmed.substring(0, dotIndex + 1);
+             const content = trimmed.substring(dotIndex + 1);
+             return (
+                 <div key={index} className="flex items-start ml-1 mb-1">
+                    <span className="mr-1 text-cyan-500 font-mono text-xs pt-0.5">{number}</span>
+                    <span className="text-gray-200">{parseInline(content)}</span>
+                </div>
+             );
+        }
+        
+        // Horizontal Rule
+        if (trimmed === '---' || trimmed === '***') {
+            return <hr key={index} className="my-3 border-gray-600/50" />;
+        }
+
+        // Empty lines (for spacing)
+        if (!trimmed) {
+            return <div key={index} className="h-2"></div>;
+        }
+
+        // Regular Paragraph
+        return <p key={index} className="text-gray-300 leading-relaxed min-h-[1em]">{parseInline(line)}</p>;
+    });
+};
+
 const GeminiChatNode: React.FC<NodeContentProps> = ({ node, onValueChange, onSendMessage, isChatting, isStopping, onStopGeneration, t, deselectAllNodes }) => {
     const isLoading = isChatting === node.id;
     const chatValue = useMemo(() => {
@@ -85,12 +164,19 @@ const GeminiChatNode: React.FC<NodeContentProps> = ({ node, onValueChange, onSen
                 )}
                 {messages.map((msg: { role: string, content: string }, index: number) => (
                     <div key={index} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`relative group max-w-[80%] p-3 rounded-lg ${msg.role === 'user' ? 'bg-emerald-600' : 'bg-gray-700'}`}>
-                            <p className="text-sm whitespace-pre-wrap break-words">{msg.content}</p>
+                        <div className={`relative group max-w-[90%] p-3 rounded-lg ${msg.role === 'user' ? 'bg-emerald-600 text-white' : 'bg-gray-800 border border-gray-700'}`}>
+                            {msg.role === 'user' ? (
+                                <p className="text-sm whitespace-pre-wrap break-words">{msg.content}</p>
+                            ) : (
+                                <div className="text-sm break-words">
+                                    {renderMarkdown(msg.content)}
+                                </div>
+                            )}
+                            
                             {msg.role === 'model' && (
                                 <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <ActionButton tooltipPosition="left" title={t('node.action.copy')} onClick={() => navigator.clipboard.writeText(msg.content)}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                         </svg>
                                     </ActionButton>
@@ -101,11 +187,11 @@ const GeminiChatNode: React.FC<NodeContentProps> = ({ node, onValueChange, onSen
                 ))}
                 {isLoading && (
                     <div className="flex justify-start">
-                        <div className="max-w-[80%] p-3 rounded-lg bg-gray-700">
+                        <div className="max-w-[80%] p-3 rounded-lg bg-gray-800 border border-gray-700">
                             <div className="flex items-center space-x-2">
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse"></div>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '150ms' }}></div>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: '300ms' }}></div>
+                                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" style={{ animationDelay: '150ms' }}></div>
+                                <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" style={{ animationDelay: '300ms' }}></div>
                             </div>
                         </div>
                     </div>
@@ -119,7 +205,7 @@ const GeminiChatNode: React.FC<NodeContentProps> = ({ node, onValueChange, onSen
                     placeholder={t('node.content.chatPlaceholder')}
                     onWheel={e => e.stopPropagation()}
                     onMouseDown={(e) => e.stopPropagation()}
-                    className="w-full p-2 pr-10 bg-gray-700 border border-transparent rounded-md resize-y focus:border-emerald-500 focus:ring-0 focus:outline-none custom-scrollbar overflow-y-scroll min-h-[80px]"
+                    className="w-full p-2 pr-10 bg-gray-700 border border-transparent rounded-md resize-y focus:border-emerald-500 focus:ring-0 focus:outline-none custom-scrollbar overflow-y-scroll min-h-[80px] text-white placeholder-gray-400"
                     rows={2}
                     onFocus={deselectAllNodes}
                 />

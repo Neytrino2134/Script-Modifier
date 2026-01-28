@@ -10,6 +10,7 @@ const FAKE_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/5
 
 // Store custom download path in memory
 let customDownloadPath = '';
+let isQuitting = false; // Flag to check if we are forcibly quitting
 
 const createWindow = () => {
   const isDev = !app.isPackaged;
@@ -37,6 +38,15 @@ const createWindow = () => {
 
   // Hide menu bar for app-like feel
   win.setMenuBarVisibility(false);
+
+  // Intercept the close event
+  win.on('close', (e) => {
+    if (!isQuitting) {
+      e.preventDefault(); // Stop the window from closing immediately
+      // Send a message to the renderer process (React) to ask for confirmation
+      win.webContents.send('app:request-close');
+    }
+  });
 
   // 3. Handle external links and popups (Google Login)
   win.webContents.setWindowOpenHandler(({ url }) => {
@@ -106,6 +116,12 @@ ipcMain.handle('dialog:selectFolder', async () => {
 
 ipcMain.on('app:setDownloadPath', (event, path) => {
   customDownloadPath = path;
+});
+
+// Listener for when React confirms it's okay to close
+ipcMain.on('app:quit-confirmed', () => {
+  isQuitting = true;
+  app.quit();
 });
 
 app.whenReady().then(() => {

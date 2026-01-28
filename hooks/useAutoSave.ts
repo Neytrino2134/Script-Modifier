@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from 'react';
 import { TabState } from '../types';
 
@@ -87,6 +86,10 @@ export const useAutoSave = (
         const handleBeforeUnload = (e: BeforeUnloadEvent) => {
             // Bypass prompt if the app is performing a deliberate hard reload
             if ((window as any).isReloading) return;
+
+            // If running in Electron (electronAPI exists), do NOT use the browser native popup.
+            // The Main process interception + React Modal logic in AppContext will handle it.
+            if ((window as any).electronAPI) return;
 
             // Check the ref current value to get the latest state without closure staleness
             const hasContent = tabsRef.current.some(tab => tab.nodes.length > 0);
