@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../../localization';
-import { useGoogleDrive } from '../../hooks/useGoogleDrive';
 import { useAppContext } from '../../contexts/Context';
 
 interface SettingsDialogProps {
@@ -17,9 +16,9 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ isOpen, onClose, onSave
   const context = useAppContext();
   
   // Safe destructuring with fallbacks for critical props
+  // Note: we now access googleDrive from context
   const { 
-      saveDataToCatalog = () => {}, 
-      importCatalog = () => {},
+      googleDrive
   } = context || {};
 
   // General State
@@ -27,22 +26,8 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ isOpen, onClose, onSave
   const [useFreeKey, setUseFreeKey] = useState(useFreeKeyProp);
   const [downloadPath, setDownloadPath] = useState('');
   
-  // Cloud State
-  const drive = useGoogleDrive(
-      context?.addToast || ((msg) => console.log(msg)),
-      saveDataToCatalog,
-      (g, n, c) => {}, // not used directly here, but available in hook
-      importCatalog,
-      () => ({ // Get All Project Data func
-          type: 'script-modifier-project',
-          timestamp: Date.now(),
-          appState: context ? { activeTabIndex: context.activeTabIndex, isSnapToGrid: context.isSnapToGrid, lineStyle: context.lineStyle } : {},
-          tabs: context?.tabs || [], 
-          catalog: context?.currentCatalogItems || [], 
-          library: context?.libraryItems || []
-      })
-  );
-  const [googleClientId, setGoogleClientId] = useState(drive.clientId);
+  // Cloud State - Consume from Context
+  const [googleClientId, setGoogleClientId] = useState(googleDrive?.clientId || '');
 
   // Dragging
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -59,7 +44,10 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ isOpen, onClose, onSave
       setShouldRender(true);
       setApiKey(currentApiKey);
       setUseFreeKey(useFreeKeyProp);
-      setGoogleClientId(drive.clientId);
+      // Sync client ID from context state if available
+      if (googleDrive) {
+          setGoogleClientId(googleDrive.clientId);
+      }
       
       // Position Logic
       try {
@@ -100,14 +88,18 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ isOpen, onClose, onSave
       }, 300); // Wait for transition duration
       return () => clearTimeout(timer);
     }
-  }, [isOpen, currentApiKey, useFreeKeyProp, drive.clientId]);
+  }, [isOpen, currentApiKey, useFreeKeyProp, googleDrive?.clientId]);
 
   const handleSave = () => {
     // Save Position
     localStorage.setItem('script-modifier-settings-pos', JSON.stringify(position));
 
     onSave({ key: apiKey, useFree: useFreeKey });
-    drive.setClientId(googleClientId);
+    
+    // Update Client ID in context
+    if (googleDrive) {
+        googleDrive.setClientId(googleClientId);
+    }
     
     // Send download path to Electron if available
     if ((window as any).electronAPI) {
@@ -174,7 +166,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ isOpen, onClose, onSave
       }
   };
 
-  if (!shouldRender) return null;
+  if (!shouldRender || !googleDrive) return null;
 
   return (
     // Wrapper: Fixed, covers screen but allows clicks through (pointer-events-none)
@@ -285,34 +277,34 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ isOpen, onClose, onSave
                 <div className="flex items-center justify-between bg-gray-900/50 p-3 rounded-lg border border-gray-700">
                      <div>
                          <h4 className="text-sm font-bold text-gray-200">Google Drive</h4>
-                         <p className="text-xs text-gray-500">{drive.isAuthenticated ? t('settings.cloud.connected') : "Not connected"}</p>
+                         <p className="text-xs text-gray-500">{googleDrive.isAuthenticated ? t('settings.cloud.connected') : "Not connected"}</p>
                      </div>
                      <button 
-                        onClick={drive.handleConnect}
-                        disabled={!googleClientId || drive.isAuthenticated}
-                        className={`px-3 py-1.5 rounded-md font-bold text-xs transition-colors ${drive.isAuthenticated ? 'bg-green-900/50 text-green-400 cursor-default border border-green-700' : 'bg-emerald-600 hover:bg-emerald-700 text-white'}`}
+                        onClick={googleDrive.handleConnect}
+                        disabled={!googleClientId || googleDrive.isAuthenticated}
+                        className={`px-3 py-1.5 rounded-md font-bold text-xs transition-colors ${googleDrive.isAuthenticated ? 'bg-green-900/50 text-green-400 cursor-default border border-green-700' : 'bg-emerald-600 hover:bg-emerald-700 text-white'}`}
                      >
-                         {drive.isAuthenticated ? "Connected" : t('settings.cloud.connect')}
+                         {googleDrive.isAuthenticated ? "Connected" : t('settings.cloud.connect')}
                      </button>
                 </div>
 
-                {drive.isAuthenticated && (
+                {googleDrive.isAuthenticated && (
                     <div className="space-y-2">
                         <button 
-                            onClick={drive.handleSyncCatalogs}
-                            disabled={drive.isSyncing}
+                            onClick={googleDrive.handleSyncCatalogs}
+                            disabled={googleDrive.isSyncing}
                             className="w-full p-2 bg-gray-700 hover:bg-gray-600 rounded-md text-left flex items-center justify-between group transition-colors"
                         >
                             <div>
                                 <div className="font-bold text-gray-200 text-sm">{t('settings.cloud.sync')}</div>
                                 <div className="text-[10px] text-gray-400">Download from Drive</div>
                             </div>
-                            {drive.isSyncing ? <div className="animate-spin h-4 w-4 border-2 border-emerald-500 border-t-transparent rounded-full"></div> : <svg className="w-4 h-4 text-gray-500 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>}
+                            {googleDrive.isSyncing ? <div className="animate-spin h-4 w-4 border-2 border-emerald-500 border-t-transparent rounded-full"></div> : <svg className="w-4 h-4 text-gray-500 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>}
                         </button>
                         
                         <button 
-                            onClick={drive.handleSaveToDrive}
-                            disabled={drive.isSyncing}
+                            onClick={googleDrive.handleSaveToDrive}
+                            disabled={googleDrive.isSyncing}
                             className="w-full p-2 bg-gray-700 hover:bg-gray-600 rounded-md text-left flex items-center justify-between group transition-colors"
                         >
                             <div>
@@ -320,6 +312,18 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({ isOpen, onClose, onSave
                                 <div className="text-[10px] text-gray-400">Backup full project</div>
                             </div>
                             <svg className="w-4 h-4 text-gray-500 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                        </button>
+                        
+                        <button 
+                            onClick={googleDrive.handleCleanupDuplicates}
+                            disabled={googleDrive.isSyncing}
+                            className="w-full p-2 bg-gray-700 hover:bg-gray-600 rounded-md text-left flex items-center justify-between group transition-colors"
+                        >
+                            <div>
+                                <div className="font-bold text-gray-200 text-sm">{t('settings.cloud.cleanup')}</div>
+                                <div className="text-[10px] text-gray-400">Remove duplicate files</div>
+                            </div>
+                            <svg className="w-4 h-4 text-gray-500 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                         </button>
                     </div>
                 )}

@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useLayoutEffect } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -17,7 +18,7 @@ export const Tooltip: React.FC<TooltipProps> = ({ title, children, position = 'b
     const updatePosition = () => {
         if (triggerRef.current && isVisible) {
             const rect = triggerRef.current.getBoundingClientRect();
-            const gap = 6;
+            const gap = 8; // Increased gap slightly to prevent cursor overlap flickering
             let top = 0;
             let left = 0;
 
@@ -62,16 +63,15 @@ export const Tooltip: React.FC<TooltipProps> = ({ title, children, position = 'b
         right: '-translate-y-1/2',
     };
 
-    // If no title, render children directly without wrapper logic to save resources, 
-    // but keep wrapper for consistency in styling if className is provided.
     if (!title) {
-        return <div className={`relative flex items-center justify-center ${className}`}>{children}</div>;
+        return <div className={`relative inline-flex items-center justify-center ${className}`}>{children}</div>;
     }
 
     return (
         <div 
             ref={triggerRef}
-            className={`relative flex items-center justify-center ${className}`}
+            // Changed from 'flex' to 'inline-flex' to hug content tightly and prevent layout fighting in toolbars
+            className={`relative inline-flex items-center justify-center ${className}`}
             onMouseEnter={() => setIsVisible(true)}
             onMouseLeave={() => setIsVisible(false)}
             onMouseDown={() => setIsVisible(false)}
@@ -79,11 +79,12 @@ export const Tooltip: React.FC<TooltipProps> = ({ title, children, position = 'b
             {children}
             {isVisible && createPortal(
                 <div
-                    className={`fixed z-[9999] px-2 py-1 bg-gray-900 text-gray-200 text-xs font-medium rounded shadow-xl pointer-events-none transition-opacity duration-200 ${transformClasses[position]} ${contentClassName || 'whitespace-nowrap'}`}
+                    // Z-Index increased to 9999 to ensure visibility over all panels/modals
+                    // pointer-events-none is CRITICAL to prevent the tooltip from capturing mouse events (causing flickering)
+                    className={`fixed z-[9999] px-2 py-1 bg-gray-900 text-gray-200 text-xs font-medium rounded shadow-xl border border-gray-700 pointer-events-none transition-opacity duration-200 ${transformClasses[position]} ${contentClassName || 'whitespace-nowrap'}`}
                     style={{ 
                         top: coords.top, 
                         left: coords.left,
-                        // Ensure it's on top of everything
                         isolation: 'isolate'
                     }}
                     role="tooltip"

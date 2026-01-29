@@ -338,4 +338,43 @@ export const nodes = {
     'node.content.spm_stack.physics': '2. Fizika va Mantiq',
     'node.content.spm_stack.hierarchy': '3. Subyekt Ierarxiyasi',
     'node.content.spm_stack.construction': '4. Qurilish va Format',
+    'node.content.suffix': 'Suffiks',
+
+    // Script Generator Stack Headers
+    'node.content.scriptGenerationStack': 'SSENARIY GENERATSIYA STEKI',
+    'node.content.entityGenerationStack': 'ENTITI GENERATSIYA STEKI',
+    'node.content.sg_stack.priming': 'PRAYMING VA KONTEKST',
+    'node.content.sg_stack.narrative': 'NARRATIV MOTOR',
+    'node.content.sg_stack.world': 'VIZUAL DUNYO',
+    'node.content.sg_stack.constraints': 'FORMAT VA CHEKLOVLAR',
+    'node.content.mainChars': 'ASOSIY',
+    'node.content.secChars': 'IKKINCHI DARAJALI',
+    'node.content.keyItems': 'BUYUMLAR',
+    'node.content.thumbnailPrompt': 'Muqova Prompti',
+
+    // Script Analyzer Stack Headers
+    'node.content.stack.system': '1. TIZIM VA KONTEKST',
+    'node.content.stack.role': '2. ROL VA MANTIQ',
+    'node.content.stack.cinematography': '3. KINEMATOGRAFIYA',
+    'node.content.stack.world': '4. DUNYO VA DOIMIYLIK',
+
+    // Tag Editor
+    'node.content.tagEditor.aiTitle': 'AI Avto-Teglash',
+    'node.content.tagEditor.aiPlaceholder': 'Masalan: 80s Synthwave, Space Theme',
+    'node.content.tagEditor.aiGenerate': 'Teglarni to‘ldirish (AI)',
+    'node.content.tagEditor.aiSuccess': 'Teglar muvaffaqiyatli yaratildi!',
+    'node.content.tagEditor.aiFailed': 'Teg yaratishda xatolik',
+    'node.content.tagEditor.noFiles': 'Qayta ishlash uchun fayllar yo‘q.',
+    'node.content.tagEditor.analyzeDuplicates': 'Dublikatlarni tahlil qilish',
+    'node.content.tagEditor.deleteSelected': 'Tanlanganlarni o‘chirish',
+    'node.content.tagEditor.deleteDuplicates': 'Dublikatlarni o‘chirish',
+    'node.content.tagEditor.downloadSelected': 'Tanlanganlarni yuklab olish',
+    'node.content.tagEditor.duplicatesFound': '{count} ta dublikat topildi va tanlandi.',
+    'node.content.tagEditor.noDuplicates': 'Dublikatlar topilmadi.',
+    'node.content.tagEditor.addFiles': 'MP3 qo‘shish',
+    'node.content.tagEditor.batch': 'Ommaviy qo‘llash',
+    'node.content.tagEditor.artist': 'Artist',
+    'node.content.tagEditor.album': 'Albom',
+    'node.content.tagEditor.download': 'O‘zgartirilgan fayllarni yuklab olish',
+    'node.content.mp3TagEditor': 'MP3 Teg Muharriri',
 };

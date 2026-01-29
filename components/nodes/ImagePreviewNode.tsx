@@ -51,6 +51,15 @@ const ImagePreviewNode: React.FC<NodeContentProps> = ({ node, onValueChange, t, 
         }
     };
 
+    const handleImageDragStart = (e: React.DragEvent<HTMLImageElement>) => {
+        if (imageBase64) {
+            e.stopPropagation();
+            // Send just the base64 string to be compatible with other nodes
+            e.dataTransfer.setData('application/prompt-modifier-drag-image', imageBase64);
+            e.dataTransfer.effectAllowed = 'copy';
+        }
+    };
+
     const handleExtractText = () => {
         if (onExtractTextFromImage) {
             onExtractTextFromImage(node.id);
@@ -114,7 +123,13 @@ const ImagePreviewNode: React.FC<NodeContentProps> = ({ node, onValueChange, t, 
             >
                 {imageBase64 ? (
                     <>
-                        <img src={`data:image/png;base64,${imageBase64}`} alt="Preview" className="w-full h-full object-contain pointer-events-none" />
+                        <img 
+                            src={`data:image/png;base64,${imageBase64}`} 
+                            alt="Preview" 
+                            className="w-full h-full object-contain" 
+                            draggable={true}
+                            onDragStart={handleImageDragStart}
+                        />
                         <div className="absolute top-2 right-2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             <button 
                                 onClick={(e) => { e.stopPropagation(); handleCopyImage(); }}

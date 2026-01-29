@@ -1,5 +1,6 @@
+
 import React, { createContext, useCallback, useMemo, useState, ReactNode, useContext, useRef, useEffect } from 'react';
-import type { Node, Connection, Point, Group, LibraryItem, LineStyle, Tool, CatalogItem, TabState, ConnectingInfo } from '../types';
+import type { Node, Connection, Point, Group, LibraryItem, LineStyle, Tool, CatalogItem, TabState, ConnectingInfo, FileDropMenuState } from '../types';
 import { NodeType, LibraryItemType, CatalogItemType } from '../types';
 import { useLanguage } from '../localization';
 import {
@@ -20,7 +21,7 @@ import {
   useDerivedMemo,
   useAutoSave,
   loadAutoSavedState,
-  useGoogleDrive // Imported
+  useGoogleDrive
 } from '../hooks';
 import { getOutputHandleType, getInputHandleType } from '../utils/nodeUtils';
 import type { Toast } from '../components/ui/ToastContainer';
@@ -67,7 +68,7 @@ export interface AppContextType {
     // Interaction State
     activeTool: Tool;
     effectiveTool: Tool;
-    connectingInfo: any; // Simplified for brevity
+    connectingInfo: any;
     connectionTarget: any;
     hoveredNodeId: string | null;
     selectedNodeIds: string[];
@@ -101,6 +102,7 @@ export interface AppContextType {
     catalogFileInputRef: React.RefObject<HTMLInputElement>;
     libraryFileInputRef: React.RefObject<HTMLInputElement>;
     nodeIdCounter: React.MutableRefObject<number>;
+    pendingFiles: React.MutableRefObject<Map<string, File[]>>; // NEW: Store dropped files transiently
 
     // Handlers
     handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -230,7 +232,7 @@ export interface AppContextType {
     handleCloseAddNodeMenus: () => void;
     setActiveTool: React.Dispatch<React.SetStateAction<Tool>>;
     onAddNode: (type: NodeType, position: Point, value?: string, title?: string) => string;
-    handleAddNodeFromToolbar: (type: NodeType) => void;
+    handleAddNodeFromToolbar: (type: NodeType, initialValue?: string) => void;
     handleSaveCanvas: () => void;
     handleLoadCanvas: () => void;
     openQuickSearchMenu: (position: Point) => void;
@@ -255,6 +257,10 @@ export interface AppContextType {
     // State for connection quick add menu
     connectionMenu: { isOpen: boolean; position: Point; sourceNodeId: string; sourceHandleId?: string; fromType: 'text' | 'image' | null } | null;
     setConnectionMenu: React.Dispatch<React.SetStateAction<{ isOpen: boolean; position: Point; sourceNodeId: string; sourceHandleId?: string; fromType: 'text' | 'image' | null } | null>>;
+    
+    // File Drop Menu State
+    fileDropMenu: FileDropMenuState | null;
+    setFileDropMenu: React.Dispatch<React.SetStateAction<FileDropMenuState | null>>;
 
     // Catalog & Library Handlers
     navigateCatalogBack: () => void;
@@ -314,9 +320,19 @@ export interface AppContextType {
     onLoadCharacterCard: (nodeId: string) => void;
     onSaveCharacterToCatalog: (nodeId: string) => void;
 
-    // Cloud Sync
+    // Cloud Sync (Exposed from Hook)
     uploadCatalogItem: (item: CatalogItem | LibraryItem, context: 'characters' | 'sequences' | 'library' | 'scripts') => Promise<void>;
     syncCloudItems: () => Promise<void>;
+    googleDrive: {
+        isAuthenticated: boolean;
+        clientId: string;
+        setClientId: (id: string) => void;
+        handleConnect: () => void;
+        handleSaveToDrive: () => Promise<void>;
+        handleSyncCatalogs: () => Promise<void>;
+        handleCleanupDuplicates: () => Promise<void>;
+        isSyncing: boolean;
+    };
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -328,6 +344,10 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     const { t } = useLanguage();
     const [isSnapToGrid, setIsSnapToGrid] = useState(false);
     const [lineStyle, setLineStyle] = useState<LineStyle>('orthogonal');
+    
+    // Pending files reference for passing files to newly created nodes (e.g. via drop menu)
+    const pendingFiles = useRef<Map<string, File[]>>(new Map());
+    const [fileDropMenu, setFileDropMenu] = useState<FileDropMenuState | null>(null);
     
     // Context Menu Slots State
     const [contextMenuSlots, setContextMenuSlots] = useState<(NodeType | null)[]>(() => {
@@ -524,16 +544,23 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     
     const addToast = useCallback((message: string, type: 'success' | 'info' | 'error' = 'info') => baseAddToast(message, type as 'success' | 'info'), [baseAddToast]);
 
-    // Google Drive Integration
-    const { uploadCatalogItem, syncCloudItems } = useGoogleDrive(
+    // Google Drive Integration - Full State Capture
+    const googleDrive = useGoogleDrive(
         addToast,
-        () => {}, // saveDataToCatalog not used here directly
+        () => {}, // saveDataToCatalog placeholder, unused internally by hook
         saveGroupToCatalog, // Just placeholder if needed by hook internals
         importCatalog,
-        () => ({}), // getAllProjectData placeholder
+        () => ({ // getAllProjectData
+            type: 'script-modifier-project',
+            timestamp: Date.now(),
+            appState: { activeTabIndex, isSnapToGrid, lineStyle },
+            tabs, catalog: catalogItems, library: libraryItems
+        }),
         mergeCatalogItems,
         mergeLibraryItems
     );
+
+    const { uploadCatalogItem, syncCloudItems } = googleDrive;
 
     // *** ELECTRON EXIT HANDLING ***
     useEffect(() => {
@@ -766,7 +793,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         onConnectionReleased,
     });
     
-    const { onAddNode, handleAddNodeFromToolbar, deleteNodeAndConnections, handleSplitConnection, handleGroupSelection, handleRemoveGroup, handleSaveGroupToCatalog, handleSaveGroupToDisk, handleCopyGroup, handleDuplicateGroup, handleAddGroupFromCatalog, handleApplyAliases, handleDetachCharacter, addCharacterCardFromFile, addImagePreviewNodeFromFile, handlePasteFromClipboard, handleAddGroupFromTemplate, handleDuplicateNode: handleDuplicateNodeFromEntityActions, handleDuplicateNodeEmpty: handleDuplicateNodeEmptyFromEntityActions, saveDataToCatalog, handleDownloadChat } = useEntityActions({
+    const { onAddNode, handleAddNodeFromToolbar: baseHandleAddNodeFromToolbar, deleteNodeAndConnections, handleSplitConnection, handleGroupSelection, handleRemoveGroup, handleSaveGroupToCatalog, handleSaveGroupToDisk, handleCopyGroup, handleDuplicateGroup, handleAddGroupFromCatalog, handleApplyAliases, handleDetachCharacter, addCharacterCardFromFile, addImagePreviewNodeFromFile, handlePasteFromClipboard, handleAddGroupFromTemplate, handleDuplicateNode: handleDuplicateNodeFromEntityActions, handleDuplicateNodeEmpty: handleDuplicateNodeEmptyFromEntityActions, saveDataToCatalog, handleDownloadChat } = useEntityActions({
       nodes, connections, groups, addNodeFromHook, t,
       clientPointerPosition, clientPointerPositionRef, viewTransform, setCreationLine, setLastAddedNodeId, handleDeleteNode, removeConnectionsByNodeId,
       addConnection: addConnectionWithLogic, handleValueChange, nodeIdCounter, setNodes, setConnections, addGroup, selectedNodeIds, setSelectedNodeIds: setSelectedNodeIds, removeGroup, saveGroupToCatalog, catalogItems, currentCatalogItems, handleCloseCatalog,
@@ -775,6 +802,17 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       handleDuplicateNodeEmpty,
       saveGenericItemToCatalog
     });
+
+    const handleAddNodeFromToolbar = useCallback((type: NodeType, initialValue?: string) => {
+        const viewportCenterScreen = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+        const viewportCenterCanvas = {
+            x: (viewportCenterScreen.x - viewTransform.translate.x) / viewTransform.scale,
+            y: (viewportCenterScreen.y - viewTransform.translate.y) / viewTransform.scale,
+        };
+        setCreationLine({ start: clientPointerPositionRef.current, end: viewportCenterScreen });
+        setTimeout(() => setCreationLine(null), 700);
+        onAddNode(type, viewportCenterCanvas, initialValue); // Pass initialValue
+    }, [clientPointerPositionRef, viewTransform, onAddNode, setCreationLine]);
 
     const handleAddNodeFromConnectionMenu = useCallback((type: NodeType) => {
         if (!connectionMenu) return;
@@ -928,7 +966,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       handleValueChange,
       handleSaveProject,
       handleLoadProject,
-      addToast 
+      addToast,
+      setFileDropMenu 
     });
     
     const { connectedInputs, groupButtonPosition, getCanvasCursor, getConnectionPoints, selectionRect } = useDerivedMemo({ nodes, connections, selectedNodeIds, dollyZoomingInfo, draggingInfo, effectiveTool, isPanning, t, selectionRect: selectionRectPoints });
@@ -1024,7 +1063,11 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         handleDownloadChat,
         handleLoadAutoSave,
         uploadCatalogItem,
-        syncCloudItems
+        syncCloudItems,
+        googleDrive: googleDrive, // Full object exposure
+        fileDropMenu,
+        setFileDropMenu,
+        pendingFiles
     };
 
     return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;

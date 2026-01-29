@@ -1,4 +1,5 @@
 
+
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useLanguage } from '../localization';
@@ -184,7 +185,8 @@ const HelpPanel: React.FC = () => {
       { key: 'T', description: t('node.title.text_input') },
       { key: 'P', description: t('node.title.prompt_processor') },
       { key: 'A', description: t('node.title.prompt_analyzer') },
-      { key: 'Shift+M', description: t('node.title.gemini_chat') },
+      // Shift+M updated to Tag Editor
+      { key: 'Shift+M', description: t('node.content.mp3TagEditor') || 'MP3 Tag Editor' },
       { key: 'L', description: t('node.title.translator') },
       { key: 'N', description: t('node.title.note') },
       { key: 'O', description: t('node.title.image_generator') },

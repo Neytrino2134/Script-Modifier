@@ -7,6 +7,8 @@
 
 
 
+
+
 export const ui = {
     'toolbar.edit': 'Editar (V)',
     'toolbar.cutter': 'Cortar Conexión (C)',
@@ -45,6 +47,7 @@ export const ui = {
     'toolbar.addSpeechSynthesizer': 'Sintetizador de Voz (Shift+N)',
     'toolbar.addNarratorTextGenerator': 'Generador de Texto Narrador (Shift+G)',
     'toolbar.addAudioTranscriber': 'Transcriptor de Audio (Shift+B)',
+    'toolbar.addTagEditor': 'Editor de Etiquetas (Shift+M)',
     'toolbar.addYouTubeTitleGenerator': 'Generador de Títulos YouTube (Shift+T)',
     'toolbar.addMusicIdeaGenerator': 'Generador de Ideas Musicales (M)',
     'toolbar.addYouTubeAnalytics': 'Analíticas de YouTube (Shift+Y)',

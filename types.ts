@@ -109,6 +109,12 @@ export interface LibraryItem {
   content?: string; // Only for prompts
 }
 
+export interface FileDropMenuState {
+  isOpen: boolean;
+  position: Point;
+  files: File[];
+}
+
 // A subset of NodeViewProps that all content components will receive
 export interface NodeContentProps {
   node: Node;
@@ -205,6 +211,7 @@ export interface NodeContentProps {
   getUpstreamNodeValues?: (nodeId: string) => any[];
   onAddNode?: (type: NodeType, position: Point) => string;
   onDeleteNode?: (nodeId: string) => void;
+  pendingFiles?: Map<string, File[]>;
 }
 
 export interface TabState {

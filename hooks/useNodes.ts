@@ -110,14 +110,32 @@ export const useNodes = (initialNodes: Node[], initialCounter: number) => {
         const newNodeId = `node-${nodeIdCounter.current}-${Date.now()}`;
         const defaults = getNodeDefaults(type, t);
 
+        let finalWidth = defaults.width;
+        let finalHeight = defaults.height;
+        let finalTitle = title || defaults.title;
+
+        // Custom size and title for Tag Editor (Audio Transcriber variant)
+        if (type === NodeType.AUDIO_TRANSCRIBER && value) {
+            try {
+                const parsed = JSON.parse(value);
+                if (parsed.initialTab === 'tags') {
+                    finalWidth = 680;
+                    finalHeight = 800;
+                    if (!title) finalTitle = t('node.content.mp3TagEditor') || "MP3 Tag Editor";
+                }
+            } catch (e) {
+                // value not json, ignore
+            }
+        }
+
         const newNode: Node = {
             id: newNodeId,
             type,
             position,
-            title: title || defaults.title,
+            title: finalTitle,
             value: value || defaults.value,
-            width: defaults.width,
-            height: defaults.height,
+            width: finalWidth,
+            height: finalHeight,
         };
 
         setNodes((prev) => [...prev, newNode]);

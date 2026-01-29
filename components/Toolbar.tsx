@@ -9,7 +9,7 @@ import { useAppContext } from '../contexts/Context'; // Added import
 interface ToolbarProps {
   activeTool: Tool;
   onToolChange: (tool: Tool) => void;
-  onAddNode: (type: NodeType) => void;
+  onAddNode: (type: NodeType, initialValue?: string) => void; // Updated signature
   onSaveCanvas: () => void;
   onSaveProject: () => void;
   onLoadCanvas: () => void;
@@ -415,6 +415,13 @@ const Toolbar: React.FC<ToolbarProps> = ({
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15 12h5m-5 3h5m-5 3h5" />
                     </svg>
                 </ToolButton>
+                {/* NEW BUTTON: Tag Editor (Audio Transcriber with specific init) */}
+                <ToolButton title={t('toolbar.addTagEditor')} onClick={() => onAddNode(NodeType.AUDIO_TRANSCRIBER, JSON.stringify({ initialTab: 'tags' }))} hoverBgClass="hover:bg-blue-600">
+                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                    </svg>
+                </ToolButton>
+
                 <ToolButton title={t('toolbar.addMusicIdeaGenerator')} onClick={() => onAddNode(NodeType.MUSIC_IDEA_GENERATOR)} hoverBgClass="hover:bg-blue-600">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 6l12-3" /></svg>
                 </ToolButton>

@@ -8,6 +8,7 @@
 
 
 
+
 export const ui = {
     'toolbar.edit': 'Редактировать (V)',
     'toolbar.cutter': 'Разрезать (C)',
@@ -46,6 +47,7 @@ export const ui = {
     'toolbar.addSpeechSynthesizer': 'Синтезатор речи (Shift+N)',
     'toolbar.addNarratorTextGenerator': 'Генератор текста диктора (Shift+G)',
     'toolbar.addAudioTranscriber': 'Аудио транскрибер (Shift+B)',
+    'toolbar.addTagEditor': 'Редактор тегов (Shift+M)',
     'toolbar.addYouTubeTitleGenerator': 'Генератор заголовков YouTube (Shift+T)',
     'toolbar.addMusicIdeaGenerator': 'Генератор муз. идей (M)',
     'toolbar.addYouTubeAnalytics': 'YouTube Аналитика (Shift+Y)',
@@ -141,7 +143,7 @@ export const ui = {
     'search.node.note.title': 'Заметка',
     'search.node.note.description': 'Простое поле для заметок. (N)',
     'search.node.reroute_dot.title': 'Точка маршрутизации',
-    'search.node.reroute_dot.description': 'Точка для перенаправления и разветвления соединений.',
+    'search.node.reroute_dot.description': 'Точка для перенаправления соединений.',
     'search.node.data_reader.title': 'Читатель данных',
     'search.node.data_reader.description': 'Отображает сырые данные из подключенного узла. (Shift+R)',
     'search.node.speech_synthesizer.title': 'Синтезатор речи',
@@ -261,6 +263,7 @@ export const ui = {
     'node.content.mainChars': 'ГЛАВНЫЕ',
     'node.content.secChars': 'ВТОРОСТЕПЕННЫЕ',
     'node.content.keyItems': 'ПРЕДМЕТЫ',
+    'node.content.thumbnailPrompt': 'Промпт Обложки',
 
     // Script Analyzer Stack Headers
     'node.content.stack.system': '1. СИСТЕМА И КОНТЕКСТ',

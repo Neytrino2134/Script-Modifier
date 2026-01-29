@@ -271,6 +271,8 @@ const Editor: React.FC = () => {
       if (isTyping || e.repeat) return;
 
       let nodeTypeToAdd: NodeType | null = null;
+      let initialValue: string | undefined = undefined;
+
       if (e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
         switch (e.code) {
           case 'KeyC': nodeTypeToAdd = NodeType.CHARACTER_GENERATOR; break;
@@ -283,14 +285,29 @@ const Editor: React.FC = () => {
           case 'KeyB': nodeTypeToAdd = NodeType.AUDIO_TRANSCRIBER; break;
           case 'KeyT': nodeTypeToAdd = NodeType.YOUTUBE_TITLE_GENERATOR; break;
           case 'KeyY': nodeTypeToAdd = NodeType.YOUTUBE_ANALYTICS; break;
-          case 'KeyM': nodeTypeToAdd = NodeType.GEMINI_CHAT; break; // Shift+M is now Gemini Chat
+          // Shift+M is now Tag Editor (Audio Transcriber with specific tab)
+          case 'KeyM': 
+              e.preventDefault();
+              // Calculate Position with specific dimensions for Tag Editor (680)
+              const nodeWidth = 680;
+              const HEADER_HEIGHT = 40;
+              const cursorCanvasPosition = {
+                  x: (clientPointerPosition.x - viewTransform.translate.x) / viewTransform.scale,
+                  y: (clientPointerPosition.y - viewTransform.translate.y) / viewTransform.scale,
+              };
+              const newNodePosition = {
+                  x: cursorCanvasPosition.x - (nodeWidth / 2),
+                  y: cursorCanvasPosition.y - (HEADER_HEIGHT / 2),
+              };
+              onAddNode(NodeType.AUDIO_TRANSCRIBER, newNodePosition, JSON.stringify({ initialTab: 'tags' }));
+              return; 
         }
       } else if (!e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey) {
         switch (e.code) {
           case 'KeyT': nodeTypeToAdd = NodeType.TEXT_INPUT; break;
           case 'KeyA': nodeTypeToAdd = NodeType.PROMPT_ANALYZER; break;
           case 'KeyP': nodeTypeToAdd = NodeType.PROMPT_PROCESSOR; break;
-          case 'KeyM': nodeTypeToAdd = NodeType.MUSIC_IDEA_GENERATOR; break; // M is now Music Generator
+          case 'KeyM': nodeTypeToAdd = NodeType.MUSIC_IDEA_GENERATOR; break; // M is Music Generator
           case 'KeyL': nodeTypeToAdd = NodeType.TRANSLATOR; break;
           case 'KeyN': nodeTypeToAdd = NodeType.NOTE; break;
           case 'KeyO': nodeTypeToAdd = NodeType.IMAGE_GENERATOR; break;
@@ -314,7 +331,7 @@ const Editor: React.FC = () => {
           y: cursorCanvasPosition.y - (HEADER_HEIGHT / 2),
         };
 
-        onAddNode(nodeTypeToAdd, newNodePosition, undefined);
+        onAddNode(nodeTypeToAdd, newNodePosition, initialValue);
       }
     };
 

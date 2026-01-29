@@ -1,12 +1,12 @@
 
-
-import React, { useRef, useMemo, useEffect, useLayoutEffect } from 'react';
+import React, { useRef, useMemo, useEffect, useLayoutEffect, useCallback } from 'react';
 import { useAppContext } from '../contexts/Context';
 import NodeView from './NodeView';
 import ConnectionView from './ConnectionView';
 import GroupView from './GroupView';
-import { Point } from '../types';
+import { NodeType, Point } from '../types';
 import { useVirtualization } from '../hooks/useVirtualization';
+import FileDropMenu from './menus/FileDropMenu';
 
 interface CanvasProps {
     children?: React.ReactNode;
@@ -203,7 +203,13 @@ const Canvas: React.FC<CanvasProps> = ({ children, checkTarget = false }) => {
         onSaveCharacterCard,
         onLoadCharacterCard,
         onSaveCharacterToCatalog,
-        handleDownloadChat // Passed here
+        handleDownloadChat,
+        // File Drop Menu
+        fileDropMenu,
+        setFileDropMenu,
+        onAddNode,
+        pendingFiles,
+        nodeIdCounter
     } = context;
 
     // Apply Virtualization
@@ -292,9 +298,9 @@ const Canvas: React.FC<CanvasProps> = ({ children, checkTarget = false }) => {
                 target.closest('textarea') ||
                 target.closest('input') ||
                 target.closest('.no-wheel') ||
-                target.closest('.custom-scrollbar') || // Элементы с прокруткой
                 target.closest('button') ||
-                target.closest('select')
+                target.closest('select') ||
+                target.closest('.custom-scrollbar') 
             ) {
                 return; // Позволяем стандартное поведение прокрутки
             }
@@ -306,6 +312,51 @@ const Canvas: React.FC<CanvasProps> = ({ children, checkTarget = false }) => {
         container.addEventListener('wheel', onWheelNative, { passive: false });
         return () => container.removeEventListener('wheel', onWheelNative);
     }, []);
+
+    // Custom Handler for File Drop Menu Actions
+    const handleFileMenuAction = useCallback((action: 'transcribe' | 'tag_editor') => {
+         if (!fileDropMenu) return;
+         const { position, files } = fileDropMenu;
+         const canvasPosition = {
+            x: (position.x - viewTransform.translate.x) / viewTransform.scale,
+            y: (position.y - viewTransform.translate.y) / viewTransform.scale,
+        };
+
+        if (action === 'transcribe') {
+            // Create 1 node per file
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                     const base64String = (event.target?.result as string).split(',')[1];
+                     const newNodeValue = JSON.stringify({
+                         audioBase64: base64String,
+                         mimeType: file.type,
+                         fileName: file.name,
+                         transcription: '',
+                         segments: [],
+                         initialTab: 'transcribe'
+                     });
+                     // Stagger positions slightly
+                     const pos = { x: canvasPosition.x + (index * 20), y: canvasPosition.y + (index * 20) };
+                     onAddNode(NodeType.AUDIO_TRANSCRIBER, pos, newNodeValue);
+                };
+                reader.readAsDataURL(file);
+            });
+        } else if (action === 'tag_editor') {
+            // Create 1 node, pass files via PendingFiles
+            // We use a specific initial value to switch tab
+            const newNodeValue = JSON.stringify({ initialTab: 'tags' });
+            
+            // We need the ID to register pending files. onAddNode returns it.
+            const newNodeId = onAddNode(NodeType.AUDIO_TRANSCRIBER, canvasPosition, newNodeValue);
+            
+            // Register files for this node
+            pendingFiles.current.set(newNodeId, files);
+        }
+        
+        setFileDropMenu(null);
+    }, [fileDropMenu, viewTransform, onAddNode, pendingFiles, setFileDropMenu]);
+
 
     return (
         <div
@@ -341,7 +392,6 @@ const Canvas: React.FC<CanvasProps> = ({ children, checkTarget = false }) => {
             {children}
 
             {/* Transform Layer: Moves everything together */}
-            {/* Added pointer-events-none so panning clicks pass through to app-container */}
             <div
                 id="canvas-transform-layer"
                 className="pointer-events-none"
@@ -353,7 +403,6 @@ const Canvas: React.FC<CanvasProps> = ({ children, checkTarget = false }) => {
                     height: '100%',
                     transform: `translate3d(${viewTransform.translate.x}px, ${viewTransform.translate.y}px, 0) scale(${viewTransform.scale})`,
                     transformOrigin: '0 0',
-                    // REMOVED will-change: transform to prevent blurry text at >100% zoom
                 }}
             >
                 {/* Origin Crosshair - Neat little plus */}
@@ -481,7 +530,8 @@ const Canvas: React.FC<CanvasProps> = ({ children, checkTarget = false }) => {
                         isModifyingScriptPrompts={isModifyingScriptPrompts}
                         onApplyAliases={handleApplyAliases}
                         onDetachCharacter={handleDetachCharacter}
-                        activeTool={effectiveTool}
+                        handleStartConnection={handleStartConnection}
+                        handleStartConnectionTouchStart={handleStartConnectionTouchStart}
                         onOutputHandleMouseDown={handleStartConnection}
                         onOutputHandleTouchStart={handleStartConnectionTouchStart}
                         onNodeClick={handleNodeClick}
@@ -542,9 +592,21 @@ const Canvas: React.FC<CanvasProps> = ({ children, checkTarget = false }) => {
                         onLoadCharacterCard={onLoadCharacterCard}
                         onSaveCharacterToCatalog={onSaveCharacterToCatalog}
                         onDownloadChat={handleDownloadChat}
+                        activeTool={effectiveTool}
                     />
                 ))}
             </div>
+
+            {/* File Drop Menu */}
+            {fileDropMenu && (
+                <FileDropMenu
+                    isOpen={fileDropMenu.isOpen}
+                    position={fileDropMenu.position}
+                    files={fileDropMenu.files}
+                    onClose={() => setFileDropMenu(null)}
+                    onSelect={handleFileMenuAction}
+                />
+            )}
         </div>
     );
 };

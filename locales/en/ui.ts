@@ -8,6 +8,7 @@
 
 
 
+
 export const ui = {
     'toolbar.edit': 'Edit (V)',
     'toolbar.cutter': 'Cut Connection (C)',
@@ -46,6 +47,7 @@ export const ui = {
     'toolbar.addSpeechSynthesizer': 'Speech Synthesizer (Shift+N)',
     'toolbar.addNarratorTextGenerator': 'Narrator Text Generator (Shift+G)',
     'toolbar.addAudioTranscriber': 'Audio Transcriber (Shift+B)',
+    'toolbar.addTagEditor': 'Tag Editor (Shift+M)',
     'toolbar.addYouTubeTitleGenerator': 'YouTube Title Generator (Shift+T)',
     'toolbar.addMusicIdeaGenerator': 'Music Idea Generator (M)',
     'toolbar.addYouTubeAnalytics': 'YouTube Analytics (Shift+Y)',
@@ -135,7 +137,7 @@ export const ui = {
     'search.node.script_analyzer.title': 'Script Analyzer',
     'search.node.script_analyzer.description': 'Analyzes the script structure, breaking it down into characters and frames with detailed descriptions. (Shift+D)',
     'search.node.script_prompt_modifier.title': 'Prompt Finalizer',
-    'search.node.script_prompt_modifier.description': 'Takes analyzed script data and synthesizes final, artistic prompts for image generation for each frame. (Shift+F)',
+    'search.node.script_prompt_modifier.description': 'Synthesizes final, artistic prompts for image generation for each frame. (Shift+F)',
     'search.node.error_analyzer.title': 'Error Analyzer',
     'search.node.error_analyzer.description': 'Checks and corrects text for spelling and grammar errors.',
     'search.node.note.title': 'Note',

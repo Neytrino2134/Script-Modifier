@@ -1,3 +1,4 @@
+
 export function fileToArrayBuffer(file: File): Promise<ArrayBuffer> {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -66,4 +67,37 @@ export function audioBufferToWav(buffer: AudioBuffer): Blob {
     view.setUint32(40, pcmData.byteLength, true);
 
     return new Blob([view, pcmData], { type: 'audio/wav' });
+}
+
+export async function getAudioFingerprint(file: File): Promise<string> {
+    try {
+        const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const arrayBuffer = await file.arrayBuffer();
+        
+        // Decode the audio data. This is CPU intensive.
+        const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+        
+        const duration = audioBuffer.duration.toFixed(3); // Duration to 3 decimal places
+        const channels = audioBuffer.numberOfChannels;
+        const sampleRate = audioBuffer.sampleRate;
+        
+        // Create a checksum from the first 5 seconds of audio data to compare content
+        // We skip samples to save processing time, effectively downsampling for the hash
+        const dataToCheck = audioBuffer.getChannelData(0); // Use left channel
+        const samplesToCheck = Math.min(dataToCheck.length, sampleRate * 5); // Check first 5 seconds
+        let sum = 0;
+        const step = 100; // Check every 100th sample
+        
+        for(let i = 0; i < samplesToCheck; i += step) {
+            sum += dataToCheck[i];
+        }
+        
+        await ctx.close();
+        
+        // Signature: Duration_Channels_SampleRate_Checksum
+        return `${duration}_${channels}_${sampleRate}_${sum.toFixed(4)}`;
+    } catch (e) {
+        console.error("Fingerprinting failed", e);
+        return `error_${file.name}_${file.size}`; // Fallback to basic file info
+    }
 }

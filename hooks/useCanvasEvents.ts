@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { Node, NodeType, Point, CatalogItem, Tool, LineStyle } from '../types';
+import { Node, NodeType, Point, CatalogItem, Tool, LineStyle, FileDropMenuState } from '../types';
 
 const blobToBase64 = (blob: Blob): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -37,7 +37,8 @@ export const useCanvasEvents = ({
     handleValueChange,
     handleSaveProject,
     handleLoadProject,
-    addToast
+    addToast,
+    setFileDropMenu
 }: {
     isQuickSearchOpen: boolean;
     handleToggleCatalog: () => void;
@@ -77,9 +78,10 @@ export const useCanvasEvents = ({
     handleSaveProject: () => void;
     handleLoadProject: (projectData: any) => void;
     addToast: (message: string, type?: 'success' | 'info', position?: Point) => void;
+    setFileDropMenu: (state: FileDropMenuState | null) => void;
 }) => {
     const [isDraggingOverCanvas, setIsDraggingOverCanvas] = useState(false);
-    
+
     const addNodeAndCloseMenus = useCallback((type: NodeType) => {
       const currentPointerPos = clientPointerPositionRef.current;
       if (!currentPointerPos) return;
@@ -248,132 +250,149 @@ export const useCanvasEvents = ({
             }
         }
 
-        const file = e.dataTransfer.files?.[0];
-        if (file) {
-            if (file.type.startsWith('image/') && !file.name.endsWith('.json')) {
-                const imageDropPosition = { ...dropPosition, x: dropPosition.x - 150, y: dropPosition.y - 170 };
-                addImagePreviewNodeFromFile(file, imageDropPosition);
-                return;
-            }
-
-            if (file.type.startsWith('audio/') || file.type.startsWith('video/')) {
-                 const reader = new FileReader();
-                 reader.onload = (event) => {
-                     const base64String = (event.target?.result as string).split(',')[1];
-                     const newNodeValue = JSON.stringify({
-                         audioBase64: base64String,
-                         mimeType: file.type,
-                         fileName: file.name,
-                         transcription: '',
-                         segments: [],
-                     });
-                     onAddNode(NodeType.AUDIO_TRANSCRIBER, dropPosition, newNodeValue);
-                 };
-                 reader.onerror = () => {
-                     addToast(t('error.fileReadError'), 'info');
-                 };
-                 reader.readAsDataURL(file);
+        const files = Array.from(e.dataTransfer.files) as File[];
+        if (files.length > 0) {
+            // Check if ANY are audio files. If so, and > 0, check for multi-drop logic
+            const audioFiles = files.filter(f => f.type.startsWith('audio/') || f.name.endsWith('.mp3'));
+            
+            if (audioFiles.length > 0) {
+                 // INTERCEPT: Show File Drop Menu
+                 setFileDropMenu({
+                     isOpen: true,
+                     position: { x: e.clientX, y: e.clientY }, // Use client position for fixed menu
+                     files: audioFiles
+                 });
                  return;
             }
-            
-            // Allow .json, .SMC, .SMP and .CHAR files
-            if (file.type === 'application/json' || file.name.endsWith('.json') || file.name.endsWith('.SMC') || file.name.endsWith('.SMP') || file.name.endsWith('.CHAR')) {
-                const text = await file.text();
+
+            const file = files[0];
+            if (file) {
+                if (file.type.startsWith('image/') && !file.name.endsWith('.json')) {
+                    const imageDropPosition = { ...dropPosition, x: dropPosition.x - 150, y: dropPosition.y - 170 };
+                    addImagePreviewNodeFromFile(file, imageDropPosition);
+                    return;
+                }
+
+                if (file.type.startsWith('video/')) {
+                     // Single video drop (MP4) -> Transcriber directly
+                     const reader = new FileReader();
+                     reader.onload = (event) => {
+                         const base64String = (event.target?.result as string).split(',')[1];
+                         const newNodeValue = JSON.stringify({
+                             audioBase64: base64String,
+                             mimeType: file.type,
+                             fileName: file.name,
+                             transcription: '',
+                             segments: [],
+                         });
+                         onAddNode(NodeType.AUDIO_TRANSCRIBER, dropPosition, newNodeValue);
+                     };
+                     reader.onerror = () => {
+                         addToast(t('error.fileReadError'), 'info');
+                     };
+                     reader.readAsDataURL(file);
+                     return;
+                }
                 
-                let data;
-                try {
-                    data = JSON.parse(text);
-                } catch (err) {
-                    geminiContext.setError(`Error loading file: Invalid JSON format.`);
-                    return;
-                }
+                // Allow .json, .SMC, .SMP and .CHAR files
+                if (file.type === 'application/json' || file.name.endsWith('.json') || file.name.endsWith('.SMC') || file.name.endsWith('.SMP') || file.name.endsWith('.CHAR')) {
+                    const text = await file.text();
+                    
+                    let data;
+                    try {
+                        data = JSON.parse(text);
+                    } catch (err) {
+                        geminiContext.setError(`Error loading file: Invalid JSON format.`);
+                        return;
+                    }
 
-                if (data && (data.type === 'prompt-modifier-canvas' || data.type === 'prompt-modifier-project')) {
-                    geminiContext.setError(t('error.promptModifierFile'));
-                    return;
-                }
+                    if (data && (data.type === 'prompt-modifier-canvas' || data.type === 'prompt-modifier-project')) {
+                        geminiContext.setError(t('error.promptModifierFile'));
+                        return;
+                    }
 
-                // Handle Project Load on Drop
-                if (data && data.type === 'script-modifier-project') {
-                    handleLoadProject(data);
-                    return;
-                }
+                    // Handle Project Load on Drop
+                    if (data && data.type === 'script-modifier-project') {
+                        handleLoadProject(data);
+                        return;
+                    }
 
-                if (data && (data.type === 'group' || data.type === 'scriptModifierGroup')) {
-                    handleAddGroupFromTemplate(data, dropPosition);
-                    return;
-                }
+                    if (data && (data.type === 'group' || data.type === 'scriptModifierGroup')) {
+                        handleAddGroupFromTemplate(data, dropPosition);
+                        return;
+                    }
 
-                if (data && (data.type === 'character-card' || (Array.isArray(data) && data.length > 0 && data[0].type === 'character-card'))) {
-                    const charDropPosition = { ...dropPosition, x: dropPosition.x - 220, y: dropPosition.y - 400 };
-                    addCharacterCardFromFile(data, charDropPosition);
-                    return;
-                }
+                    if (data && (data.type === 'character-card' || (Array.isArray(data) && data.length > 0 && data[0].type === 'character-card'))) {
+                        const charDropPosition = { ...dropPosition, x: dropPosition.x - 220, y: dropPosition.y - 400 };
+                        addCharacterCardFromFile(data, charDropPosition);
+                        return;
+                    }
 
-                // Handle new file types
-                if (data) {
-                    let targetNodeType: NodeType | null = null;
-                    let initialValueObj: any = data;
-                    const itemTitle = data.title;
+                    // Handle new file types
+                    if (data) {
+                        let targetNodeType: NodeType | null = null;
+                        let initialValueObj: any = data;
+                        const itemTitle = data.title;
 
-                    // Direct type check first
-                    if (data.type) {
-                        switch (data.type) {
-                            case 'script-generator-data':
-                                targetNodeType = NodeType.SCRIPT_GENERATOR;
-                                initialValueObj = { scenes: data.scenes };
-                                break;
-                            case 'script-analyzer-data':
-                                targetNodeType = NodeType.SCRIPT_ANALYZER;
-                                initialValueObj = { scenes: data.scenes };
-                                break;
-                            case 'script-prompt-modifier-data':
-                                targetNodeType = NodeType.SCRIPT_PROMPT_MODIFIER;
-                                initialValueObj = { 
-                                    finalPrompts: data.finalPrompts,
-                                    sceneContexts: data.sceneContexts || {} // Extract contexts
-                                };
-                                break;
-                            case 'youtube-title-data':
-                                targetNodeType = NodeType.YOUTUBE_TITLE_GENERATOR;
-                                break;
-                            case 'youtube-analytics-data':
-                                targetNodeType = NodeType.YOUTUBE_ANALYTICS;
-                                break;
-                            case 'music-idea-data':
-                                targetNodeType = NodeType.MUSIC_IDEA_GENERATOR;
-                                break;
-                            case 'character-generator-data':
-                                targetNodeType = NodeType.CHARACTER_GENERATOR;
-                                initialValueObj = { characters: data.characters };
-                                break;
-                            case 'gemini-chat-data':
+                        // Direct type check first
+                        if (data.type) {
+                            switch (data.type) {
+                                case 'script-generator-data':
+                                    targetNodeType = NodeType.SCRIPT_GENERATOR;
+                                    initialValueObj = { scenes: data.scenes };
+                                    break;
+                                case 'script-analyzer-data':
+                                    targetNodeType = NodeType.SCRIPT_ANALYZER;
+                                    initialValueObj = { scenes: data.scenes };
+                                    break;
+                                case 'script-prompt-modifier-data':
+                                    targetNodeType = NodeType.SCRIPT_PROMPT_MODIFIER;
+                                    initialValueObj = { 
+                                        finalPrompts: data.finalPrompts,
+                                        sceneContexts: data.sceneContexts || {} // Extract contexts
+                                    };
+                                    break;
+                                case 'youtube-title-data':
+                                    targetNodeType = NodeType.YOUTUBE_TITLE_GENERATOR;
+                                    break;
+                                case 'youtube-analytics-data':
+                                    targetNodeType = NodeType.YOUTUBE_ANALYTICS;
+                                    break;
+                                case 'music-idea-data':
+                                    targetNodeType = NodeType.MUSIC_IDEA_GENERATOR;
+                                    break;
+                                case 'character-generator-data':
+                                    targetNodeType = NodeType.CHARACTER_GENERATOR;
+                                    initialValueObj = { characters: data.characters };
+                                    break;
+                                case 'gemini-chat-data':
+                                    targetNodeType = NodeType.GEMINI_CHAT;
+                                    break;
+                            }
+                        }
+                        
+                        // Fallback heuristics for untyped or generic JSON files dropped
+                        if (!targetNodeType) {
+                            if (data.messages && Array.isArray(data.messages)) {
                                 targetNodeType = NodeType.GEMINI_CHAT;
-                                break;
+                            }
+                        }
+
+                        if (targetNodeType) {
+                            onAddNode(targetNodeType, dropPosition, JSON.stringify(initialValueObj), itemTitle);
+                            return;
                         }
                     }
                     
-                    // Fallback heuristics for untyped or generic JSON files dropped
-                    if (!targetNodeType) {
-                        if (data.messages && Array.isArray(data.messages)) {
-                            targetNodeType = NodeType.GEMINI_CHAT;
-                        }
+                    try {
+                        loadStateFromFileContent(text);
+                    } catch (err: any) {
+                        // loadStateFromFileContent handles error display now via setGlobalError in useCanvasIO
                     }
-
-                    if (targetNodeType) {
-                        onAddNode(targetNodeType, dropPosition, JSON.stringify(initialValueObj), itemTitle);
-                        return;
-                    }
-                }
-                
-                try {
-                    loadStateFromFileContent(text);
-                } catch (err: any) {
-                    // loadStateFromFileContent handles error display now via setGlobalError in useCanvasIO
                 }
             }
         }
-    }, [loadStateFromFileContent, geminiContext, addCharacterCardFromFile, viewTransform, addImagePreviewNodeFromFile, handleAddGroupFromTemplate, catalogItems, onAddNode, handleLoadProject, t]);
+    }, [loadStateFromFileContent, geminiContext, addCharacterCardFromFile, viewTransform, addImagePreviewNodeFromFile, handleAddGroupFromTemplate, catalogItems, onAddNode, handleLoadProject, t, setFileDropMenu]);
 
     useEffect(() => {
         const handlePaste = async (event: ClipboardEvent) => {
