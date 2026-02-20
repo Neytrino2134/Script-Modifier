@@ -24,9 +24,6 @@ const WelcomeDialog: React.FC<WelcomeDialogProps> = ({ isOpen, onSave, isFirstRu
   // Custom Dropdown State
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
-  // State to track if we are waiting for language switch to complete before saving (Developer Mode)
-  const [pendingDevSave, setPendingDevSave] = useState(false);
   
   // Reload Confirmation State
   const [isReloadConfirmOpen, setIsReloadConfirmOpen] = useState(false);
@@ -76,14 +73,6 @@ const WelcomeDialog: React.FC<WelcomeDialogProps> = ({ isOpen, onSave, isFirstRu
       return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isDropdownOpen]);
 
-  // Effect to trigger save after language switch (Developer Mode)
-  useEffect(() => {
-      if (pendingDevSave && language === 'ru') {
-          setPendingDevSave(false);
-          // Trigger save sequence now that language context has updated and propagated
-          triggerSaveSequence('', true);
-      }
-  }, [language, pendingDevSave]);
 
   const triggerSaveSequence = (key: string, isFree: boolean) => {
       // 1. Start animation immediately
@@ -109,8 +98,8 @@ const WelcomeDialog: React.FC<WelcomeDialogProps> = ({ isOpen, onSave, isFirstRu
   };
 
   const handleDeveloperClick = () => {
-    setLanguage('ru');
-    setPendingDevSave(true);
+    // Connect only using built-in AI Studio key (environment key), without changing language parameters
+    triggerSaveSequence('', false);
   };
   
   const handleReloadClick = () => {

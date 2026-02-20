@@ -15,7 +15,7 @@ export const app = {
     'error.unsupportedFile': 'Unsupported file type.',
     'error.promptModifierFile': 'This file belongs to another application (Prompt Modifier). Please open it in that application.',
     'error.invalidFileType': 'Invalid file type. Please load a Script Modifier Canvas or Project file.',
-    'welcome.iAmDeveloper': 'I am a Developer',
+    'welcome.iAmDeveloper': 'I work from Google AI Studio',
     'welcome.letsGo': "Let's Go!",
     'welcome.resume': "Resume",
     'welcome.reload': "Reload App",

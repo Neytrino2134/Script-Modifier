@@ -1,14 +1,18 @@
 
+
+
 import React, { useRef, useState, useEffect } from 'react';
 import CustomCheckbox from '../../ui/CustomCheckbox';
 import { Mp3File } from './types';
 import { fileToArrayBuffer, getAudioFingerprint } from '../../../utils/audioUtils';
 import { generateMp3Tags } from '../../../services/geminiService';
 import { CopyIcon, PasteIcon, CloseIcon } from '../../icons/AppIcons';
-// Fix for "does not provide an export named 'default'" error with browser-id3-writer
+// Fix for various import styles of browser-id3-writer depending on environment/bundler
 import * as ID3WriterModule from 'browser-id3-writer';
+
+// Robust resolution of ID3Writer class
 // @ts-ignore
-const ID3Writer = ID3WriterModule.default || ID3WriterModule;
+const ID3Writer = ID3WriterModule.ID3Writer || ID3WriterModule.default || ID3WriterModule;
 
 import Tooltip from '../../ui/Tooltip';
 
@@ -481,6 +485,41 @@ export const TagEditorPanel: React.FC<TagEditorPanelProps> = ({ t, addToast, ini
         addToast('Files sorted by name', 'success');
     };
 
+    const handleFixOrder = () => {
+        setMp3Files(prev => {
+            return prev.map((f, index) => {
+                const newTrackNum = (index + 1).toString();
+                const paddedNum = newTrackNum.padStart(2, '0');
+                
+                let newName = f.name;
+                // Regex to match existing leading numbers: "01 - ", "1. ", "01_", "1 "
+                const prefixRegex = /^(\d+)([\s\.\-_]+)(.*)/;
+                const match = newName.match(prefixRegex);
+                
+                if (match) {
+                    // Replace existing number prefix
+                    // Preserve the separator if it exists
+                    const separator = match[2]; 
+                    const rest = match[3];
+                    newName = `${paddedNum}${separator}${rest}`;
+                } else {
+                    // No prefix found, prepend standard "01 - "
+                    newName = `${paddedNum} - ${newName}`;
+                }
+
+                return {
+                    ...f,
+                    name: newName,
+                    tags: {
+                        ...f.tags,
+                        trackNumber: newTrackNum
+                    }
+                };
+            });
+        });
+        addToast(t('node.content.tagEditor.orderFixed') || 'Order fixed', 'success');
+    };
+
     const applyGlobalTags = () => {
         setMp3Files(prev => prev.map(f => {
             if (!f.isChecked && mp3Files.some(mf => mf.isChecked)) return f; 
@@ -626,6 +665,11 @@ export const TagEditorPanel: React.FC<TagEditorPanelProps> = ({ t, addToast, ini
              return;
         }
 
+        if (!ID3Writer) {
+             addToast('ID3Writer library not loaded correctly.', 'error');
+             return;
+        }
+
         setIsProcessingTags(true);
         for (const mp3 of filesToDownload) {
             try {
@@ -668,7 +712,8 @@ export const TagEditorPanel: React.FC<TagEditorPanelProps> = ({ t, addToast, ini
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
                 
-                await new Promise(resolve => setTimeout(resolve, 500));
+                // Increase delay to ensure browser handles sequential downloads without blocking
+                await new Promise(resolve => setTimeout(resolve, 1000));
                 
             } catch (e) {
                 console.error("Failed to tag file", mp3.name, e);
@@ -872,6 +917,15 @@ export const TagEditorPanel: React.FC<TagEditorPanelProps> = ({ t, addToast, ini
                         title="Sort by Name" 
                         icon={<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" /></svg>}
                         tooltipPosition="left"
+                     />
+
+                     {/* Fix Order / Renumber Tracks Button */}
+                     <ToolButton 
+                        onClick={handleFixOrder}
+                        title={t('node.content.tagEditor.fixOrder') || "Fix Order"} 
+                        icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-4"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg>}
+                        tooltipPosition="left"
+                        className="bg-gray-800 hover:bg-emerald-600/30 text-gray-400 hover:text-emerald-400"
                      />
 
                      {/* Selection Tools (Right Aligned) */}

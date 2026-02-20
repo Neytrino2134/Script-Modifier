@@ -133,7 +133,7 @@ const ConnectionQuickAddMenu: React.FC<ConnectionQuickAddMenuProps> = ({
     [NodeType.IDEA_GENERATOR]: 'Shift+A',
     [NodeType.SCRIPT_GENERATOR]: 'Shift+S',
     [NodeType.SCRIPT_ANALYZER]: 'Shift+D',
-    [NodeType.SCRIPT_PROMPT_MODIFIER]: 'Shift+F',
+    [NodeType.SCRIPT_PROMPT_MODIFIER]: 'Shift+L', // Updated from Shift+F
     [NodeType.CHARACTER_GENERATOR]: 'Shift+C',
     [NodeType.CHARACTER_CARD]: 'Ctrl+Shift+C',
     [NodeType.DATA_READER]: 'Shift+R',
@@ -161,23 +161,23 @@ const ConnectionQuickAddMenu: React.FC<ConnectionQuickAddMenuProps> = ({
            { type: NodeType.SCRIPT_ANALYZER, title: t('node.title.script_analyzer'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V6A2.25 2.25 0 0018.75 3.75H5.25A2.25 2.25 0 003 6v6" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 15.75a.75.75 0 01.75-.75h.008a.75.75 0 01.75.75v.008a.75.75 0 01-.75-.75h-.008a.75.75 0 01-.75-.75v-.008z" /></svg> },
            { type: NodeType.SCRIPT_PROMPT_MODIFIER, title: t('node.title.script_prompt_modifier'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /><path strokeLinecap="round" strokeLinejoin="round" d="M18.375 12.75l-1.125 1.125m1.125-1.125L16.125 11.5m2.25 1.25l1.125-1.125m-1.125 1.125l-1.125-1.125M15 6l-2.25 2.25" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 6l2.25-2.25M15 6l-2.25-2.25" /></svg> },
         ]
-    },
-    {
+      },
+      {
         title: t('toolbar.group.characters'),
         items: [
            { type: NodeType.CHARACTER_GENERATOR, title: t('node.title.character_generator'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg> },
            { type: NodeType.CHARACTER_CARD, title: t('node.title.character_card'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 3.75H4.5A2.25 2.25 0 002.25 6v12A2.25 2.25 0 004.5 20.25h15A2.25 2.25 0 0021.75 18V6A2.25 2.25 0 0019.5 3.75z" /><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 8.25a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 16.5c0-2.485 2.015-4.5 4.5-4.5s4.5 2.015 4.5 4.5" /></svg> },
            { type: NodeType.CHARACTER_ANALYZER, title: t('node.title.character_analyzer'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M15 9a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 14.25c-3.1 0-5.88-1.5-7.5-3.75m15 3.75c-1.62-2.25-4.4-3.75-7.5-3.75S6.12 12 4.5 14.25" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18z" /></svg> },
         ]
-    },
-    {
+      },
+      {
         title: t('toolbar.group.images'),
         items: [
            { type: NodeType.IMAGE_GENERATOR, title: t('node.title.image_generator'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg> },
            { type: NodeType.IMAGE_PREVIEW, title: t('node.title.image_preview'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" /></svg> },
         ]
-    },
-    {
+      },
+      {
         title: t('toolbar.group.ai'),
         items: [
            { type: NodeType.TRANSLATOR, title: t('node.title.translator'), icon: <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L12 6l6 12M8 14h8" /></svg> },
@@ -253,6 +253,7 @@ const ConnectionQuickAddMenu: React.FC<ConnectionQuickAddMenuProps> = ({
   return (
     <div
       ref={menuRef}
+      tabIndex={-1}
       className={`fixed bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-2xl border border-gray-700 p-2 flex flex-col space-y-2 max-h-[400px] w-72 cursor-default transition-[opacity,transform] duration-200 ease-out ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}
       style={{ left: menuLocation.x, top: menuLocation.y, zIndex: 1000 }}
       onMouseDown={handleMouseDown}

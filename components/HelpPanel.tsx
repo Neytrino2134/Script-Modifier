@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useLanguage } from '../localization';
@@ -124,7 +125,7 @@ const HelpPanel: React.FC = () => {
           category: t('help.category.alpha'),
           headerColor: 'text-blue-400',
           links: [
-               { label: "Script Modifier 0.1.6", subLabel: t('help.sub.alpha'), url: "https://aistudio.google.com/apps/drive/1y9CSUmlVQK2xq7ckses7fpM6wpbZdBnB?showAssistant=true&resourceKey=&showPreview=true", iconType: 'google' },
+               { label: "Script Modifier 0.1.6 Alpha.2", subLabel: t('help.sub.alpha'), url: "https://aistudio.google.com/apps/drive/1y9CSUmlVQK2xq7ckses7fpM6wpbZdBnB?showAssistant=true&resourceKey=&showPreview=true", iconType: 'google' },
                { label: "Prompt Modifier 0.1.8", subLabel: t('help.sub.alpha'), url: "https://aistudio.google.com/apps/drive/1OJfPP9wUKlnjvZ5_2_Fxq_v1dW0iftlW?showAssistant=true&resourceKey=&showPreview=true", iconType: 'google' },
           ]
       },
@@ -132,7 +133,7 @@ const HelpPanel: React.FC = () => {
           category: t('help.category.github'),
           headerColor: 'text-yellow-400',
           links: [
-              { label: "Script Modifier Repo", subLabel: "v0.1.6 Alpha", url: "https://github.com/Neytrino2134/Script-Modifier", iconType: 'github' },
+              { label: "Script Modifier Repo", subLabel: "v0.1.6 Alpha.2", url: "https://github.com/Neytrino2134/Script-Modifier", iconType: 'github' },
               { label: "Prompt Modifier Repo", subLabel: "v0.1.8 Alpha", url: "https://github.com/Neytrino2134/Prompt-Modifier", iconType: 'github' },
           ]
       }
@@ -170,6 +171,7 @@ const HelpPanel: React.FC = () => {
     ],
     windows: [
       { key: 'F', description: t('hotkeys.windows.search') },
+      { key: 'Shift + F', description: t('toolbar.enterFullscreen') },
       { key: 'Space', description: t('hotkeys.windows.quickAdd') },
       { key: 'Ctrl+Space', description: t('hotkeys.windows.catalog') },
       { key: 'F1', description: t('hotkeys.show') },
@@ -194,7 +196,7 @@ const HelpPanel: React.FC = () => {
       { key: 'Ctrl+Shift+C', description: t('node.title.character_card') },
       { key: 'Shift+S', description: t('node.title.script_generator') },
       { key: 'Shift+D', description: t('node.title.script_analyzer') },
-      { key: 'Shift+F', description: t('node.title.script_prompt_modifier') },
+      { key: 'Shift+L', description: t('node.title.script_prompt_modifier') }, // Updated to Shift+L
       { key: 'Shift+R', description: t('node.title.data_reader') },
       { key: 'Shift+G', description: t('node.title.narrator_text_generator') },
       { key: 'Shift+N', description: t('node.title.speech_synthesizer') },

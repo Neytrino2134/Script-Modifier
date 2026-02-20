@@ -16,7 +16,7 @@ export const app = {
     'error.unsupportedFile': 'Неподдерживаемый тип файла.',
     'error.promptModifierFile': 'Этот файл принадлежит другой программе (Prompt Modifier). Пожалуйста, откройте его в соответствующем приложении.',
     'error.invalidFileType': 'Неверный тип файла. Пожалуйста, загрузите файл проекта или холста Script Modifier.',
-    'welcome.iAmDeveloper': 'Я разработчик',
+    'welcome.iAmDeveloper': 'Я работаю из Google AI Studio',
     'welcome.letsGo': "Поехали!",
     'welcome.resume': "Продолжить",
     'welcome.reload': "Перезапуск",

@@ -267,6 +267,13 @@ const Editor: React.FC = () => {
         }
         return;
       }
+      
+      // Shift+F for Fullscreen
+      if (e.code === 'KeyF' && e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey && !isTyping) {
+          e.preventDefault();
+          toggleFullScreen();
+          return;
+      }
 
       if (isTyping || e.repeat) return;
 
@@ -278,7 +285,7 @@ const Editor: React.FC = () => {
           case 'KeyC': nodeTypeToAdd = NodeType.CHARACTER_GENERATOR; break;
           case 'KeyS': nodeTypeToAdd = NodeType.SCRIPT_GENERATOR; break;
           case 'KeyD': nodeTypeToAdd = NodeType.SCRIPT_ANALYZER; break;
-          case 'KeyF': nodeTypeToAdd = NodeType.SCRIPT_PROMPT_MODIFIER; break;
+          case 'KeyL': nodeTypeToAdd = NodeType.SCRIPT_PROMPT_MODIFIER; break; // Changed from KeyF to KeyL
           case 'KeyR': nodeTypeToAdd = NodeType.DATA_READER; break;
           case 'KeyG': nodeTypeToAdd = NodeType.NARRATOR_TEXT_GENERATOR; break;
           case 'KeyN': nodeTypeToAdd = NodeType.SPEECH_SYNTHESIZER; break;

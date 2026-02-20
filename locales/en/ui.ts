@@ -1,14 +1,4 @@
 
-
-
-
-
-
-
-
-
-
-
 export const ui = {
     'toolbar.edit': 'Edit (V)',
     'toolbar.cutter': 'Cut Connection (C)',
@@ -24,8 +14,8 @@ export const ui = {
     'toolbar.settings': 'Settings',
     'toolbar.resetToDefault': 'Reset to Default',
     'toolbar.closeProject': 'Close Project / Clear',
-    'toolbar.enterFullscreen': 'Fullscreen',
-    'toolbar.exitFullscreen': 'Exit Fullscreen',
+    'toolbar.enterFullscreen': 'Fullscreen (Shift+F)',
+    'toolbar.exitFullscreen': 'Exit Fullscreen (Shift+F)',
     'toolbar.home': 'Home',
     'toolbar.addTextInput': 'Text Input (T)',
     'toolbar.addPromptAnalyzer': 'Prompt Analyzer (A)',
@@ -40,7 +30,7 @@ export const ui = {
     'toolbar.addIdeaGenerator': 'Idea Generator (Shift+A)',
     'toolbar.addScriptGenerator': 'Script Generator (Shift+S)',
     'toolbar.addScriptAnalyzer': 'Script Analyzer (Shift+D)',
-    'toolbar.addScriptPromptModifier': 'Prompt Finalizer (Shift+F)',
+    'toolbar.addScriptPromptModifier': 'Prompt Finalizer (Shift+L)',
     'toolbar.addErrorAnalyzer': 'Error Analyzer',
     'toolbar.addNote': 'Note (N)',
     'toolbar.addDataReader': 'Data Reader (Shift+R)',
@@ -121,7 +111,7 @@ export const ui = {
     'search.node.character_analyzer.title': 'Character Analyzer',
     'search.node.character_analyzer.description': 'Analyzes a character description and splits it into physical appearance and clothing.',
     'search.node.character_generator.title': 'Character Generator',
-    'search.node.character_generator.description': 'Creates detailed characters from an idea. (Shift+C)',
+    'search.node.character_generator.description': 'Creates detailed character descriptions from an idea. (Shift+C)',
     'search.node.image_generator.title': 'Image Generator',
     'search.node.image_generator.description': 'Generates an image from a text prompt using the Gemini API. (O)',
     'search.node.image_preview.title': 'Image Preview',
@@ -137,7 +127,7 @@ export const ui = {
     'search.node.script_analyzer.title': 'Script Analyzer',
     'search.node.script_analyzer.description': 'Analyzes the script structure, breaking it down into characters and frames with detailed descriptions. (Shift+D)',
     'search.node.script_prompt_modifier.title': 'Prompt Finalizer',
-    'search.node.script_prompt_modifier.description': 'Synthesizes final, artistic prompts for image generation for each frame. (Shift+F)',
+    'search.node.script_prompt_modifier.description': 'Synthesizes final, artistic prompts for image generation for each frame. (Shift+L)',
     'search.node.error_analyzer.title': 'Error Analyzer',
     'search.node.error_analyzer.description': 'Checks and corrects text for spelling and grammar errors.',
     'search.node.note.title': 'Note',
@@ -252,4 +242,5 @@ export const ui = {
     'youtube_analytics.vids_wk': 'Videos/Wk',
     'youtube_analytics.vids_mo': 'Videos/Mo',
     'youtube_analytics.subs_short': 'Subs',
+    'node.content.tagEditor.fixOrder': 'Renumber Tracks',
 };

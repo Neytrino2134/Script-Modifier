@@ -1,14 +1,4 @@
 
-
-
-
-
-
-
-
-
-
-
 export const ui = {
     'toolbar.edit': 'Редактировать (V)',
     'toolbar.cutter': 'Разрезать (C)',
@@ -24,8 +14,8 @@ export const ui = {
     'toolbar.settings': 'Настройки',
     'toolbar.resetToDefault': 'Сбросить холст',
     'toolbar.closeProject': 'Закрыть проект / Очистить',
-    'toolbar.enterFullscreen': 'На весь экран',
-    'toolbar.exitFullscreen': 'Выход из полноэкранного режима',
+    'toolbar.enterFullscreen': 'На весь экран (Shift+F)',
+    'toolbar.exitFullscreen': 'Выход из полноэкранного режима (Shift+F)',
     'toolbar.home': 'Главная',
     'toolbar.addTextInput': 'Текстовый ввод (T)',
     'toolbar.addPromptAnalyzer': 'Анализатор промпта (A)',
@@ -40,7 +30,7 @@ export const ui = {
     'toolbar.addIdeaGenerator': 'Генератор идей (Shift+A)',
     'toolbar.addScriptGenerator': 'Генератор сценариев (Shift+S)',
     'toolbar.addScriptAnalyzer': 'Анализатор сценария (Shift+D)',
-    'toolbar.addScriptPromptModifier': 'Финалайзер промптов (Shift+F)',
+    'toolbar.addScriptPromptModifier': 'Финалайзер промптов (Shift+L)',
     'toolbar.addErrorAnalyzer': 'Анализатор ошибок',
     'toolbar.addNote': 'Заметка (N)',
     'toolbar.addDataReader': 'Читатель данных (Shift+R)',
@@ -137,7 +127,7 @@ export const ui = {
     'search.node.script_analyzer.title': 'Анализатор сценария',
     'search.node.script_analyzer.description': 'Разбивает сценарий на кадры и промпты. (Shift+D)',
     'search.node.script_prompt_modifier.title': 'Финалайзер промптов',
-    'search.node.script_prompt_modifier.description': 'Финалайзер промптов (Shift+F)',
+    'search.node.script_prompt_modifier.description': 'Финалайзер промптов (Shift+L)',
     'search.node.error_analyzer.title': 'Анализатор ошибок',
     'search.node.error_analyzer.description': 'Проверяет и исправляет орфографию и грамматику.',
     'search.node.note.title': 'Заметка',
@@ -270,4 +260,27 @@ export const ui = {
     'node.content.stack.role': '2. РОЛЬ И ЛОГИКА',
     'node.content.stack.cinematography': '3. КИНЕМАТОГРАФИЯ',
     'node.content.stack.world': '4. МИР И НЕПРЕРЫВНОСТЬ',
+
+    // Tag Editor
+    'node.content.tagEditor.aiTitle': 'Авто-тегирование ИИ',
+    'node.content.tagEditor.aiPlaceholder': 'Напр.: 80s Synthwave, Space Theme',
+    'node.content.tagEditor.aiGenerate': 'Заполнить теги (AI)',
+    'node.content.tagEditor.aiSuccess': 'Теги успешно сгенерированы!',
+    'node.content.tagEditor.aiFailed': 'Ошибка генерации тегов',
+    'node.content.tagEditor.noFiles': 'Нет файлов для обработки.',
+    'node.content.tagEditor.analyzeDuplicates': 'Поиск дубликатов',
+    'node.content.tagEditor.deleteSelected': 'Удалить выбранные',
+    'node.content.tagEditor.deleteDuplicates': 'Удалить дубликаты',
+    'node.content.tagEditor.downloadSelected': 'Скачать выбранные',
+    'node.content.tagEditor.duplicatesFound': 'Найдено и выбрано дубликатов: {count}',
+    'node.content.tagEditor.noDuplicates': 'Дубликаты не найдены',
+    'node.content.tagEditor.addFiles': 'Добавить MP3',
+    'node.content.tagEditor.batch': 'Пакетное заполнение',
+    'node.content.tagEditor.artist': 'Артист',
+    'node.content.tagEditor.album': 'Альбом',
+    'node.content.tagEditor.genre': 'Жанр',
+    'node.content.tagEditor.download': 'Скачать измененные файлы',
+    'node.content.mp3TagEditor': 'MP3 Редактор Тегов',
+    'node.content.tagEditor.dragDrop': 'Перетащите MP3 сюда или нажмите Добавить',
+    'node.content.tagEditor.fixOrder': 'Исправить порядок',
 };

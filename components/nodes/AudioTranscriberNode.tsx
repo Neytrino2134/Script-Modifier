@@ -17,7 +17,8 @@ const AudioTranscriberNode: React.FC<NodeContentProps> = ({
     deselectAllNodes,
     addToast,
 }) => {
-    const isLoading = isTranscribingAudio === node.id;
+    // isTranscribingAudio is passed as a boolean from NodeView (props.isTranscribingAudio === node.id)
+    const isLoading = isTranscribingAudio;
     const { pendingFiles } = useAppContext();
     
     // Tab State - Initialize based on node value if available
